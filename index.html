@@ -152,6 +152,69 @@
             font-weight: bold;
         }
 
+        /* Custom Confirmation Modal */
+        #confirm-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 200;
+            padding: 30px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .confirm-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid var(--red);
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .confirm-content h2 {
+            margin-bottom: 20px;
+            color: var(--white);
+            font-size: 1.5rem;
+        }
+
+        .confirm-content p {
+            margin-bottom: 25px;
+            line-height: 1.4;
+            font-size: 1.2rem;
+        }
+
+        .confirm-btns {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .confirm-btn {
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .confirm-yes {
+            background: var(--red);
+            color: white;
+        }
+
+        .confirm-no {
+            background: var(--gray);
+            color: black;
+        }
+
         .btn-container {
             display: flex;
             flex-direction: column;
@@ -335,6 +398,18 @@
         </div>
     </div>
 
+    <!-- Custom Confirm Modal -->
+    <div id="confirm-overlay">
+        <div class="confirm-content">
+            <h2 id="confirm-title">Set Home Go Home</h2>
+            <p id="confirm-msg"></p>
+            <div class="confirm-btns">
+                <button id="confirm-no-btn" class="confirm-btn confirm-no">Cancel</button>
+                <button id="confirm-yes-btn" class="confirm-btn confirm-yes">Yes</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Compass Screen -->
     <div id="compass-screen" class="screen">
         <div class="compass-container">
@@ -390,6 +465,10 @@
         const openHelp = document.getElementById('open-help');
         const closeHelp = document.getElementById('close-help');
         const helpOverlay = document.getElementById('help-overlay');
+        const confirmOverlay = document.getElementById('confirm-overlay');
+        const confirmMsg = document.getElementById('confirm-msg');
+        const confirmYesBtn = document.getElementById('confirm-yes-btn');
+        const confirmNoBtn = document.getElementById('confirm-no-btn');
         
         const arrow = document.getElementById('arrow');
         const distanceVal = document.getElementById('distance-val');
@@ -438,6 +517,33 @@
                 helpOverlay.style.display = 'none';
             }
         });
+
+        // Custom Confirm Logic
+        function customConfirm(message) {
+            return new Promise((resolve) => {
+                confirmMsg.innerText = message;
+                confirmOverlay.style.display = 'flex';
+
+                const onYes = () => {
+                    cleanup();
+                    resolve(true);
+                };
+
+                const onNo = () => {
+                    cleanup();
+                    resolve(false);
+                };
+
+                const cleanup = () => {
+                    confirmOverlay.style.display = 'none';
+                    confirmYesBtn.removeEventListener('click', onYes);
+                    confirmNoBtn.removeEventListener('click', onNo);
+                };
+
+                confirmYesBtn.addEventListener('click', onYes, { once: true });
+                confirmNoBtn.addEventListener('click', onNo, { once: true });
+            });
+        }
 
         // Utils: Haversine distance
         function getDistance(lat1, lon1, lat2, lon2) {
@@ -640,9 +746,11 @@
         }
 
         // Stop Button
-        stopBtn.addEventListener('click', () => {
-            if (confirm("Are you sure you want to stop? The trip will end and be cleared.")) {
-                if (confirm("Are you absolutely sure? You will need to 'Set Home' again.")) {
+        stopBtn.addEventListener('click', async () => {
+            const firstConfirm = await customConfirm("Are you sure you want to stop? The trip will end and be cleared.");
+            if (firstConfirm) {
+                const secondConfirm = await customConfirm("Are you absolutely sure? You will need to 'Set Home' again.");
+                if (secondConfirm) {
                     stopNavigation();
                     resetAppState();
                     showScreen(homeScreen);
