@@ -107,6 +107,89 @@
             z-index: 10;
         }
 
+        .poi-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* POI Modal */
+        #poi-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 150;
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .poi-content {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 20px;
+            border: 2px solid var(--green);
+            max-width: 95%;
+            width: 400px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .poi-list {
+            overflow-y: auto;
+            margin-top: 15px;
+            flex: 1;
+        }
+
+        .poi-item {
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .poi-item:active {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--green);
+        }
+
+        .poi-item h4 {
+            margin-bottom: 5px;
+            color: var(--green);
+        }
+
+        .poi-item p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .loading-poi {
+            padding: 20px;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
         /* Modal / Help Overlay */
         #help-overlay {
             display: none;
@@ -382,7 +465,20 @@
         </div>
 
         <button id="install-btn">📱 Install App</button>
+        <div id="open-poi" class="poi-btn">📍</div>
         <div id="open-help" class="help-btn">?</div>
+    </div>
+
+    <!-- POI Modal -->
+    <div id="poi-overlay">
+        <div class="poi-content">
+            <h2 style="color: var(--green);">Find Playground</h2>
+            <p style="font-size: 0.9rem; opacity: 0.7;">Searching for nearest playgrounds...</p>
+            <div id="poi-list" class="poi-list">
+                <div class="loading-poi">Locating you first...</div>
+            </div>
+            <button id="close-poi" class="close-help" style="background: var(--green); margin-top: 15px;">Close</button>
+        </div>
     </div>
 
     <!-- Help Overlay -->
@@ -465,6 +561,10 @@
         const openHelp = document.getElementById('open-help');
         const closeHelp = document.getElementById('close-help');
         const helpOverlay = document.getElementById('help-overlay');
+        const openPoiBtn = document.getElementById('open-poi');
+        const closePoiBtn = document.getElementById('close-poi');
+        const poiOverlay = document.getElementById('poi-overlay');
+        const poiList = document.getElementById('poi-list');
         const confirmOverlay = document.getElementById('confirm-overlay');
         const confirmMsg = document.getElementById('confirm-msg');
         const confirmYesBtn = document.getElementById('confirm-yes-btn');
@@ -517,6 +617,72 @@
                 helpOverlay.style.display = 'none';
             }
         });
+
+        // POI Logic
+        openPoiBtn.addEventListener('click', () => {
+            poiOverlay.style.display = 'flex';
+            fetchPlaygrounds();
+        });
+
+        closePoiBtn.addEventListener('click', () => {
+            poiOverlay.style.display = 'none';
+        });
+
+        async function fetchPlaygrounds() {
+            poiList.innerHTML = '<div class="loading-poi">Locating you...</div>';
+            
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                poiList.innerHTML = '<div class="loading-poi">Searching for playgrounds nearby...</div>';
+                
+                // Overpass API query for playgrounds within 3000m
+                const query = `[out:json];node["leisure"="playground"](around:3000,${lat},${lon});out;`;
+                const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+                
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    
+                    if (data.elements && data.elements.length > 0) {
+                        poiList.innerHTML = '';
+                        
+                        // Sort by distance
+                        const pois = data.elements.map(item => {
+                            const d = getDistance(lat, lon, item.lat, item.lon);
+                            return { ...item, distance: d };
+                        }).sort((a, b) => a.distance - b.distance);
+
+                        pois.slice(0, 10).forEach(poi => {
+                            const div = document.createElement('div');
+                            div.className = 'poi-item';
+                            const name = poi.tags.name || "Unnamed Playground";
+                            div.innerHTML = `
+                                <h4>${name}</h4>
+                                <p>${Math.round(poi.distance)} meters away</p>
+                            `;
+                            div.onclick = () => {
+                                homeLat = poi.lat;
+                                homeLon = poi.lon;
+                                setHomeBtn.classList.add('home-set');
+                                setHomeBtn.innerText = "Home Set (POI)";
+                                poiOverlay.style.display = 'none';
+                                customAlert(`Target set to: ${name}`);
+                            };
+                            poiList.appendChild(div);
+                        });
+                    } else {
+                        poiList.innerHTML = '<div class="loading-poi">No playgrounds found within 3km.</div>';
+                    }
+                } catch (error) {
+                    poiList.innerHTML = '<div class="loading-poi">Error fetching playgrounds. Try again.</div>';
+                    console.error(error);
+                }
+            }, (error) => {
+                poiList.innerHTML = '<div class="loading-poi">Could not get your location.</div>';
+            });
+        }
 
         // Custom Alert Logic
         function customAlert(message) {
