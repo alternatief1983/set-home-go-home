@@ -89,6 +89,69 @@
             z-index: 10;
         }
 
+        .help-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Modal / Help Overlay */
+        #help-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            padding: 30px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .help-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid var(--blue);
+            max-width: 90%;
+            text-align: left;
+        }
+
+        .help-content h2 {
+            margin-bottom: 20px;
+            color: var(--blue);
+        }
+
+        .help-content p {
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .close-help {
+            margin-top: 20px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
         .btn-container {
             display: flex;
             flex-direction: column;
@@ -256,6 +319,20 @@
         </div>
 
         <button id="install-btn">📱 Install App</button>
+        <div id="open-help" class="help-btn">?</div>
+    </div>
+
+    <!-- Help Overlay -->
+    <div id="help-overlay">
+        <div class="help-content">
+            <h2>How it works (for humans)</h2>
+            <p><strong>1. Set Home:</strong> Tap this at your car, tent, or that one tree you think you'll remember (you won't).</p>
+            <p><strong>2. Wander off:</strong> Go hiking, get lost, chase a squirrel. We don't judge.</p>
+            <p><strong>3. Go Home:</strong> When you're tired/hungry, tap this. Follow the arrow like your life depends on it (it might).</p>
+            <p><strong>4. Green Arrow:</strong> You're facing the right way. Keep going, hero!</p>
+            <p><strong>5. Arrival:</strong> When the phone vibrates and confetti flies, you're back! Time for a snack.</p>
+            <button id="close-help" class="close-help">Got it!</button>
+        </div>
     </div>
 
     <!-- Compass Screen -->
@@ -308,6 +385,9 @@
         const stopBtn = document.getElementById('stop-btn');
         const startNewBtn = document.getElementById('start-new-btn');
         const installBtn = document.getElementById('install-btn');
+        const openHelp = document.getElementById('open-help');
+        const closeHelp = document.getElementById('close-help');
+        const helpOverlay = document.getElementById('help-overlay');
         
         const arrow = document.getElementById('arrow');
         const distanceVal = document.getElementById('distance-val');
@@ -339,6 +419,21 @@
                 installBtn.style.display = 'none';
             }
             deferredPrompt = null;
+        });
+
+        // Help Overlay Logic
+        openHelp.addEventListener('click', () => {
+            helpOverlay.style.display = 'flex';
+        });
+
+        closeHelp.addEventListener('click', () => {
+            helpOverlay.style.display = 'none';
+        });
+
+        helpOverlay.addEventListener('click', (e) => {
+            if (e.target === helpOverlay) {
+                helpOverlay.style.display = 'none';
+            }
         });
 
         // Utils: Haversine distance
