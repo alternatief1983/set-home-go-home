@@ -1,4 +1,4 @@
-const CACHE_NAME = 'set-home-v10';
+const CACHE_NAME = 'set-home-v12';
 const ASSETS = [
   './',
   './index.html',

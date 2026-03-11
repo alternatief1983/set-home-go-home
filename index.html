@@ -107,6 +107,75 @@
             z-index: 10;
         }
 
+        .lang-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 70px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Language Modal */
+        #lang-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 150;
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lang-content {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 20px;
+            border: 2px solid var(--blue);
+            max-width: 95%;
+            width: 300px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lang-list {
+            overflow-y: auto;
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .lang-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 10px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        .lang-item.active {
+            background: var(--blue);
+            border-color: var(--white);
+        }
+
         .poi-btn {
             position: absolute;
             bottom: 20px;
@@ -192,6 +261,37 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
+        }
+
+        /* POI Categories */
+        .poi-categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .cat-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 4px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .cat-btn.active {
+            background: var(--green);
+            border-color: var(--green);
+        }
+
+        .cat-icon {
+            font-size: 1.2rem;
         }
 
         /* Loading Spinner */
@@ -475,7 +575,7 @@
 <body>
     <!-- Home Screen -->
     <div id="home-screen" class="screen active">
-        <a href="https://paypal.me/Master8383" target="_blank" rel="noopener noreferrer" class="donation-btn">
+        <a id="donation-link" href="https://paypal.me/Master8383" target="_blank" rel="noopener noreferrer" class="donation-btn">
             If you like the app<br>☕ Buy me a coffee<br>@Master8383
         </a>
         
@@ -486,14 +586,64 @@
 
         <button id="install-btn">📱 Install App</button>
         <div id="open-poi" class="poi-btn">📍</div>
+        <div id="open-lang" class="lang-btn">🌐</div>
         <div id="open-help" class="help-btn">?</div>
+    </div>
+
+    <!-- Language Modal -->
+    <div id="lang-overlay">
+        <div class="lang-content">
+            <h2 id="lang-modal-title">Select Language</h2>
+            <div id="lang-list" class="lang-list">
+                <!-- Languages will be added by JS -->
+            </div>
+            <button id="close-lang" class="close-help" style="margin-top: 15px;">Close</button>
+        </div>
     </div>
 
     <!-- POI Modal -->
     <div id="poi-overlay">
         <div class="poi-content">
-            <h2 style="color: var(--green);">Find Playground</h2>
-            <p style="font-size: 0.9rem; opacity: 0.7;">Searching for nearest playgrounds...</p>
+            <h2 id="poi-title" style="color: var(--green);">Find Places</h2>
+            <div class="poi-categories">
+                <button class="cat-btn active" data-type="playground" data-label="Playground">
+                    <span class="cat-icon">🧸</span>Play
+                </button>
+                <button class="cat-btn" data-type="cafe" data-label="Cafe">
+                    <span class="cat-icon">☕</span>Cafe
+                </button>
+                <button class="cat-btn" data-type="snackbar" data-label="Snackbar">
+                    <span class="cat-icon">🍟</span>Snack
+                </button>
+                <button class="cat-btn" data-type="toilet" data-label="Toilet">
+                    <span class="cat-icon">🚻</span>WC
+                </button>
+                <button class="cat-btn" data-type="water" data-label="Water">
+                    <span class="cat-icon">💧</span>Water
+                </button>
+                <button class="cat-btn" data-type="shop" data-label="Shop">
+                    <span class="cat-icon">🛒</span>Shop
+                </button>
+                <button class="cat-btn" data-type="bench" data-label="Bench">
+                    <span class="cat-icon">🪑</span>Rest
+                </button>
+                <button class="cat-btn" data-type="viewpoint" data-label="View">
+                    <span class="cat-icon">🔭</span>View
+                </button>
+                <button class="cat-btn" data-type="park" data-label="Park">
+                    <span class="cat-icon">🌳</span>Park
+                </button>
+                <button class="cat-btn" data-type="ice_cream" data-label="Ice Cream">
+                    <span class="cat-icon">🍦</span>Ice
+                </button>
+                <button class="cat-btn" data-type="pharmacy" data-label="Pharmacy">
+                    <span class="cat-icon">🏥</span>Meds
+                </button>
+                <button class="cat-btn" data-type="bus_stop" data-label="Bus Stop">
+                    <span class="cat-icon">🚌</span>Bus
+                </button>
+            </div>
+            <p id="poi-status" style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 10px;">Select a category</p>
             <div id="poi-list" class="poi-list">
                 <div class="loading-poi">
                     <div class="spinner"></div>
@@ -507,12 +657,10 @@
     <!-- Help Overlay -->
     <div id="help-overlay">
         <div class="help-content">
-            <h2>How it works (for humans)</h2>
-            <p><strong>1. Set Home:</strong> Tap this at your car, tent, or that one tree you think you'll remember (you won't).</p>
-            <p><strong>2. Wander off:</strong> Go hiking, get lost, chase a squirrel. We don't judge.</p>
-            <p><strong>3. Go Home:</strong> When you're tired/hungry, tap this. Follow the arrow like your life depends on it (it might).</p>
-            <p><strong>4. Green Arrow:</strong> You're facing the right way. Keep going, hero!</p>
-            <p><strong>5. Arrival:</strong> When the phone vibrates and confetti flies, you're back! Time for a snack.</p>
+            <h2 id="help-title">How it works (for humans)</h2>
+            <div id="help-steps">
+                <!-- Steps will be added by JS -->
+            </div>
             <button id="close-help" class="close-help">Got it!</button>
         </div>
     </div>
@@ -542,8 +690,8 @@
         </div>
         
         <div class="distance-display">
-            Distance: <span id="distance-val">0</span> m<br>
-            <span id="eta-display" style="font-size: 1.5rem; opacity: 0.8;">ETA: -- min</span>
+            <span id="dist-label">Distance</span>: <span id="distance-val">0</span> m<br>
+            <span id="eta-display" style="font-size: 1.5rem; opacity: 0.8;">Time to Home: -- min</span>
         </div>
         
         <button id="stop-btn" class="stop-btn">STOP</button>
@@ -551,8 +699,8 @@
 
     <!-- Trip Complete Screen -->
     <div id="trip-complete-screen" class="screen">
-        <div class="complete-title">🏁 Trip Complete</div>
-        <div class="stats">Time: <span id="trip-time">0</span> minutes</div>
+        <div id="complete-title" class="complete-title">🏁 Trip Complete</div>
+        <div class="stats"><span id="time-label">Time</span>: <span id="trip-time">0</span> <span id="min-label">minutes</span></div>
         <button id="start-new-btn" class="reset-btn">Start New Trip</button>
     </div>
 
@@ -570,6 +718,559 @@
         let watchId = null;
         let startTime = null;
         let arrivalTriggered = false;
+        let currentLang = localStorage.getItem('appLang') || 'en';
+
+        const translations = {
+            en: {
+                goHome: "Go Home",
+                setHome: "Set Home",
+                homeSet: "Home Set",
+                homeSetPoi: "Home Set (POI)",
+                locating: "Locating...",
+                pressSetHome: "Press Set Home first",
+                distance: "Distance",
+                timeToHome: "Time to Home",
+                standingStill: "Standing still",
+                stop: "STOP",
+                tripComplete: "🏁 Trip Complete",
+                time: "Time",
+                minutes: "minutes",
+                startNew: "Start New Trip",
+                install: "📱 Install App",
+                coffee: "If you like the app<br>☕ Buy me a coffee<br>@Master8383",
+                helpTitle: "How it works (for humans)",
+                helpSteps: [
+                    "<strong>1. Set Home:</strong> Tap this at your car, tent, or that one tree you think you'll remember (you won't).",
+                    "<strong>2. Wander off:</strong> Go hiking, get lost, chase a squirrel. We don't judge.",
+                    "<strong>3. Go Home:</strong> When you're tired/hungry, tap this. Follow the arrow like your life depends on it (it might).",
+                    "<strong>4. Green Arrow:</strong> You're facing the right way. Keep going, hero!",
+                    "<strong>5. Arrival:</strong> When the phone vibrates and confetti flies, you're back! Time for a snack."
+                ],
+                close: "Close",
+                gotIt: "Got it!",
+                findPlaces: "Find Places",
+                locatingYou: "Locating you...",
+                searchingPoi: "Searching for nearby locations...",
+                noPoiFound: "No locations found within 3km.",
+                gpsError: "GPS error",
+                connError: "Connection error",
+                targetSet: "Target set to:",
+                confirmStop1: "Are you sure you want to stop? The trip will end and be cleared.",
+                confirmStop2: "Are you absolutely sure? You will need to 'Set Home' again.",
+                yes: "Yes",
+                no: "No",
+                ok: "OK",
+                selectLang: "Select Language"
+            },
+            nl: {
+                goHome: "Ga naar Huis",
+                setHome: "Stel Huis in",
+                homeSet: "Huis Ingesteld",
+                homeSetPoi: "Doel Ingesteld (POI)",
+                locating: "Zoeken...",
+                pressSetHome: "Stel eerst je huis in",
+                distance: "Afstand",
+                timeToHome: "Tijd naar Huis",
+                standingStill: "Stilstand",
+                stop: "STOP",
+                tripComplete: "🏁 Trip Voltooid",
+                time: "Tijd",
+                minutes: "minuten",
+                startNew: "Nieuwe Trip",
+                install: "📱 Installeer App",
+                coffee: "Vind je de app leuk?<br>☕ Koop een koffie<br>@Master8383",
+                helpTitle: "Hoe het werkt",
+                helpSteps: [
+                    "<strong>1. Stel Huis in:</strong> Tik hier bij je auto, tent, of die ene boom die je denkt te onthouden (dat lukt niet).",
+                    "<strong>2. Dwaal rond:</strong> Ga wandelen, verdwaal, achtervolg een eekhoorn. Wij oordelen niet.",
+                    "<strong>3. Ga naar Huis:</strong> Als je moe/hongerig bent, tik hier. Volg de pijl alsof je leven ervan afhangt (dat zou best kunnen).",
+                    "<strong>4. Groene Pijl:</strong> Je loopt de goede kant op. Zet hem op, held!",
+                    "<strong>5. Aankomst:</strong> Als de telefoon trilt en er confetti vliegt, ben je er! Tijd voor een snack."
+                ],
+                close: "Sluiten",
+                gotIt: "Begrepen!",
+                findPlaces: "Plaatsen Zoeken",
+                locatingYou: "Locatie bepalen...",
+                searchingPoi: "Zoeken naar plaatsen in de buurt...",
+                noPoiFound: "Geen plaatsen gevonden binnen 3km.",
+                gpsError: "GPS fout",
+                connError: "Verbindingsfout",
+                targetSet: "Doel ingesteld op:",
+                confirmStop1: "Weet je zeker dat je wilt stoppen? De route wordt gewist.",
+                confirmStop2: "Heel zeker? Je moet daarna opnieuw je startpunt instellen.",
+                yes: "Ja",
+                no: "Nee",
+                ok: "OK",
+                selectLang: "Kies Taal"
+            },
+            de: {
+                goHome: "Nach Hause",
+                setHome: "Heimat setzen",
+                homeSet: "Heimat gesetzt",
+                homeSetPoi: "Ziel gesetzt (POI)",
+                locating: "Suchen...",
+                pressSetHome: "Zuerst Heimat setzen",
+                distance: "Entfernung",
+                timeToHome: "Zeit nach Hause",
+                standingStill: "Stillstand",
+                stop: "STOPP",
+                tripComplete: "🏁 Trip beendet",
+                time: "Zeit",
+                minutes: "Minuten",
+                startNew: "Neuer Trip",
+                install: "📱 App installieren",
+                coffee: "Gefällt dir de App?<br>☕ Kaffee spendieren<br>@Master8383",
+                helpTitle: "Wie het funktioniert",
+                helpSteps: [
+                    "<strong>1. Heimat setzen:</strong> Tippe hier bei deinem Auto, Zelt oder dem Baum, den du dir merken willst (wirst du niet).",
+                    "<strong>2. Wandern:</strong> Geh wandern, verirr dich, jag ein Eichhörnchen. Wir urteilen nicht.",
+                    "<strong>3. Nach Hause:</strong> Wenn du müde/hungrig bist, tippe hier. Folg dem Pfeil, als ginge es um dein Leben (könnte sein).",
+                    "<strong>4. Grüner Pfeil:</strong> Du bist auf dem richtigen Weg. Weiter so, Held!",
+                    "<strong>5. Ankunft:</strong> Wenn das Handy vibriert und Konfetti fliegt, bist du da! Zeit für einen Snack."
+                ],
+                close: "Schließen",
+                gotIt: "Verstanden!",
+                findPlaces: "Orte finden",
+                locatingYou: "Suche Standort...",
+                searchingPoi: "Suche Orte in der Nähe...",
+                noPoiFound: "Keine Orte im Umkreis van 3km gefunden.",
+                gpsError: "GPS-Fehler",
+                connError: "Verbindungsfehler",
+                targetSet: "Ziel gesetzt auf:",
+                confirmStop1: "Bist du sicher? Der Trip wird beendet und gelöscht.",
+                confirmStop2: "Ganz sicher? Du musst den Startpunkt neu setzen.",
+                yes: "Ja",
+                no: "Nein",
+                ok: "OK",
+                selectLang: "Sprache wählen"
+            },
+            fr: {
+                goHome: "Rentrer",
+                setHome: "Définir Home",
+                homeSet: "Home défini",
+                homeSetPoi: "Cible définie (POI)",
+                locating: "Recherche...",
+                pressSetHome: "Définir Home d'abord",
+                distance: "Distance",
+                timeToHome: "Temps restant",
+                standingStill: "À l'arrêt",
+                stop: "STOP",
+                tripComplete: "🏁 Trip terminé",
+                time: "Temps",
+                minutes: "minutes",
+                startNew: "Nouveau Trip",
+                install: "📱 Installer l'App",
+                coffee: "Vous aimez l'app ?<br>☕ Offrez un café<br>@Master8383",
+                helpTitle: "Comment ça marche",
+                helpSteps: [
+                    "<strong>1. Définir Home :</strong> Appuyez ici à votre voiture, tente ou cet arbre que vous pensez retenir (non).",
+                    "<strong>2. Balade :</strong> Allez marcher, perdez-vous, poursuivez un écureuil. On ne juge pas.",
+                    "<strong>3. Rentrer :</strong> Quand vous êtes fatigué/affamé, appuyez ici. Suivez la flèche comme si votre vie en dépendait.",
+                    "<strong>4. Flèche verte :</strong> Vous êtes dans la bonne direction. Allez, champion !",
+                    "<strong>5. Arrivée :</strong> Quand le téléphone vibre et les confettis volent, vous y êtes ! L'heure du goûter."
+                ],
+                close: "Fermer",
+                gotIt: "Compris !",
+                findPlaces: "Trouver lieux",
+                locatingYou: "Localisation...",
+                searchingPoi: "Recherche de lieux à proximité...",
+                noPoiFound: "Aucun lieu trouvé à moins de 3km.",
+                gpsError: "Erreur GPS",
+                connError: "Erreur connexion",
+                targetSet: "Cible définie sur :",
+                confirmStop1: "Voulez-vous vraiment arrêter ? Le trajet sera effacé.",
+                confirmStop2: "Sûr ? Vous devrez redéfinir votre point de départ.",
+                yes: "Oui",
+                no: "Non",
+                ok: "OK",
+                selectLang: "Choisir langue"
+            },
+            es: {
+                goHome: "Ir a Casa",
+                setHome: "Fijar Casa",
+                homeSet: "Casa fijada",
+                homeSetPoi: "Objetivo fijado (POI)",
+                locating: "Buscando...",
+                pressSetHome: "Fija Casa primero",
+                distance: "Distancia",
+                timeToHome: "Tiempo a Casa",
+                standingStill: "Parado",
+                stop: "STOP",
+                tripComplete: "🏁 Trip completado",
+                time: "Tiempo",
+                minutes: "minutos",
+                startNew: "Nuevo Trip",
+                install: "📱 Instalar App",
+                coffee: "¿Te gusta la app?<br>☕ Invítame a un café<br>@Master8383",
+                helpTitle: "Cómo funciona",
+                helpSteps: [
+                    "<strong>1. Fijar Casa:</strong> Pulsa aquí en tu coche, tienda o ese árbol que crees que recordarás (no será así).",
+                    "<strong>2. Deambular:</strong> Camina, piérdete, persigue una ardilla. No juzgamos.",
+                    "<strong>3. Ir a Casa:</strong> Cuando estés cansado/hambriento, pulsa aquí. Sigue la flecha como si te fuera la vida en ello.",
+                    "<strong>4. Flecha verde:</strong> Vas por el buen camino. ¡Sigue así, héroe!",
+                    "<strong>5. Llegada:</strong> Cuando el móvil vibre y vuele confeti, ¡has llegado! Hora de merendar."
+                ],
+                close: "Cerrar",
+                gotIt: "¡Entendido!",
+                findPlaces: "Buscar lugares",
+                locatingYou: "Localizando...",
+                searchingPoi: "Buscando lugares cercanos...",
+                noPoiFound: "No se encontraron lugares en 3km.",
+                gpsError: "Error GPS",
+                connError: "Error de conexión",
+                targetSet: "Objetivo fijado en:",
+                confirmStop1: "¿Seguro que quieres parar? Se borrará la ruta.",
+                confirmStop2: "¿Muy seguro? Tendrás que fijar el punto de inicio de nuevo.",
+                yes: "Sí",
+                no: "No",
+                ok: "OK",
+                selectLang: "Elegir idioma"
+            },
+            it: {
+                goHome: "Vai a Casa",
+                setHome: "Fissa Casa",
+                homeSet: "Casa fissata",
+                homeSetPoi: "Obiettivo fissato (POI)",
+                locating: "Ricerca...",
+                pressSetHome: "Fissa prima Casa",
+                distance: "Distanza",
+                timeToHome: "Tempo a Casa",
+                standingStill: "Fermo",
+                stop: "STOP",
+                tripComplete: "🏁 Trip completato",
+                time: "Tempo",
+                minutes: "minuti",
+                startNew: "Nuovo Trip",
+                install: "📱 Installa App",
+                coffee: "Ti piace l'app?<br>☕ Offrimi un caffè<br>@Master8383",
+                helpTitle: "Come funziona",
+                helpSteps: [
+                    "<strong>1. Fissa Casa:</strong> Premi qui alla tua auto, tenda o quell'albero che pensi di ricordare (non succederà).",
+                    "<strong>2. Vagabondare:</strong> Cammina, perditi, insegui uno scoiattolo. Non giudichiamo.",
+                    "<strong>3. Vai a Casa:</strong> Quando sei stanco/affamato, premi qui. Segui la freccia come se la tua vita dipendesse da questo.",
+                    "<strong>4. Freccia verde:</strong> Sei sulla strada giusta. Continua così, eroe!",
+                    "<strong>5. Arrivo:</strong> Quando il telefono vibra e volano coriandoli, sei arrivato! Ora di merenda."
+                ],
+                close: "Chiudi",
+                gotIt: "Capito!",
+                findPlaces: "Trova luoghi",
+                locatingYou: "Localizzazione...",
+                searchingPoi: "Ricerca luoghi vicini...",
+                noPoiFound: "Nessun luogo trovato entro 3km.",
+                gpsError: "Errore GPS",
+                connError: "Errore connessione",
+                targetSet: "Obiettivo fissato su:",
+                confirmStop1: "Vuoi davvero fermarti? Il percorso verrà cancellato.",
+                confirmStop2: "Sicuro? Dovrai fissare di nuovo il punto di partenza.",
+                yes: "Sì",
+                no: "No",
+                ok: "OK",
+                selectLang: "Scegli lingua"
+            },
+            pl: {
+                goHome: "Do Domu",
+                setHome: "Ustaw Dom",
+                homeSet: "Dom ustawiony",
+                homeSetPoi: "Cel ustawiony (POI)",
+                locating: "Lokalizacja...",
+                pressSetHome: "Najpierw ustaw Dom",
+                distance: "Dystans",
+                timeToHome: "Czas do Domu",
+                standingStill: "Postój",
+                stop: "STOP",
+                tripComplete: "🏁 Trip ukończony",
+                time: "Czas",
+                minutes: "minut",
+                startNew: "Nowy Trip",
+                install: "📱 Zainstaluj App",
+                coffee: "Lubisz aplikację?<br>☕ Postaw kawę<br>@Master8383",
+                helpTitle: "Jak to działa",
+                helpSteps: [
+                    "<strong>1. Ustaw Dom:</strong> Naciśnij to przy aucie, namiocie lub tym jednym drzewie (którego i tak nie zapamiętasz).",
+                    "<strong>2. Wędruj:</strong> Idź na spacer, zgub się, goń wiewiórkę. Nie oceniamy.",
+                    "<strong>3. Do Domu:</strong> Gdy będziesz zmęczony/głodny, naciśnij to. Idź za strzałką, jakby od tego zależało Twoje życie.",
+                    "<strong>4. Zielona Strzałka:</strong> Idziesz w dobrą stronę. Tak trzymaj, bohaterze!",
+                    "<strong>5. Przybycie:</strong> Gdy telefon zawibruje i poleci konfetti, jesteś na miejscu! Czas na przekąskę."
+                ],
+                close: "Zamknij",
+                gotIt: "Zrozumiałem!",
+                findPlaces: "Znajdź miejsca",
+                locatingYou: "Lokalizowanie...",
+                searchingPoi: "Szukanie miejsc w pobliżu...",
+                noPoiFound: "Nie znaleziono miejsc w promieniu 3km.",
+                gpsError: "Błąd GPS",
+                connError: "Błąd połączenia",
+                targetSet: "Cel ustawiony na:",
+                confirmStop1: "Czy na pewno chcesz przerwać? Trasa zostanie wyczyszczona.",
+                confirmStop2: "Na pewno? Będziesz musiał ponownie ustawić punkt startu.",
+                yes: "Tak",
+                no: "Nie",
+                ok: "OK",
+                selectLang: "Wybierz język"
+            },
+            pt: {
+                goHome: "Ir para Casa",
+                setHome: "Definir Casa",
+                homeSet: "Casa definida",
+                homeSetPoi: "Alvo definido (POI)",
+                locating: "Localizando...",
+                pressSetHome: "Defina Casa primeiro",
+                distance: "Distância",
+                timeToHome: "Tempo até Casa",
+                standingStill: "Parado",
+                stop: "STOP",
+                tripComplete: "🏁 Trip concluída",
+                time: "Tempo",
+                minutes: "minutos",
+                startNew: "Nova Trip",
+                install: "📱 Instalar App",
+                coffee: "Gosta da app?<br>☕ Pague um café<br>@Master8383",
+                helpTitle: "Como funciona",
+                helpSteps: [
+                    "<strong>1. Definir Casa:</strong> Prima aqui no seu carro, tenda ou naquela árvore que acha que vai lembrar (não vai).",
+                    "<strong>2. Vaguear:</strong> Vá caminhar, perca-se, persiga um esquilo. Nós não julgamos.",
+                    "<strong>3. Ir para Casa:</strong> Quando estiver cansado/faminto, prima aqui. Siga a seta como se a sua vida dependesse disso.",
+                    "<strong>4. Seta Verde:</strong> Está na direção certa. Continue assim, herói!",
+                    "<strong>5. Chegada:</strong> Quando o telemóvel vibrar e voar confetes, chegou! Hora do lanche."
+                ],
+                close: "Fechar",
+                gotIt: "Entendi!",
+                findPlaces: "Encontrar locais",
+                locatingYou: "Localizando...",
+                searchingPoi: "A procurar locais próximos...",
+                noPoiFound: "Nenhum local encontrado em 3km.",
+                gpsError: "Erro GPS",
+                connError: "Erro de ligação",
+                targetSet: "Alvo definido para:",
+                confirmStop1: "Tem a certeza que quer parar? O trajeto será apagado.",
+                confirmStop2: "Absoluta? Terá de definir o ponto de partida novamente.",
+                yes: "Sim",
+                no: "Não",
+                ok: "OK",
+                selectLang: "Escolher idioma"
+            },
+            tr: {
+                goHome: "Eve Git",
+                setHome: "Evi Ayarla",
+                homeSet: "Ev Ayarlandı",
+                homeSetPoi: "Hedef Ayarlandı (POI)",
+                locating: "Aranıyor...",
+                pressSetHome: "Önce Evi Ayarla",
+                distance: "Mesafe",
+                timeToHome: "Eve Kalan Süre",
+                standingStill: "Duruyor",
+                stop: "DUR",
+                tripComplete: "🏁 Gezi Tamamlandı",
+                time: "Süre",
+                minutes: "dakika",
+                startNew: "Yeni Gezi",
+                install: "📱 Uygulamayı Yükle",
+                coffee: "Uygulamayı sevdiniz mi?<br>☕ Bir kahve ısmarlayın<br>@Master8383",
+                helpTitle: "Nasıl Çalışır?",
+                helpSteps: [
+                    "<strong>1. Evi Ayarla:</strong> Araba, çadır weya o hatırlayacağınızı sandığınız ağaçta (hatırlamayacaksınız) buna basın.",
+                    "<strong>2. Dolaşın:</strong> Yürüyüşe çıkın, kaybolun, bir sincabı kovalayın. Yargılamıyoruz.",
+                    "<strong>3. Eve Git:</strong> Yorulduğunuzda buna basın. Okun yönünü hayatınız buna bağlıymış gibi (olabilir) takip edin.",
+                    "<strong>4. Yeşil Ok:</strong> Doğru yöne bakıyorsunuz. Devam et kahraman!",
+                    "<strong>5. Varış:</strong> Telefon titreyip konfetiler uçtuğunda vardınız demektir! Atıştırma vakti."
+                ],
+                close: "Kapat",
+                gotIt: "Anladım!",
+                findPlaces: "Yer Bul",
+                locatingYou: "Konum bulunuyor...",
+                searchingPoi: "Yakındaki yerler aranıyor...",
+                noPoiFound: "3 km içinde yer bulunamadı.",
+                gpsError: "GPS hatası",
+                connError: "Bağlantı hatası",
+                targetSet: "Hedef belirlendi:",
+                confirmStop1: "Durdurmak istediğinize emin misiniz? Gezi silinecektir.",
+                confirmStop2: "Tamamen emin misiniz? Başlangıç noktasını tekrar ayarlamanız gerekecek.",
+                yes: "Evet",
+                no: "Hayır",
+                ok: "Tamam",
+                selectLang: "Dil Seçin"
+            },
+            ru: {
+                goHome: "Домой",
+                setHome: "Установить Дом",
+                homeSet: "Дом установлен",
+                homeSetPoi: "Цель установлена (POI)",
+                locating: "Поиск...",
+                pressSetHome: "Сначала установите Дом",
+                distance: "Дистанция",
+                timeToHome: "Время до Дома",
+                standingStill: "На месте",
+                stop: "СТОП",
+                tripComplete: "🏁 Поход завершен",
+                time: "Время",
+                minutes: "минут",
+                startNew: "Новый поход",
+                install: "📱 Установить приложение",
+                coffee: "Нравится приложение?<br>☕ Купи мне кофе<br>@Master8383",
+                helpTitle: "Как это работает",
+                helpSteps: [
+                    "<strong>1. Установить Дом:</strong> Нажми здесь у машины, палатки или того дерева (которое ты не запомнишь).",
+                    "<strong>2. Гуляй:</strong> Иди в поход, потеряйся, погоняйся за белкой. Мы не осуждаем.",
+                    "<strong>3. Домой:</strong> Когда устанешь, нажми сюда. Следуй за стрелкой, будто от этого зависит жизнь.",
+                    "<strong>4. Зеленая стрелка:</strong> Идешь в верном направлении. Так держать, герой!",
+                    "<strong>5. Прибытие:</strong> Когда телефон завибрирует и полетит конфетти — ты на месте! Время перекусить."
+                ],
+                close: "Закрыть",
+                gotIt: "Понятно!",
+                findPlaces: "Найти места",
+                locatingYou: "Определение локации...",
+                searchingPoi: "Поиск мест поблизости...",
+                noPoiFound: "Места в радиусе 3 км не найдены.",
+                gpsError: "Ошибка GPS",
+                connError: "Ошибка соединения",
+                targetSet: "Цель установлена:",
+                confirmStop1: "Уверены, что хотите прервать? Маршрут будет удален.",
+                confirmStop2: "Точно? Придется заново устанавливать точку старта.",
+                yes: "Да",
+                no: "Нет",
+                ok: "OK",
+                selectLang: "Выбрать язык"
+            },
+            ar: {
+                goHome: "العودة للمنزل",
+                setHome: "تحديد المنزل",
+                homeSet: "تم تحديد المنزل",
+                homeSetPoi: "تم تحديد الهدف (POI)",
+                locating: "جاري التحديد...",
+                pressSetHome: "حدد المنزل أولاً",
+                distance: "المسافة",
+                timeToHome: "الوقت للمنزل",
+                standingStill: "متوقف",
+                stop: "إيقاف",
+                tripComplete: "🏁 اكتملت الرحلة",
+                time: "الوقت",
+                minutes: "دقائق",
+                startNew: "رحلة جديدة",
+                install: "📱 تثبيت التطبيق",
+                coffee: "أعجبك التطبيق؟<br>☕ اشترِ لي قهوة<br>@Master8383",
+                helpTitle: "كيف يعمل التطبيق",
+                helpSteps: [
+                    "<strong>1. تحديد المنزل:</strong> اضغط هنا عند سيارتك أو خيمتك أو تلك الشجرة التي تظن أنك ستتذكرها (لن تفعل).",
+                    "<strong>2. تجول:</strong> اذهب للمشي، تِه قليلاً، طارد سنجاباً. نحن لا نحكم عليك.",
+                    "<strong>3. العودة للمنزل:</strong> عندما تتعب، اضغط هنا. اتبع السهم كأن حياتك تعتمد عليه (قد يكون كذلك).",
+                    "<strong>4. السهم الأخضر:</strong> أنت في الاتجاه الصحيح. استمر يا بطل!",
+                    "<strong>5. الوصول:</strong> عندما يهتز الهاتف وتطير الألعاب النارية، لقد وصلت! وقت الوجبة الخفيفة."
+                ],
+                close: "إغلاق",
+                gotIt: "فهمت!",
+                findPlaces: "البحث عن أماكن",
+                locatingYou: "جاري تحديد موقعك...",
+                searchingPoi: "البحث عن أماكن قريبة...",
+                noPoiFound: "لم يتم العثور على أماكن ضمن 3 كم.",
+                gpsError: "خطأ في GPS",
+                connError: "خطأ في الاتصال",
+                targetSet: "تم تحديد الهدف إلى:",
+                confirmStop1: "هل أنت متأكد من الإيقاف؟ سيتم مسح الرحلة.",
+                confirmStop2: "هل أنت متأكد تماماً؟ ستحتاج لتحديد نقطة البداية مجدداً.",
+                yes: "نعم",
+                no: "لا",
+                ok: "موافق",
+                selectLang: "اختر اللغة"
+            },
+            hi: {
+                goHome: "घर जाएँ",
+                setHome: "घर सेट करें",
+                homeSet: "घर सेट हो गया",
+                homeSetPoi: "लक्ष्य सेट (POI)",
+                locating: "ढूँढ रहे हैं...",
+                pressSetHome: "पहले घर सेट करें",
+                distance: "दूरी",
+                timeToHome: "घर तक का समय",
+                standingStill: "रुके हुए",
+                stop: "रुकें",
+                tripComplete: "🏁 यात्रा पूर्ण",
+                time: "समय",
+                minutes: "मिनट",
+                startNew: "नई यात्रा",
+                install: "📱 ऐप इंस्टॉल करें",
+                coffee: "ऐप पसंद आया?<br>☕ कॉफी पिलाएँ<br>@Master8383",
+                helpTitle: "यह कैसे काम करता है",
+                helpSteps: [
+                    "<strong>1. घर सेट करें:</strong> अपनी कार, टेंट या उस पेड़ के पास इसे दबाएँ जिसे आप याद रखेंगे (आप नहीं रखेंगे)।",
+                    "<strong>2. घूमें-फिरें:</strong> लंबी पैदल यात्रा करें, खो जाएँ, गिलहरी का पीछा करें। हम बुरा नहीं मानते।",
+                    "<strong>3. घर जाएँ:</strong> जब आप थक जाएँ, तो इसे दबाएँ। तीर का पालन ऐसे करें जैसे आपकी जान उस पर टिकी हो।",
+                    "<strong>4. हरा तीर:</strong> आप सही दिशा में हैं। चलते रहें, हीरो!",
+                    "<strong>5. आगमन:</strong> जब फोन कंपन करे और कॉन्फेटी उड़े, तो आप पहुँच गए! नाश्ते का समय।"
+                ],
+                close: "बंद करें",
+                gotIt: "समझ गए!",
+                findPlaces: "जगह ढूँढें",
+                locatingYou: "स्थान ढूँढ रहे हैं...",
+                searchingPoi: "आस-पास की जगहें ढूँढ रहे हैं...",
+                noPoiFound: "3 किमी के भीतर कोई जगह नहीं मिली।",
+                gpsError: "जीपीएस त्रुटि",
+                connError: "कनेक्शन त्रुटि",
+                targetSet: "लक्षय यहाँ सेट है:",
+                confirmStop1: "क्या आप वाकई रुकना चाहते हैं? यात्रा साफ़ हो जाएगी।",
+                confirmStop2: "क्या आप पूरी तरह से आश्वस्त हैं? आपको फिर से घर सेट करना होगा।",
+                yes: "हाँ",
+                no: "नहीं",
+                ok: "ठीक है",
+                selectLang: "भाषा चुनें"
+            },
+            zh: {
+                goHome: "回家",
+                setHome: "设置起点",
+                homeSet: "起点已设置",
+                homeSetPoi: "目标已设置 (POI)",
+                locating: "定位中...",
+                pressSetHome: "请先设置起点",
+                distance: "距离",
+                timeToHome: "预计用时",
+                standingStill: "静止",
+                stop: "停止",
+                tripComplete: "🏁 旅程完成",
+                time: "用时",
+                minutes: "分钟",
+                startNew: "开始新旅程",
+                install: "📱 安装应用",
+                coffee: "喜欢这个应用吗？<br>☕ 请我喝杯咖啡<br>@Master8383",
+                helpTitle: "使用说明",
+                helpSteps: [
+                    "<strong>1. 设置起点：</strong> 在你的车、帐篷或某棵树旁点击此按钮（你肯定会忘在那儿）。",
+                    "<strong>2. 随意漫步：</strong> 去远足、去迷路、去追松鼠。我们不会评价。",
+                    "<strong>3. 回家：</strong> 累了或饿了时点击此按钮。像命悬一线一样跟着箭头走（可能真是这样）。",
+                    "<strong>4. 绿色箭头：</strong> 你的方向正确。继续加油，英雄！",
+                    "<strong>5. 到达：</strong> 当手机震动并撒出彩纸时，你到了！该吃零食了。"
+                ],
+                close: "关闭",
+                gotIt: "知道了！",
+                findPlaces: "查找地点",
+                locatingYou: "正在定位...",
+                searchingPoi: "正在搜索附近地点...",
+                noPoiFound: "3公里内未找到地点。",
+                gpsError: "GPS错误",
+                connError: "连接错误",
+                targetSet: "目标设置为：",
+                confirmStop1: "确定要停止吗？行程将被清除。",
+                confirmStop2: "真的确定吗？你需要重新设置起点。",
+                yes: "是",
+                no: "否",
+                ok: "确定",
+                selectLang: "选择语言"
+            }
+        };
+
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'nl', name: 'Nederlands' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'fr', name: 'Français' },
+            { code: 'es', name: 'Español' },
+            { code: 'it', name: 'Italiano' },
+            { code: 'pl', name: 'Polski' },
+            { code: 'pt', name: 'Português' },
+            { code: 'tr', name: 'Türkçe' },
+            { code: 'ru', name: 'Русский' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'hi', name: 'हिन्दी' },
+            { code: 'zh', name: '中文' }
+        ];
 
         // UI Elements
         const homeScreen = document.getElementById('home-screen');
@@ -584,19 +1285,118 @@
         const openHelp = document.getElementById('open-help');
         const closeHelp = document.getElementById('close-help');
         const helpOverlay = document.getElementById('help-overlay');
+        const helpTitle = document.getElementById('help-title');
+        const helpSteps = document.getElementById('help-steps');
         const openPoiBtn = document.getElementById('open-poi');
         const closePoiBtn = document.getElementById('close-poi');
         const poiOverlay = document.getElementById('poi-overlay');
         const poiList = document.getElementById('poi-list');
+        const poiTitle = document.getElementById('poi-title');
+        const poiStatus = document.getElementById('poi-status');
+        const catBtns = document.querySelectorAll('.cat-btn');
+        const openLangBtn = document.getElementById('open-lang');
+        const closeLangBtn = document.getElementById('close-lang');
+        const langOverlay = document.getElementById('lang-overlay');
+        const langList = document.getElementById('lang-list');
+        const langModalTitle = document.getElementById('lang-modal-title');
         const confirmOverlay = document.getElementById('confirm-overlay');
         const confirmMsg = document.getElementById('confirm-msg');
         const confirmYesBtn = document.getElementById('confirm-yes-btn');
         const confirmNoBtn = document.getElementById('confirm-no-btn');
+        const donationLink = document.getElementById('donation-link');
+        const distLabel = document.getElementById('dist-label');
+        const completeTitle = document.getElementById('complete-title');
+        const timeLabel = document.getElementById('time-label');
+        const minLabel = document.getElementById('min-label');
         
         const arrow = document.getElementById('arrow');
         const distanceVal = document.getElementById('distance-val');
         const etaDisplay = document.getElementById('eta-display');
         const tripTimeDisplay = document.getElementById('trip-time');
+
+        // Language Management
+        function setLanguage(langCode) {
+            currentLang = langCode;
+            localStorage.setItem('appLang', langCode);
+            updateUI();
+            renderLangList();
+        }
+
+        function updateUI() {
+            const t = translations[currentLang];
+            goHomeBtn.innerText = t.goHome;
+            if (!homeLat) {
+                setHomeBtn.innerText = t.setHome;
+            } else {
+                setHomeBtn.innerText = setHomeBtn.innerText.includes('POI') || setHomeBtn.innerText.includes(':') ? t.homeSetPoi : t.homeSet;
+            }
+            stopBtn.innerText = t.stop;
+            startNewBtn.innerText = t.startNew;
+            installBtn.innerText = t.install;
+            donationLink.innerHTML = t.coffee;
+            closeHelp.innerText = t.gotIt;
+            helpTitle.innerText = t.helpTitle;
+            helpSteps.innerHTML = t.helpSteps.map(step => `<p>${step}</p>`).join('');
+            poiTitle.innerText = t.findPlaces;
+            closePoiBtn.innerText = t.close;
+            closeLangBtn.innerText = t.close;
+            langModalTitle.innerText = t.selectLang;
+            distLabel.innerText = t.distance;
+            completeTitle.innerText = t.tripComplete;
+            timeLabel.innerText = t.time;
+            minLabel.innerText = t.minutes;
+
+            // Update POI category labels
+            const poiLabels = {
+                playground: currentLang === 'nl' ? 'Speel' : 'Play',
+                cafe: currentLang === 'nl' ? 'Cafe' : 'Cafe',
+                snackbar: currentLang === 'nl' ? 'Snack' : 'Snack',
+                toilet: currentLang === 'nl' ? 'WC' : 'WC',
+                water: currentLang === 'nl' ? 'Water' : 'Water',
+                shop: currentLang === 'nl' ? 'Winkel' : 'Shop',
+                bench: currentLang === 'nl' ? 'Rust' : 'Rest',
+                viewpoint: currentLang === 'nl' ? 'Zicht' : 'View',
+                park: currentLang === 'nl' ? 'Park' : 'Park',
+                ice_cream: currentLang === 'nl' ? 'Ijs' : 'Ice',
+                pharmacy: currentLang === 'nl' ? 'Apotheek' : 'Meds',
+                bus_stop: currentLang === 'nl' ? 'Bus' : 'Bus'
+            };
+
+            catBtns.forEach(btn => {
+                const type = btn.dataset.type;
+                const icon = btn.querySelector('.cat-icon').outerHTML;
+                btn.innerHTML = `${icon}${poiLabels[type] || btn.dataset.label}`;
+            });
+            
+            // RTL support for Arabic
+            document.body.style.direction = currentLang === 'ar' ? 'rtl' : 'ltr';
+        }
+
+        function renderLangList() {
+            langList.innerHTML = '';
+            languages.forEach(lang => {
+                const div = document.createElement('div');
+                div.className = `lang-item ${currentLang === lang.code ? 'active' : ''}`;
+                div.innerText = lang.name;
+                div.onclick = () => {
+                    setLanguage(lang.code);
+                    langOverlay.style.display = 'none';
+                };
+                langList.appendChild(div);
+            });
+        }
+
+        openLangBtn.addEventListener('click', () => {
+            langOverlay.style.display = 'flex';
+        });
+
+        closeLangBtn.addEventListener('click', () => {
+            langOverlay.style.display = 'none';
+        });
+
+        // Initialize UI
+        updateUI();
+        renderLangList();
 
         // PWA Install Prompt
         let deferredPrompt;
@@ -642,21 +1442,50 @@
         });
 
         // POI Logic
+        let currentCategory = 'playground';
+        
+        const poiQueries = {
+            playground: 'node["leisure"="playground"]',
+            cafe: 'node["amenity"="cafe"]',
+            snackbar: 'node["amenity"="fast_food"]',
+            toilet: 'node["amenity"="toilets"]',
+            water: 'node["amenity"="drinking_water"]',
+            shop: 'node["shop"="supermarket"]',
+            bench: 'node["amenity"="bench"]',
+            viewpoint: 'node["tourism"="viewpoint"]',
+            park: 'node["leisure"="park"]',
+            ice_cream: 'node["amenity"="ice_cream"]',
+            pharmacy: 'node["amenity"="pharmacy"]',
+            bus_stop: 'node["highway"="bus_stop"]'
+        };
+
         openPoiBtn.addEventListener('click', () => {
             poiOverlay.style.display = 'flex';
-            fetchPlaygrounds();
+            fetchPOIs();
         });
 
         closePoiBtn.addEventListener('click', () => {
             poiOverlay.style.display = 'none';
         });
 
-        async function fetchPlaygrounds() {
+        catBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                catBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.type;
+                poiTitle.innerText = `${translations[currentLang].findPlaces}: ${btn.dataset.label}`;
+                fetchPOIs();
+            });
+        });
+
+        async function fetchPOIs() {
+            const t = translations[currentLang];
             poiList.innerHTML = `
                 <div class="loading-poi">
                     <div class="spinner"></div>
-                    Locating you...
+                    ${t.locatingYou}
                 </div>`;
+            poiStatus.innerText = "Accessing GPS...";
             
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const lat = position.coords.latitude;
@@ -665,11 +1494,12 @@
                 poiList.innerHTML = `
                     <div class="loading-poi">
                         <div class="spinner"></div>
-                        Searching for playgrounds nearby...
+                        ${t.searchingPoi}
                     </div>`;
+                poiStatus.innerText = `Searching within 3km...`;
                 
-                // Overpass API query for playgrounds within 3000m
-                const query = `[out:json];node["leisure"="playground"](around:3000,${lat},${lon});out;`;
+                const queryTag = poiQueries[currentCategory];
+                const query = `[out:json];${queryTag}(around:3000,${lat},${lon});out;`;
                 const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
                 
                 try {
@@ -678,17 +1508,17 @@
                     
                     if (data.elements && data.elements.length > 0) {
                         poiList.innerHTML = '';
+                        poiStatus.innerText = `Found ${data.elements.length} locations`;
                         
-                        // Sort by distance
                         const pois = data.elements.map(item => {
                             const d = getDistance(lat, lon, item.lat, item.lon);
                             return { ...item, distance: d };
                         }).sort((a, b) => a.distance - b.distance);
 
-                        pois.slice(0, 10).forEach(poi => {
+                        pois.slice(0, 15).forEach(poi => {
                             const div = document.createElement('div');
                             div.className = 'poi-item';
-                            const name = poi.tags.name || "Unnamed Playground";
+                            const name = poi.tags.name || `Unnamed ${currentCategory}`;
                             div.innerHTML = `
                                 <h4>${name}</h4>
                                 <p>${Math.round(poi.distance)} meters away</p>
@@ -697,30 +1527,34 @@
                                 homeLat = poi.lat;
                                 homeLon = poi.lon;
                                 setHomeBtn.classList.add('home-set');
-                                setHomeBtn.innerText = "Home Set (POI)";
+                                setHomeBtn.innerText = `${t.homeSetPoi}: ${currentCategory.toUpperCase()}`;
                                 poiOverlay.style.display = 'none';
-                                customAlert(`Target set to: ${name}`);
+                                customAlert(`${t.targetSet} ${name}`);
                             };
                             poiList.appendChild(div);
                         });
                     } else {
-                        poiList.innerHTML = '<div class="loading-poi">No playgrounds found within 3km.</div>';
+                        poiList.innerHTML = `<div class="loading-poi">${t.noPoiFound}</div>`;
+                        poiStatus.innerText = "Try another category";
                     }
                 } catch (error) {
-                    poiList.innerHTML = '<div class="loading-poi">Error fetching playgrounds. Try again.</div>';
+                    poiList.innerHTML = `<div class="loading-poi">${t.connError}</div>`;
+                    poiStatus.innerText = "Connection error";
                     console.error(error);
                 }
             }, (error) => {
-                poiList.innerHTML = '<div class="loading-poi">Could not get your location.</div>';
+                poiList.innerHTML = `<div class="loading-poi">${t.gpsError}</div>`;
+                poiStatus.innerText = "GPS error";
             });
         }
 
         // Custom Alert Logic
         function customAlert(message) {
+            const t = translations[currentLang];
             return new Promise((resolve) => {
                 confirmMsg.innerText = message;
                 confirmNoBtn.style.display = 'none';
-                confirmYesBtn.innerText = 'OK';
+                confirmYesBtn.innerText = t.ok;
                 confirmOverlay.style.display = 'flex';
 
                 const onOk = () => {
@@ -731,7 +1565,7 @@
                 const cleanup = () => {
                     confirmOverlay.style.display = 'none';
                     confirmNoBtn.style.display = 'block';
-                    confirmYesBtn.innerText = 'Yes';
+                    confirmYesBtn.innerText = t.yes;
                     confirmYesBtn.removeEventListener('click', onOk);
                 };
 
@@ -741,11 +1575,12 @@
 
         // Custom Confirm Logic
         function customConfirm(message) {
+            const t = translations[currentLang];
             return new Promise((resolve) => {
                 confirmMsg.innerText = message;
                 confirmNoBtn.style.display = 'block';
-                confirmNoBtn.innerText = 'No';
-                confirmYesBtn.innerText = 'Yes';
+                confirmNoBtn.innerText = t.no;
+                confirmYesBtn.innerText = t.yes;
                 confirmOverlay.style.display = 'flex';
 
                 const onYes = () => {
@@ -792,12 +1627,13 @@
 
         // Set Home Functionality
         setHomeBtn.addEventListener('click', () => {
+            const t = translations[currentLang];
             if (!navigator.geolocation) {
                 customAlert("Geolocation is not supported by your browser");
                 return;
             }
 
-            setHomeBtn.innerText = "Locating...";
+            setHomeBtn.innerText = t.locating;
             
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -805,12 +1641,12 @@
                     homeLon = position.coords.longitude;
                     
                     setHomeBtn.classList.add('home-set');
-                    setHomeBtn.innerText = "Home Set";
+                    setHomeBtn.innerText = t.homeSet;
                     console.log(`Home set at: ${homeLat}, ${homeLon}`);
                 },
                 (error) => {
-                    customAlert(`Error getting location: ${error.message}`);
-                    setHomeBtn.innerText = "Set Home";
+                    customAlert(`Error: ${error.message}`);
+                    setHomeBtn.innerText = t.setHome;
                 },
                 { enableHighAccuracy: true }
             );
@@ -818,8 +1654,9 @@
 
         // Go Home Functionality
         goHomeBtn.addEventListener('click', () => {
+            const t = translations[currentLang];
             if (homeLat === null || homeLon === null) {
-                customAlert("Press Set Home first");
+                customAlert(t.pressSetHome);
                 return;
             }
 
@@ -876,6 +1713,7 @@
         function updateNavigation() {
             if (currentLat === null || homeLat === null) return;
 
+            const t = translations[currentLang];
             const distance = getDistance(currentLat, currentLon, homeLat, homeLon);
             const bearing = getBearing(currentLat, currentLon, homeLat, homeLon);
             
@@ -891,9 +1729,9 @@
             if (currentSpeed && currentSpeed > 0.2) {
                 const speedKmh = currentSpeed * 3.6;
                 const timeMinutes = Math.round((distance / currentSpeed) / 60);
-                etaDisplay.innerText = `ETA: ${timeMinutes} min (${speedKmh.toFixed(1)} km/h)`;
+                etaDisplay.innerText = `${t.timeToHome}: ${timeMinutes} min (${speedKmh.toFixed(1)} km/h)`;
             } else {
-                etaDisplay.innerText = "ETA: -- min (Standing still)";
+                etaDisplay.innerText = `${t.timeToHome}: -- min (${t.standingStill})`;
             }
 
             // Direction Feedback: Correct Direction
@@ -936,7 +1774,7 @@
                 navigator.vibrate([200, 100, 200, 100, 200]);
             }
 
-            // Sound (using simple Beep since we don't have audio files)
+            // Sound (using simple Beep)
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
@@ -971,9 +1809,10 @@
 
         // Stop Button
         stopBtn.addEventListener('click', async () => {
-            const firstConfirm = await customConfirm("Are you sure you want to stop? The trip will end and be cleared.");
+            const t = translations[currentLang];
+            const firstConfirm = await customConfirm(t.confirmStop1);
             if (firstConfirm) {
-                const secondConfirm = await customConfirm("Are you absolutely sure? You will need to 'Set Home' again.");
+                const secondConfirm = await customConfirm(t.confirmStop2);
                 if (secondConfirm) {
                     stopNavigation();
                     resetAppState();
@@ -996,13 +1835,14 @@
         }
 
         function resetAppState() {
+            const t = translations[currentLang];
             homeLat = null;
             homeLon = null;
             arrivalTriggered = false;
             resetCompassUI();
             
             setHomeBtn.classList.remove('home-set');
-            setHomeBtn.innerText = "Set Home";
+            setHomeBtn.innerText = t.setHome;
         }
 
         // Register Service Worker
@@ -1010,7 +1850,7 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => console.log('SW registered'))
-                    .catch(err => console.log('SW registration failed', err));
+                    .catch(err => console.error('SW registration failed', err));
             });
         }
     </script>
