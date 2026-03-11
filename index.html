@@ -64,8 +64,6 @@
 
         /* Home Screen */
         .donation-btn {
-            position: absolute;
-            top: 20px;
             text-decoration: none;
             color: var(--white);
             font-size: 1.1rem;
@@ -74,6 +72,8 @@
             border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             z-index: 10;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         #install-btn {
@@ -91,7 +91,7 @@
 
         .help-btn {
             position: absolute;
-            bottom: 20px;
+            top: 20px;
             right: 20px;
             background: rgba(255, 255, 255, 0.1);
             color: var(--white);
@@ -109,7 +109,7 @@
 
         .lang-btn {
             position: absolute;
-            bottom: 20px;
+            top: 20px;
             right: 70px;
             background: rgba(255, 255, 255, 0.1);
             color: var(--white);
@@ -178,7 +178,7 @@
 
         .poi-btn {
             position: absolute;
-            bottom: 20px;
+            top: 20px;
             left: 20px;
             background: rgba(255, 255, 255, 0.1);
             color: var(--white);
@@ -575,11 +575,10 @@
 <body>
     <!-- Home Screen -->
     <div id="home-screen" class="screen active">
-        <a id="donation-link" href="https://paypal.me/Master8383" target="_blank" rel="noopener noreferrer" class="donation-btn">
-            If you like the app<br>☕ Buy me a coffee<br>@Master8383
-        </a>
-        
         <div class="btn-container">
+            <a id="donation-link" href="https://paypal.me/Master8383" target="_blank" rel="noopener noreferrer" class="donation-btn">
+                If you like the app<br>☕ Buy me a coffee<br>@Master8383
+            </a>
             <button id="go-home-btn" class="circle-btn">Go Home</button>
             <button id="set-home-btn" class="circle-btn">Set Home</button>
         </div>
