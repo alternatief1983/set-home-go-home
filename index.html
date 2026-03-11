@@ -12,6 +12,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Set Home Go Home">
     <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- Leaflet Map Library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         :root {
             --red: #ff4d4d;
@@ -93,36 +98,52 @@
             position: absolute;
             bottom: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.5);
             color: var(--white);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            width: 40px;
-            height: 40px;
+            border: 2px solid var(--green);
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 10;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5), 
+                        inset 0 0 10px rgba(76, 175, 80, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .help-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.8);
         }
 
         .lang-btn {
             position: absolute;
             bottom: 20px;
-            right: 70px;
-            background: rgba(255, 255, 255, 0.1);
+            right: 80px;
+            background: rgba(0, 0, 0, 0.5);
             color: var(--white);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            width: 40px;
-            height: 40px;
+            border: 2px solid var(--green);
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 10;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5), 
+                        inset 0 0 10px rgba(76, 175, 80, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .lang-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.8);
         }
 
         /* Language Modal */
@@ -145,12 +166,19 @@
             background: #1a1a1a;
             padding: 25px;
             border-radius: 20px;
-            border: 2px solid var(--blue);
+            border: 2px solid var(--green);
             max-width: 95%;
             width: 300px;
             max-height: 80vh;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4), 
+                        inset 0 0 20px rgba(76, 175, 80, 0.1);
+        }
+
+        .lang-content h2 {
+            color: var(--green);
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
         }
 
         .lang-list {
@@ -167,31 +195,58 @@
             border-radius: 10px;
             text-align: center;
             cursor: pointer;
-            border: 1px solid transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 0.9rem;
+            color: white;
+            transition: all 0.2s ease;
         }
 
         .lang-item.active {
-            background: var(--blue);
-            border-color: var(--white);
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid var(--green);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+            font-weight: bold;
+        }
+
+        .lang-item:active {
+            transform: scale(0.95);
         }
 
         .poi-btn {
             position: absolute;
             bottom: 20px;
             left: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.5);
             color: var(--white);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            width: 40px;
-            height: 40px;
+            border: 2px solid var(--green);
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 10;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5), 
+                        inset 0 0 10px rgba(76, 175, 80, 0.2);
+            transition: all 0.2s ease;
+            animation: pulse-green-border 2s infinite;
+        }
+
+        .poi-btn.home-set {
+            animation: none;
+        }
+
+        .poi-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.8);
+        }
+
+        @keyframes pulse-green-border {
+            0% { box-shadow: 0 0 10px rgba(76, 175, 80, 0.4), inset 0 0 5px rgba(76, 175, 80, 0.1); border-color: rgba(76, 175, 80, 0.6); }
+            50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.8), inset 0 0 10px rgba(76, 175, 80, 0.3); border-color: rgba(76, 175, 80, 1); }
+            100% { box-shadow: 0 0 10px rgba(76, 175, 80, 0.4), inset 0 0 5px rgba(76, 175, 80, 0.1); border-color: rgba(76, 175, 80, 0.6); }
         }
 
         /* POI Modal */
@@ -220,6 +275,8 @@
             max-height: 80vh;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4), 
+                        inset 0 0 20px rgba(76, 175, 80, 0.1);
         }
 
         .poi-list {
@@ -286,8 +343,10 @@
         }
 
         .cat-btn.active {
-            background: var(--green);
-            border-color: var(--green);
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid var(--green);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+            font-weight: bold;
         }
 
         .cat-icon {
@@ -330,29 +389,41 @@
             background: #1a1a1a;
             padding: 30px;
             border-radius: 20px;
-            border: 2px solid var(--blue);
+            border: 2px solid var(--green);
             max-width: 90%;
             text-align: left;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4), 
+                        inset 0 0 20px rgba(76, 175, 80, 0.1);
         }
 
         .help-content h2 {
             margin-bottom: 20px;
-            color: var(--blue);
+            color: var(--green);
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
         }
 
         .help-content p {
             margin-bottom: 15px;
             line-height: 1.4;
+            color: white;
         }
 
         .close-help {
             margin-top: 20px;
-            background: var(--blue);
+            background: rgba(76, 175, 80, 0.2);
             color: white;
-            border: none;
-            padding: 10px 30px;
-            border-radius: 10px;
+            border: 2px solid var(--green);
+            padding: 12px 30px;
+            border-radius: 12px;
             font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .close-help:active {
+            transform: scale(0.95);
+            background: var(--green);
         }
 
         /* Custom Confirmation Modal */
@@ -466,29 +537,51 @@
         }
 
         #set-home-btn {
-            background: radial-gradient(circle at 30% 30%, #ff6b6b, var(--red));
-            box-shadow: 0 10px 30px rgba(255, 77, 77, 0.4), 
-                        inset 0 -5px 15px rgba(0,0,0,0.3),
-                        inset 0 5px 15px rgba(255,255,255,0.2);
+            background: radial-gradient(circle at 30% 30%, #1a1a1a, #000);
+            box-shadow: 0 0 25px rgba(255, 77, 77, 0.5), 
+                        inset 0 0 20px rgba(0,0,0,0.8),
+                        inset 0 0 10px rgba(255, 77, 77, 0.2);
+            border: 2px solid var(--red);
+            animation: pulse-red-border 2s infinite;
         }
 
         #set-home-btn.home-set {
-            background: radial-gradient(circle at 30% 30%, #69db7c, var(--green));
-            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4),
-                        inset 0 -5px 15px rgba(0,0,0,0.3),
-                        inset 0 5px 15px rgba(255,255,255,0.2);
+            background: radial-gradient(circle at 30% 30%, #1a1a1a, #000);
+            box-shadow: 0 0 35px rgba(76, 175, 80, 0.8), 
+                        inset 0 0 20px rgba(0,0,0,0.8),
+                        inset 0 0 15px rgba(76, 175, 80, 0.3);
+            border: 3px solid var(--green);
+            animation: none;
+        }
+
+        @keyframes pulse-red-border {
+            0% { box-shadow: 0 0 15px rgba(255, 77, 77, 0.4), inset 0 0 10px rgba(255, 77, 77, 0.1); border-color: rgba(255, 77, 77, 0.6); }
+            50% { box-shadow: 0 0 35px rgba(255, 77, 77, 0.8), inset 0 0 15px rgba(255, 77, 77, 0.3); border-color: rgba(255, 77, 77, 1); }
+            100% { box-shadow: 0 0 15px rgba(255, 77, 77, 0.4), inset 0 0 10px rgba(255, 77, 77, 0.1); border-color: rgba(255, 77, 77, 0.6); }
         }
 
         #go-home-btn {
-            background: radial-gradient(circle at 30% 30%, #4dabf7, var(--blue));
+            background: radial-gradient(circle at 30% 30%, #1a1a1a, #000);
             width: 28vh;
             height: 28vh;
             max-width: 55vw;
             max-height: 55vw;
             font-size: 1.8rem;
-            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4),
-                        inset 0 -5px 15px rgba(0,0,0,0.3),
-                        inset 0 5px 15px rgba(255,255,255,0.2);
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.5), 
+                        inset 0 0 20px rgba(0,0,0,0.8),
+                        inset 0 0 10px rgba(76, 175, 80, 0.2);
+            border: 2px solid var(--green);
+        }
+
+        #select-compass-btn, #select-map-btn {
+            background: radial-gradient(circle at 30% 30%, #1a1a1a, #000);
+            width: 25vh;
+            height: 25vh;
+            font-size: 1.5rem;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.4), 
+                        inset 0 0 15px rgba(0,0,0,0.8),
+                        inset 0 0 8px rgba(76, 175, 80, 0.2);
+            border: 2px solid var(--green);
         }
 
         /* Compass Screen */
@@ -499,10 +592,11 @@
             max-width: 85vw;
             max-height: 85vw;
             border-radius: 50%;
-            border: 4px solid rgba(255, 255, 255, 0.1);
+            border: 3px solid var(--green);
             background: radial-gradient(circle at 50% 50%, #1a1a1a, #000);
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.05), 
-                        inset 0 0 30px rgba(0,0,0,0.8);
+            box-shadow: 0 0 35px rgba(76, 175, 80, 0.6), 
+                        inset 0 0 30px rgba(0,0,0,0.8),
+                        inset 0 0 15px rgba(76, 175, 80, 0.2);
             margin-bottom: 5vh;
             display: flex;
             align-items: center;
@@ -644,6 +738,225 @@
             transform: scale(0.95);
             box-shadow: inset 0 5px 15px rgba(0,0,0,0.4);
         }
+
+        .sos-btn {
+            background: radial-gradient(circle at 30% 30%, #ff5252, #b71c1c);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 1vh 3vh;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.3),
+                        inset 0 -3px 10px rgba(0,0,0,0.3),
+                        inset 0 3px 10px rgba(255,255,255,0.2);
+            margin-bottom: 2vh;
+            transition: transform 0.1s;
+        }
+
+        .sos-btn:active {
+            transform: scale(0.95);
+            box-shadow: inset 0 3px 10px rgba(0,0,0,0.4);
+        }
+
+        .offline-btn {
+            background: radial-gradient(circle at 30% 30%, #1a1a1a, #000);
+            color: white;
+            border: 2px solid var(--green);
+            padding: 1vh 3vh;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.4), 
+                        inset 0 0 10px rgba(76, 175, 80, 0.1);
+            margin-bottom: 2vh;
+            transition: all 0.2s;
+        }
+
+        .offline-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.6);
+        }
+
+        .download-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 300;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .download-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 20px;
+            border: 2px solid var(--green);
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4);
+        }
+
+        .download-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .download-opt-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid var(--green);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .download-opt-btn:active {
+            background: var(--green);
+        }
+
+        #download-progress-container {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green);
+            transition: width 0.3s;
+        }
+
+        /* Navigation Selection */
+        .selection-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3vh;
+            width: 100%;
+            align-items: center;
+        }
+
+        .selection-title {
+            font-size: 2.5rem;
+            margin-bottom: 4vh;
+            color: var(--green);
+            text-shadow: 0 0 15px rgba(76, 175, 80, 0.8),
+                         0 0 5px rgba(255, 255, 255, 0.5);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Map Screen */
+        #map-screen {
+            justify-content: flex-start;
+            padding-top: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 60vh;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2vh;
+            z-index: 1;
+        }
+
+        #map-stop-btn {
+            background: radial-gradient(circle at 30% 30%, #ff5252, #b71c1c);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4),
+                        inset 0 -3px 10px rgba(0,0,0,0.3),
+                        inset 0 3px 10px rgba(255,255,255,0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 1vh 3vh;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .map-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            width: 90%;
+            margin-bottom: 2vh;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Map direction arrow */
+        .user-direction-container {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-direction-arrow {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 25px solid var(--blue);
+            filter: drop-shadow(0 0 5px rgba(33, 150, 243, 0.8));
+            transition: transform 0.2s ease-out;
+        }
+
+        .user-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--white);
+            border-radius: 50%;
+            border: 2px solid var(--blue);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* Home Destination Marker */
+        .home-marker-container {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .home-marker-dot {
+            width: 24px;
+            height: 24px;
+            background: #ff4d4d;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 0 25px rgba(255, 77, 77, 1),
+                        0 0 50px rgba(255, 77, 77, 0.6);
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(1); box-shadow: 0 0 25px rgba(255, 77, 77, 1); }
+            50% { transform: scale(1.3); box-shadow: 0 0 45px rgba(255, 77, 77, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 25px rgba(255, 77, 77, 1); }
+        }
     </style>
 </head>
 <body>
@@ -707,8 +1020,8 @@
                 <button class="cat-btn" data-type="park" data-label="Park">
                     <span class="cat-icon">🌳</span>Park
                 </button>
-                <button class="cat-btn" data-type="ice_cream" data-label="Ice Cream">
-                    <span class="cat-icon">🍦</span>Ice
+                <button class="cat-btn" data-type="camp_site" data-label="Camp">
+                    <span class="cat-icon">⛺</span>Camp
                 </button>
                 <button class="cat-btn" data-type="pharmacy" data-label="Pharmacy">
                     <span class="cat-icon">🏥</span>Meds
@@ -751,6 +1064,16 @@
         </div>
     </div>
 
+    <!-- Navigation Selection Screen -->
+    <div id="selection-screen" class="screen">
+        <h2 id="choose-nav-title" class="selection-title">Choose Navigation</h2>
+        <div class="selection-container">
+            <button id="select-compass-btn" class="circle-btn">🧭 Compass</button>
+            <button id="select-map-btn" class="circle-btn">🗺️ Map</button>
+        </div>
+        <button id="cancel-selection-btn" class="stop-btn" style="margin-top: 5vh; font-size: 1.2rem; padding: 1.5vh 5vh;">Cancel</button>
+    </div>
+
     <!-- Compass Screen -->
     <div id="compass-screen" class="screen">
         <div class="compass-container">
@@ -769,6 +1092,41 @@
         </div>
         
         <button id="stop-btn" class="stop-btn">STOP</button>
+    </div>
+
+    <!-- Map Screen -->
+    <div id="map-screen" class="screen">
+        <div id="map"></div>
+        <div class="map-info">
+            <span id="map-dist-label" style="font-weight: bold;">Distance</span>: <span id="map-distance-val">0</span> m<br>
+            <span id="map-eta-display" style="opacity: 0.8; font-size: 0.9rem;">Time to Home: -- min</span>
+        </div>
+        <button id="offline-map-btn" class="offline-btn">📥 Offline Map</button>
+        <button id="sos-btn" class="sos-btn">🆘 SOS</button>
+        <button id="map-stop-btn" class="stop-btn">STOP</button>
+    </div>
+
+    <!-- Download Map Overlay -->
+    <div id="download-overlay" class="download-overlay">
+        <div class="download-content">
+            <h2 id="download-title">Offline Map</h2>
+            <p id="download-desc">Download map tiles around current location for offline use.</p>
+            
+            <div id="download-options" class="download-options">
+                <button class="download-opt-btn" data-radius="5">5 KM Radius</button>
+                <button class="download-opt-btn" data-radius="10">10 KM Radius</button>
+                <button class="download-opt-btn" data-radius="20">20 KM Radius</button>
+            </div>
+
+            <div id="download-progress-container">
+                <p id="download-status">Downloading: 0%</p>
+                <div class="progress-bar-bg">
+                    <div id="download-progress-fill" class="progress-bar-fill"></div>
+                </div>
+            </div>
+
+            <button id="close-download" class="close-help" style="margin-top: 20px;">Cancel</button>
+        </div>
     </div>
 
     <!-- Trip Complete Screen -->
@@ -793,6 +1151,12 @@
         let startTime = null;
         let arrivalTriggered = false;
         let currentLang = localStorage.getItem('appLang') || 'en';
+        let navigationType = 'compass'; // 'compass' or 'map'
+        let map = null;
+        let userMarker = null;
+        let homeMarker = null;
+        let userPath = []; // To store the breadcrumb trail
+        let polyline = null; // The Leaflet polyline object
 
         const translations = {
             en: {
@@ -834,7 +1198,20 @@
                 yes: "Yes",
                 no: "No",
                 ok: "OK",
-                selectLang: "Select Language"
+                selectLang: "Select Language",
+                chooseNav: "Choose Navigation",
+                compassView: "🧭 Compass",
+                mapView: "🗺️ Map",
+                cancel: "Cancel",
+                sos: "SOS",
+                sosMsg: "My current location: ",
+                offlineMap: "📥 Offline Map",
+                downloadTitle: "Offline Map",
+                downloadDesc: "Download map tiles around current location for offline use.",
+                radius: "KM Radius",
+                downloading: "Downloading: ",
+                downloadDone: "Download Complete!",
+                downloadError: "Download failed. Check connection."
             },
             nl: {
                 goHome: "Ga naar Huis",
@@ -875,7 +1252,20 @@
                 yes: "Ja",
                 no: "Nee",
                 ok: "OK",
-                selectLang: "Kies Taal"
+                selectLang: "Kies Taal",
+                chooseNav: "Kies Navigatie",
+                compassView: "🧭 Kompas",
+                mapView: "🗺️ Kaart",
+                cancel: "Annuleren",
+                sos: "SOS",
+                sosMsg: "Mijn huidige locatie: ",
+                offlineMap: "📥 Offline Kaart",
+                downloadTitle: "Offline Kaart",
+                downloadDesc: "Download de kaart rondom je huidige locatie voor offline gebruik.",
+                radius: "KM Straal",
+                downloading: "Downloaden: ",
+                downloadDone: "Download Voltooid!",
+                downloadError: "Download mislukt. Controleer verbinding."
             },
             de: {
                 goHome: "Nach Hause",
@@ -1348,12 +1738,19 @@
 
         // UI Elements
         const homeScreen = document.getElementById('home-screen');
+        const selectionScreen = document.getElementById('selection-screen');
         const compassScreen = document.getElementById('compass-screen');
+        const mapScreen = document.getElementById('map-screen');
         const completeScreen = document.getElementById('trip-complete-screen');
         
         const setHomeBtn = document.getElementById('set-home-btn');
         const goHomeBtn = document.getElementById('go-home-btn');
+        const selectCompassBtn = document.getElementById('select-compass-btn');
+        const selectMapBtn = document.getElementById('select-map-btn');
+        const cancelSelectionBtn = document.getElementById('cancel-selection-btn');
         const stopBtn = document.getElementById('stop-btn');
+        const mapStopBtn = document.getElementById('map-stop-btn');
+        const sosBtn = document.getElementById('sos-btn');
         const startNewBtn = document.getElementById('start-new-btn');
         const installBtn = document.getElementById('install-btn');
         const openHelp = document.getElementById('open-help');
@@ -1379,14 +1776,28 @@
         const confirmNoBtn = document.getElementById('confirm-no-btn');
         const donationLink = document.getElementById('donation-link');
         const distLabel = document.getElementById('dist-label');
+        const mapDistLabel = document.getElementById('map-dist-label');
+        const chooseNavTitle = document.getElementById('choose-nav-title');
         const completeTitle = document.getElementById('complete-title');
         const timeLabel = document.getElementById('time-label');
         const minLabel = document.getElementById('min-label');
         
         const arrow = document.getElementById('arrow');
         const distanceVal = document.getElementById('distance-val');
+        const mapDistanceVal = document.getElementById('map-distance-val');
         const etaDisplay = document.getElementById('eta-display');
+        const mapEtaDisplay = document.getElementById('map-eta-display');
         const tripTimeDisplay = document.getElementById('trip-time');
+
+        // Offline Map Elements
+        const offlineMapBtn = document.getElementById('offline-map-btn');
+        const downloadOverlay = document.getElementById('download-overlay');
+        const closeDownloadBtn = document.getElementById('close-download');
+        const downloadOptBtns = document.querySelectorAll('.download-opt-btn');
+        const downloadProgressContainer = document.getElementById('download-progress-container');
+        const downloadStatus = document.getElementById('download-status');
+        const downloadProgressFill = document.getElementById('download-progress-fill');
+        const downloadOptions = document.getElementById('download-options');
 
         // Language Management
         function setLanguage(langCode) {
@@ -1405,6 +1816,8 @@
                 setHomeBtn.innerText = setHomeBtn.innerText.includes('POI') || setHomeBtn.innerText.includes(':') ? t.homeSetPoi : t.homeSet;
             }
             stopBtn.innerText = t.stop;
+            mapStopBtn.innerText = t.stop;
+            sosBtn.innerText = `🆘 ${t.sos || 'SOS'}`;
             startNewBtn.innerText = t.startNew;
             installBtn.innerText = t.install;
             donationLink.innerHTML = t.coffee;
@@ -1416,6 +1829,11 @@
             closeLangBtn.innerText = t.close;
             langModalTitle.innerText = t.selectLang;
             distLabel.innerText = t.distance;
+            mapDistLabel.innerText = t.distance;
+            chooseNavTitle.innerText = t.chooseNav || "Choose Navigation";
+            selectCompassBtn.innerText = t.compassView || "🧭 Compass";
+            selectMapBtn.innerText = t.mapView || "🗺️ Map";
+            cancelSelectionBtn.innerText = t.cancel || "Cancel";
             completeTitle.innerText = t.tripComplete;
             timeLabel.innerText = t.time;
             minLabel.innerText = t.minutes;
@@ -1431,7 +1849,7 @@
                 bench: currentLang === 'nl' ? 'Rust' : 'Rest',
                 viewpoint: currentLang === 'nl' ? 'Zicht' : 'View',
                 park: currentLang === 'nl' ? 'Park' : 'Park',
-                ice_cream: currentLang === 'nl' ? 'Ijs' : 'Ice',
+                camp_site: currentLang === 'nl' ? 'Camp' : 'Camp',
                 pharmacy: currentLang === 'nl' ? 'Apotheek' : 'Meds',
                 bus_stop: currentLang === 'nl' ? 'Bus' : 'Bus'
             };
@@ -1473,6 +1891,20 @@
         // Initialize UI
         updateUI();
         renderLangList();
+
+        // Start background location tracking immediately
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(
+                (position) => {
+                    currentLat = position.coords.latitude;
+                    currentLon = position.coords.longitude;
+                    currentSpeed = position.coords.speed;
+                    console.log("Background location updated:", currentLat, currentLon);
+                },
+                (error) => console.warn("Background location error:", error),
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
 
         // PWA Install Prompt
         let deferredPrompt;
@@ -1533,7 +1965,7 @@
             bench: 'node["amenity"="bench"]',
             viewpoint: 'node["tourism"="viewpoint"]',
             park: 'node["leisure"="park"]',
-            ice_cream: 'node["amenity"="ice_cream"]',
+            camp_site: 'node["tourism"="camp_site"]',
             pharmacy: 'node["amenity"="pharmacy"]',
             bus_stop: 'node["highway"="bus_stop"]'
         };
@@ -1562,17 +1994,9 @@
 
         async function fetchPOIs() {
             const t = translations[currentLang];
-            poiList.innerHTML = `
-                <div class="loading-poi">
-                    <div class="spinner"></div>
-                    ${t.locatingYou}
-                </div>`;
-            poiStatus.innerText = "Accessing GPS...";
             
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                
+            // Function to perform the Overpass query
+            const performPoiSearch = async (lat, lon) => {
                 poiList.innerHTML = `
                     <div class="loading-poi">
                         <div class="spinner"></div>
@@ -1610,6 +2034,7 @@
                                 homeLat = poi.lat;
                                 homeLon = poi.lon;
                                 setHomeBtn.classList.add('home-set');
+                                openPoiBtn.classList.add('home-set');
                                 setHomeBtn.innerText = `${t.homeSetPoi}: ${currentCategory.toUpperCase()}`;
                                 poiOverlay.style.display = 'none';
                                 customAlert(`${t.targetSet} ${name}`);
@@ -1625,10 +2050,30 @@
                     poiStatus.innerText = "Connection error";
                     console.error(error);
                 }
-            }, (error) => {
-                poiList.innerHTML = `<div class="loading-poi">${t.gpsError}</div>`;
-                poiStatus.innerText = "GPS error";
-            });
+            };
+
+            // If we already have a background location, use it immediately!
+            if (currentLat && currentLon) {
+                console.log("Using cached background location for POI");
+                await performPoiSearch(currentLat, currentLon);
+            } else {
+                // Fallback: get current position if background hasn't locked yet
+                poiList.innerHTML = `
+                    <div class="loading-poi">
+                        <div class="spinner"></div>
+                        ${t.locatingYou}
+                    </div>`;
+                poiStatus.innerText = "Accessing GPS...";
+                
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    currentLat = position.coords.latitude;
+                    currentLon = position.coords.longitude;
+                    await performPoiSearch(currentLat, currentLon);
+                }, (error) => {
+                    poiList.innerHTML = `<div class="loading-poi">${t.gpsError}</div>`;
+                    poiStatus.innerText = "GPS error";
+                }, { enableHighAccuracy: true });
+            }
         }
 
         // Custom Alert Logic
@@ -1728,6 +2173,7 @@
                     homeLon = position.coords.longitude;
                     
                     setHomeBtn.classList.add('home-set');
+                    openPoiBtn.classList.add('home-set');
                     setHomeBtn.innerText = t.homeSet;
                     console.log(`Home set at: ${homeLat}, ${homeLon}`);
                 },
@@ -1748,12 +2194,31 @@
                 return;
             }
 
+            showScreen(selectionScreen);
+        });
+
+        selectCompassBtn.addEventListener('click', () => {
+            playClickSound();
+            navigationType = 'compass';
             showScreen(compassScreen);
             startNavigation();
         });
 
+        selectMapBtn.addEventListener('click', () => {
+            playClickSound();
+            navigationType = 'map';
+            showScreen(mapScreen);
+            startNavigation();
+            setTimeout(initMap, 100); // Small delay to ensure container is visible
+        });
+
+        cancelSelectionBtn.addEventListener('click', () => {
+            playClickSound();
+            showScreen(homeScreen);
+        });
+
         function showScreen(screen) {
-            [homeScreen, compassScreen, completeScreen].forEach(s => s.classList.remove('active'));
+            [homeScreen, selectionScreen, compassScreen, mapScreen, completeScreen].forEach(s => s.classList.remove('active'));
             screen.classList.add('active');
         }
 
@@ -1789,6 +2254,9 @@
         }
 
         function handleOrientation(event) {
+            // Update heading regardless of navigation type
+            // (needed for both compass arrow and map marker arrow)
+
             // For Android (event.alpha)
             if (event.webkitCompassHeading) {
                 heading = event.webkitCompassHeading; // iOS
@@ -1798,44 +2266,128 @@
             updateNavigation();
         }
 
+        function initMap() {
+            if (map) {
+                map.remove();
+            }
+            
+            map = L.map('map').setView([currentLat || 0, currentLon || 0], 15);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OSM'
+            }).addTo(map);
+
+            // Large Glowing Home Icon
+            const homeIcon = L.divIcon({
+                className: 'home-marker-marker',
+                html: `
+                    <div class="home-marker-container">
+                        <div class="home-marker-dot"></div>
+                    </div>
+                `,
+                iconSize: [60, 60],
+                iconAnchor: [30, 30]
+            });
+
+            // Directional User Icon
+            const userIcon = L.divIcon({
+                className: 'user-direction-marker',
+                html: `
+                    <div class="user-direction-container">
+                        <div id="map-direction-arrow" class="user-direction-arrow" style="transform: rotate(${heading}deg)"></div>
+                        <div class="user-dot"></div>
+                    </div>
+                `,
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+
+            homeMarker = L.marker([homeLat, homeLon], {icon: homeIcon}).addTo(map);
+            userMarker = L.marker([currentLat || 0, currentLon || 0], {icon: userIcon}).addTo(map);
+            
+            // Initialize breadcrumb trail (polyline)
+            polyline = L.polyline(userPath, {
+                color: 'var(--blue)',
+                weight: 5,
+                opacity: 0.6,
+                dashArray: '10, 10'
+            }).addTo(map);
+
+            if (currentLat && currentLon) {
+                const group = new L.featureGroup([homeMarker, userMarker, polyline]);
+                map.fitBounds(group.getBounds().pad(0.2));
+            }
+        }
+
         function updateNavigation() {
             if (currentLat === null || homeLat === null) return;
 
             const t = translations[currentLang];
             const distance = getDistance(currentLat, currentLon, homeLat, homeLon);
-            const bearing = getBearing(currentLat, currentLon, homeLat, homeLon);
             
-            // Calculate arrow direction
-            // direction = bearing - heading
-            let direction = (bearing - heading + 360) % 360;
-            
-            // Update UI
-            arrow.style.transform = `rotate(${direction}deg)`;
-            distanceVal.innerText = Math.round(distance);
+            // Add current location to breadcrumb trail
+            if (userPath.length === 0 || 
+                getDistance(currentLat, currentLon, userPath[userPath.length-1][0], userPath[userPath.length-1][1]) > 5) {
+                userPath.push([currentLat, currentLon]);
+            }
+
+            // Update labels
+            if (navigationType === 'compass') {
+                distanceVal.innerText = Math.round(distance);
+            } else if (navigationType === 'map') {
+                mapDistanceVal.innerText = Math.round(distance);
+                
+                if (map && userMarker && polyline) {
+                    userMarker.setLatLng([currentLat, currentLon]);
+                    polyline.setLatLngs(userPath);
+                    
+                    // Rotate the map marker arrow
+                    const mapArrow = document.getElementById('map-direction-arrow');
+                    if (mapArrow) {
+                        mapArrow.style.transform = `rotate(${heading}deg)`;
+                    }
+
+                    const group = new L.featureGroup([homeMarker, userMarker, polyline]);
+                    map.fitBounds(group.getBounds().pad(0.2));
+                }
+            }
 
             // Update ETA based on current speed
+            let etaText = "";
             if (currentSpeed && currentSpeed > 0.2) {
                 const speedKmh = currentSpeed * 3.6;
                 const timeMinutes = Math.round((distance / currentSpeed) / 60);
-                etaDisplay.innerText = `${t.timeToHome}: ${timeMinutes} min (${speedKmh.toFixed(1)} km/h)`;
+                etaText = `${t.timeToHome}: ${timeMinutes} min (${speedKmh.toFixed(1)} km/h)`;
             } else {
-                etaDisplay.innerText = `${t.timeToHome}: -- min (${t.standingStill})`;
+                etaText = `${t.timeToHome}: -- min (${t.standingStill})`;
             }
 
-            // Direction Feedback: Correct Direction
-            // If |direction| < 20° (or > 340°)
-            const diff = Math.abs(direction > 180 ? direction - 360 : direction);
-            if (diff < 20) {
-                arrow.classList.add('green');
+            if (navigationType === 'compass') {
+                etaDisplay.innerText = etaText;
             } else {
-                arrow.classList.remove('green');
+                mapEtaDisplay.innerText = etaText;
             }
 
-            // Near Destination: Blink if < 50m
-            if (distance < 50) {
-                arrow.classList.add('blink');
-            } else {
-                arrow.classList.remove('blink');
+            // Compass specific logic
+            if (navigationType === 'compass') {
+                const bearing = getBearing(currentLat, currentLon, homeLat, homeLon);
+                let direction = (bearing - heading + 360) % 360;
+                arrow.style.transform = `rotate(${direction}deg)`;
+
+                // Direction Feedback
+                const diff = Math.abs(direction > 180 ? direction - 360 : direction);
+                if (diff < 20) {
+                    arrow.classList.add('green');
+                } else {
+                    arrow.classList.remove('green');
+                }
+
+                // Near Destination
+                if (distance < 50) {
+                    arrow.classList.add('blink');
+                } else {
+                    arrow.classList.remove('blink');
+                }
             }
 
             // Arrival Detection: < 10m
@@ -1847,9 +2399,6 @@
         function onArrival() {
             arrivalTriggered = true;
             
-            // Stop tracking
-            stopNavigation();
-
             // Confetti
             confetti({
                 particleCount: 150,
@@ -1865,15 +2414,26 @@
             // Sound
             playArrivalSound();
 
-            // Calculate duration
-            const endTime = new Date();
-            const durationMinutes = Math.round((endTime - startTime) / 60000);
-            tripTimeDisplay.innerText = durationMinutes;
+            // Behavior depends on navigation mode
+            if (navigationType === 'map') {
+                // If on Map, stay on Map and let user decide when to stop
+                // We keep tracking (watchId) active so the user can still see their position
+                console.log("Arrived on Map mode - staying on map.");
+            } else {
+                // If on Compass, stop tracking and show completion screen after delay
+                stopNavigation();
 
-            // Show Trip Complete screen after delay
-            setTimeout(() => {
-                showScreen(completeScreen);
-            }, 3000);
+                // Calculate duration
+                const endTime = new Date();
+                const durationMinutes = Math.round((endTime - startTime) / 60000);
+                tripTimeDisplay.innerText = durationMinutes;
+
+                setTimeout(() => {
+                    if (navigationType === 'compass') {
+                        showScreen(completeScreen);
+                    }
+                }, 3000);
+            }
         }
 
         function playArrivalSound() {
@@ -1892,6 +2452,11 @@
                 watchId = null;
             }
             window.removeEventListener('deviceorientation', handleOrientation);
+            
+            if (map) {
+                map.remove();
+                map = null;
+            }
         }
 
         // Stop Button
@@ -1908,6 +2473,144 @@
                 }
             }
         });
+
+        mapStopBtn.addEventListener('click', async () => {
+            playClickSound();
+            const t = translations[currentLang];
+            const firstConfirm = await customConfirm(t.confirmStop1);
+            if (firstConfirm) {
+                const secondConfirm = await customConfirm(t.confirmStop2);
+                if (secondConfirm) {
+                    stopNavigation();
+                    resetAppState();
+                    showScreen(homeScreen);
+                }
+            }
+        });
+
+        // SOS Functionality
+        sosBtn.addEventListener('click', async () => {
+            playClickSound();
+            const t = translations[currentLang];
+            
+            if (!currentLat || !currentLon) {
+                customAlert(t.locating || "Locating...");
+                return;
+            }
+
+            const mapsUrl = `https://www.google.com/maps?q=${currentLat},${currentLon}`;
+            const shareText = `${t.sosMsg || "My current location: "}${mapsUrl}`;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'SOS - Set Home Go Home',
+                        text: shareText,
+                        url: mapsUrl
+                    });
+                } catch (err) {
+                    console.log("Share failed:", err);
+                }
+            } else {
+                // Fallback: Copy to clipboard and alert
+                try {
+                    await navigator.clipboard.writeText(shareText);
+                    customAlert("Location copied to clipboard! You can now paste it into a message.");
+                } catch (err) {
+                    customAlert(`My location: ${currentLat}, ${currentLon}`);
+                }
+            }
+        });
+
+        // Offline Map Functionality
+        offlineMapBtn.addEventListener('click', () => {
+            playClickSound();
+            downloadOverlay.style.display = 'flex';
+            const t = translations[currentLang];
+            document.getElementById('download-title').innerText = t.downloadTitle;
+            document.getElementById('download-desc').innerText = t.downloadDesc;
+            closeDownloadBtn.innerText = t.cancel;
+            downloadOptBtns.forEach(btn => {
+                btn.innerText = `${btn.dataset.radius} ${t.radius}`;
+            });
+        });
+
+        closeDownloadBtn.addEventListener('click', () => {
+            playClickSound();
+            downloadOverlay.style.display = 'none';
+            downloadProgressContainer.style.display = 'none';
+            downloadOptions.style.display = 'flex';
+            closeDownloadBtn.innerText = translations[currentLang].cancel;
+        });
+
+        downloadOptBtns.forEach(btn => {
+            btn.addEventListener('click', async () => {
+                playClickSound();
+                const radiusKm = parseInt(btn.dataset.radius);
+                if (!currentLat || !currentLon) {
+                    customAlert(translations[currentLang].locating);
+                    return;
+                }
+                startMapDownload(currentLat, currentLon, radiusKm);
+            });
+        });
+
+        async function startMapDownload(lat, lon, radiusKm) {
+            const t = translations[currentLang];
+            downloadOptions.style.display = 'none';
+            downloadProgressContainer.style.display = 'block';
+            closeDownloadBtn.disabled = true;
+            closeDownloadBtn.style.opacity = '0.5';
+
+            const zoomLevels = [13, 14, 15, 16];
+            let tileUrls = [];
+
+            zoomLevels.forEach(z => {
+                const latDegreeKm = 111;
+                const lonDegreeKm = 111 * Math.cos(lat * Math.PI / 180);
+                const latDiff = radiusKm / latDegreeKm;
+                const lonDiff = radiusKm / lonDegreeKm;
+
+                const x1 = lon2tile(lon - lonDiff, z);
+                const x2 = lon2tile(lon + lonDiff, z);
+                const y1 = lat2tile(lat + latDiff, z);
+                const y2 = lat2tile(lat - latDiff, z);
+
+                for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
+                    for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
+                        tileUrls.push(`https://a.tile.openstreetmap.org/${z}/${x}/${y}.png`);
+                    }
+                }
+            });
+
+            tileUrls = [...new Set(tileUrls)].slice(0, 500); // Safety limit
+            const totalTiles = tileUrls.length;
+            let downloaded = 0;
+
+            try {
+                const cache = await caches.open(CACHE_NAME);
+                for (const url of tileUrls) {
+                    try {
+                        const response = await fetch(url);
+                        if (response.ok) await cache.put(url, response);
+                    } catch (e) {}
+                    downloaded++;
+                    const progress = Math.round((downloaded / totalTiles) * 100);
+                    downloadProgressFill.style.width = `${progress}%`;
+                    downloadStatus.innerText = `${t.downloading}${progress}%`;
+                }
+                downloadStatus.innerText = t.downloadDone;
+            } catch (err) {
+                downloadStatus.innerText = t.downloadError;
+            }
+
+            closeDownloadBtn.disabled = false;
+            closeDownloadBtn.style.opacity = '1';
+            closeDownloadBtn.innerText = t.ok;
+        }
+
+        function lon2tile(lon, zoom) { return Math.floor((lon + 180) / 360 * Math.pow(2, zoom)); }
+        function lat2tile(lat, zoom) { return Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom)); }
 
         // Start New Trip
         startNewBtn.addEventListener('click', () => {
@@ -1928,9 +2631,11 @@
             homeLat = null;
             homeLon = null;
             arrivalTriggered = false;
+            userPath = []; // Clear breadcrumb trail
             resetCompassUI();
             
             setHomeBtn.classList.remove('home-set');
+            openPoiBtn.classList.remove('home-set');
             setHomeBtn.innerText = t.setHome;
         }
 

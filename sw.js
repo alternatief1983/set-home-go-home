@@ -1,4 +1,4 @@
-const CACHE_NAME = 'set-home-v20';
+const CACHE_NAME = 'set-home-v45';
 const ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,12 @@ const ASSETS = [
   './icon-512.png',
   './arrival.mp3',
   './click.mp3',
-  'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'
+  'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+  'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png'
 ];
 
 self.addEventListener('install', (event) => {
