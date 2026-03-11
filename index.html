@@ -63,6 +63,20 @@
             padding: 10px 20px;
             border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 10;
+        }
+
+        #install-btn {
+            display: none;
+            position: absolute;
+            bottom: 30px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 10;
         }
 
         .btn-container {
@@ -230,6 +244,8 @@
             <button id="go-home-btn" class="circle-btn">Go Home</button>
             <button id="set-home-btn" class="circle-btn">Set Home</button>
         </div>
+
+        <button id="install-btn">📱 Install App</button>
     </div>
 
     <!-- Compass Screen -->
@@ -281,10 +297,29 @@
         const goHomeBtn = document.getElementById('go-home-btn');
         const stopBtn = document.getElementById('stop-btn');
         const startNewBtn = document.getElementById('start-new-btn');
+        const installBtn = document.getElementById('install-btn');
         
         const arrow = document.getElementById('arrow');
         const distanceVal = document.getElementById('distance-val');
         const tripTimeDisplay = document.getElementById('trip-time');
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                installBtn.style.display = 'none';
+            }
+            deferredPrompt = null;
+        });
 
         // Utils: Haversine distance
         function getDistance(lat1, lon1, lat2, lon2) {
