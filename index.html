@@ -6,75 +6,229 @@
     <title>Set Home – Go Home</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
-    
-    <!-- iOS support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Set Home Go Home">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --red: #ff4d4d;
-            --green: #4caf50;
-            --blue: #2196f3;
-            --white: #ffffff;
-            --black: #000000;
-            --gray: #f0f0f0;
+            --blue: #007AFF;
+            --green: #34C759;
+            --red: #FF3B30;
+            --gray: #8E8E93;
+            --bg: #000000;
+            --text: #FFFFFF;
         }
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
             -webkit-tap-highlight-color: transparent;
-        }
-
-        a, button {
-            user-select: auto;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--black);
-            color: var(--white);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation;
         }
 
-        .screen {
+        /* Top Bar Container for POI, Lang, Coffee, Help */
+        .top-controls {
+            position: absolute;
+            top: 10vh;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .side-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mini-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+
+        .coffee-link {
+            text-decoration: none;
+            color: #FFDD00;
+            font-weight: bold;
+            font-size: 14px;
+            background: rgba(255, 221, 0, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 221, 0, 0.3);
+            white-space: nowrap;
+        }
+
+        .main-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .circle-btn {
+            width: 38vh;
+            height: 38vh;
+            max-width: 80vw;
+            max-height: 80vw;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .circle-btn:active {
+            transform: scale(0.95);
+        }
+
+        #set-home-btn {
+            background: var(--blue);
+        }
+
+        #go-home-btn {
+            background: var(--green);
             display: none;
+        }
+
+        .arrow-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #arrow {
+            font-size: 80px;
+            transition: transform 0.1s;
+            filter: drop-shadow(0 0 10px var(--green));
+        }
+
+        #distance {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            flex-direction: column;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            text-align: center;
+            backdrop-filter: blur(10px);
         }
 
-        .screen.active {
-            display: flex;
+        .modal-content {
+            background: #1c1c1e;
+            padding: 25px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Home Screen */
-        .donation-btn {
-            text-decoration: none;
-            color: var(--white);
-            font-size: 1.1rem;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 10;
-            text-align: center;
+        .modal-title {
+            font-size: 22px;
+            font-weight: bold;
             margin-bottom: 20px;
+            text-align: center;
         }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .grid-item span:first-child {
+            font-size: 24px;
+        }
+
+        .btn-close {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background: var(--gray);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Confirmation Modal */
+        #confirm-modal .modal-content {
+            text-align: center;
+        }
+
+        .confirm-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .confirm-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #confirm-yes { background: var(--red); color: white; }
+        #confirm-no { background: var(--gray); color: white; }
 
         #install-btn {
             display: none;
@@ -89,1768 +243,540 @@
             z-index: 10;
         }
 
-        .help-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--white);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        .lang-btn {
-            position: absolute;
-            top: 20px;
-            right: 70px;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--white);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        /* Language Modal */
-        #lang-overlay {
-            display: none;
+        .status-msg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 150;
-            padding: 20px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lang-content {
-            background: #1a1a1a;
-            padding: 25px;
-            border-radius: 20px;
-            border: 2px solid var(--blue);
-            max-width: 95%;
-            width: 300px;
-            max-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .lang-list {
-            overflow-y: auto;
-            margin-top: 15px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .lang-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px 10px;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid transparent;
-            font-size: 0.9rem;
-        }
-
-        .lang-item.active {
-            background: var(--blue);
-            border-color: var(--white);
-        }
-
-        .poi-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--white);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        /* POI Modal */
-        #poi-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 150;
-            padding: 20px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .poi-content {
-            background: #1a1a1a;
-            padding: 25px;
-            border-radius: 20px;
-            border: 2px solid var(--green);
-            max-width: 95%;
-            width: 400px;
-            max-height: 80vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .poi-list {
-            overflow-y: auto;
-            margin-top: 15px;
-            flex: 1;
-        }
-
-        .poi-item {
-            background: rgba(255, 255, 255, 0.05);
-            margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: left;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-
-        .poi-item:active {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--green);
-        }
-
-        .poi-item h4 {
-            margin-bottom: 5px;
-            color: var(--green);
-        }
-
-        .poi-item p {
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-
-        .loading-poi {
-            padding: 20px;
-            font-style: italic;
-            opacity: 0.7;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* POI Categories */
-        .poi-categories {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .cat-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px 4px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .cat-btn.active {
-            background: var(--green);
-            border-color: var(--green);
-        }
-
-        .cat-icon {
-            font-size: 1.2rem;
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 6px solid rgba(255, 255, 255, 0.1);
-            border-left-color: var(--green);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            display: inline-block;
-            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Modal / Help Overlay */
-        #help-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 100;
-            padding: 30px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .help-content {
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 20px;
-            border: 2px solid var(--blue);
-            max-width: 90%;
-            text-align: left;
-        }
-
-        .help-content h2 {
-            margin-bottom: 20px;
-            color: var(--blue);
-        }
-
-        .help-content p {
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-
-        .close-help {
-            margin-top: 20px;
-            background: var(--blue);
-            color: white;
-            border: none;
-            padding: 10px 30px;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-
-        /* Custom Confirmation Modal */
-        #confirm-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 200;
-            padding: 30px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .confirm-content {
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 20px;
-            border: 2px solid var(--red);
-            max-width: 90%;
-            text-align: center;
-        }
-
-        .confirm-content h2 {
-            margin-bottom: 20px;
-            color: var(--white);
-            font-size: 1.5rem;
-        }
-
-        .confirm-content p {
-            margin-bottom: 25px;
-            line-height: 1.4;
-            font-size: 1.2rem;
-        }
-
-        .confirm-btns {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        .confirm-btn {
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .confirm-yes {
-            background: var(--red);
-            color: white;
-        }
-
-        .confirm-no {
-            background: var(--gray);
-            color: black;
-        }
-
-        .btn-container {
-            display: flex;
-            flex-direction: column;
-            gap: 5vh;
-            margin-top: 10vh;
-            width: 90%;
-            align-items: center;
-        }
-
-        .circle-btn {
-            width: 38vh;
-            height: 38vh;
-            max-width: 75vw;
-            max-height: 75vw;
-            border-radius: 50%;
-            border: none;
-            color: var(--white);
-            font-size: 2.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.1s, border 0.3s;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            aspect-ratio: 1/1;
-        }
-
-        .circle-btn:active {
-            transform: scale(0.95);
-        }
-
-        #set-home-btn {
-            background-color: var(--red);
-            border: 12px solid transparent;
-        }
-
-        #set-home-btn.home-set {
-            background-color: var(--green);
-            border-color: transparent;
-        }
-
-        #go-home-btn {
-            background-color: var(--blue);
-            width: 30vh;
-            height: 30vh;
-            max-width: 60vw;
-            max-height: 60vw;
-            font-size: 2rem;
-        }
-
-        /* Compass Screen */
-        .compass-container {
-            position: relative;
-            width: 45vh;
-            height: 45vh;
-            max-width: 85vw;
-            max-height: 85vw;
-            border-radius: 50%;
-            border: 6px solid var(--white);
-            margin-bottom: 5vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            aspect-ratio: 1/1;
-        }
-
-        .compass-marks {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            font-weight: bold;
-            font-size: 2rem;
-        }
-
-        .mark {
-            position: absolute;
-            width: 40px;
-            text-align: center;
-        }
-
-        .mark-n { top: 15px; left: 50%; transform: translateX(-50%); }
-        .mark-e { right: 15px; top: 50%; transform: translateY(-50%); }
-        .mark-s { bottom: 15px; left: 50%; transform: translateX(-50%); }
-        .mark-w { left: 15px; top: 50%; transform: translateY(-50%); }
-
-        .arrow {
-            width: 0;
-            height: 0;
-            border-left: 4vh solid transparent;
-            border-right: 4vh solid transparent;
-            border-bottom: 12vh solid var(--white);
-            max-border-left: 8vw;
-            max-border-right: 8vw;
-            max-border-bottom: 24vw;
-            transition: transform 0.2s cubic-bezier(0.1, 0.7, 1.0, 0.1), color 0.3s;
-        }
-
-        .arrow.green {
-            border-bottom-color: var(--green);
-        }
-
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-
-        .blink {
-            animation: blink 0.5s infinite;
-        }
-
-        .distance-display {
-            font-size: 3.5rem;
-            font-weight: bold;
-            margin-bottom: 6vh;
-        }
-
-        .stop-btn {
-            background: var(--red);
-            color: white;
-            border: none;
-            padding: 2.5vh 8vh;
+            bottom: 80px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
             border-radius: 15px;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        /* Trip Complete Screen */
-        .complete-title {
-            font-size: 4rem;
-            margin-bottom: 4vh;
-        }
-
-        .stats {
-            font-size: 2.5rem;
-            margin-bottom: 8vh;
-        }
-
-        .reset-btn {
-            background: var(--blue);
-            color: white;
-            border: none;
-            padding: 3vh 10vh;
-            border-radius: 20px;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            font-size: 13px;
+            opacity: 0.7;
         }
     </style>
 </head>
 <body>
-    <!-- Home Screen -->
-    <div id="home-screen" class="screen active">
-        <div class="btn-container">
-            <a id="donation-link" href="https://paypal.me/Master8383" target="_blank" rel="noopener noreferrer" class="donation-btn">
-                If you like the app<br>☕ Buy me a coffee<br>@Master8383
-            </a>
-            <button id="go-home-btn" class="circle-btn">Go Home</button>
-            <button id="set-home-btn" class="circle-btn">Set Home</button>
-        </div>
 
-        <button id="install-btn">📱 Install App</button>
-        <div id="open-poi" class="poi-btn">📍</div>
-        <div id="open-lang" class="lang-btn">🌐</div>
-        <div id="open-help" class="help-btn">?</div>
+    <div class="top-controls">
+        <div class="side-buttons">
+            <button class="mini-btn" id="poi-btn" title="POI">📍</button>
+            <button class="mini-btn" id="lang-btn" title="Language">🌐</button>
+        </div>
+        
+        <a href="https://www.buymeacoffee.com/" target="_blank" class="coffee-link">☕ Buy me a coffee</a>
+        
+        <div class="side-buttons">
+            <button class="mini-btn" id="help-btn" title="Help">❓</button>
+        </div>
+    </div>
+
+    <div class="main-nav">
+        <button id="set-home-btn" class="circle-btn">
+            <span id="label-set-home">Set Home</span>
+        </button>
+
+        <div id="navigation-ui" class="arrow-container">
+            <div id="arrow">⬆️</div>
+            <div id="distance">0m</div>
+            <button id="go-home-btn" class="circle-btn">
+                <span id="label-go-home">Go Home</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="status" class="status-msg">Waiting for GPS...</div>
+
+    <button id="install-btn">Install App</button>
+
+    <!-- POI Modal -->
+    <div id="poi-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="poi-title">Find Nearby</div>
+            <div class="grid">
+                <div class="grid-item" data-type="playground"><span>🛝</span><span class="poi-label" data-key="playground">Playground</span></div>
+                <div class="grid-item" data-type="cafe"><span>☕</span><span class="poi-label" data-key="cafe">Cafe</span></div>
+                <div class="grid-item" data-type="snackbar"><span>🍟</span><span class="poi-label" data-key="snackbar">Snackbar</span></div>
+                <div class="grid-item" data-type="toilet"><span>🚻</span><span class="poi-label" data-key="toilet">Toilet</span></div>
+                <div class="grid-item" data-type="drinking_water"><span>💧</span><span class="poi-label" data-key="water">Water</span></div>
+                <div class="grid-item" data-type="supermarket"><span>🛒</span><span class="poi-label" data-key="supermarket">Shop</span></div>
+                <div class="grid-item" data-type="bench"><span>🪑</span><span class="poi-label" data-key="bench">Bench</span></div>
+                <div class="grid-item" data-type="viewpoint"><span>🖼️</span><span class="poi-label" data-key="viewpoint">View</span></div>
+                <div class="grid-item" data-type="park"><span>🌳</span><span class="poi-label" data-key="park">Park</span></div>
+                <div class="grid-item" data-type="ice_cream"><span>🍦</span><span class="poi-label" data-key="icecream">Ice Cream</span></div>
+                <div class="grid-item" data-type="pharmacy"><span>🏥</span><span class="poi-label" data-key="pharmacy">Pharmacy</span></div>
+                <div class="grid-item" data-type="bus_stop"><span>🚌</span><span class="poi-label" data-key="busstop">Bus Stop</span></div>
+            </div>
+            <button class="btn-close" onclick="closeModal('poi-modal')">Close</button>
+        </div>
     </div>
 
     <!-- Language Modal -->
-    <div id="lang-overlay">
-        <div class="lang-content">
-            <h2 id="lang-modal-title">Select Language</h2>
-            <div id="lang-list" class="lang-list">
-                <!-- Languages will be added by JS -->
+    <div id="lang-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Select Language</div>
+            <div class="grid">
+                <div class="grid-item" onclick="setLanguage('en')">🇺🇸<span>English</span></div>
+                <div class="grid-item" onclick="setLanguage('nl')">🇳🇱<span>Nederlands</span></div>
+                <div class="grid-item" onclick="setLanguage('de')">🇩🇪<span>Deutsch</span></div>
+                <div class="grid-item" onclick="setLanguage('fr')">🇫🇷<span>Français</span></div>
+                <div class="grid-item" onclick="setLanguage('es')"><span>Español</span></div>
+                <div class="grid-item" onclick="setLanguage('it')"><span>Italiano</span></div>
+                <div class="grid-item" onclick="setLanguage('pl')"><span>Polski</span></div>
+                <div class="grid-item" onclick="setLanguage('pt')"><span>Português</span></div>
+                <div class="grid-item" onclick="setLanguage('tr')"><span>Türkçe</span></div>
+                <div class="grid-item" onclick="setLanguage('ru')"><span>Русский</span></div>
+                <div class="grid-item" onclick="setLanguage('ar')"><span>العربية</span></div>
+                <div class="grid-item" onclick="setLanguage('hi')"><span>हिन्दी</span></div>
+                <div class="grid-item" onclick="setLanguage('zh')"><span>中文</span></div>
             </div>
-            <button id="close-lang" class="close-help" style="margin-top: 15px;">Close</button>
+            <button class="btn-close" onclick="closeModal('lang-modal')">Close</button>
         </div>
     </div>
 
-    <!-- POI Modal -->
-    <div id="poi-overlay">
-        <div class="poi-content">
-            <h2 id="poi-title" style="color: var(--green);">Find Places</h2>
-            <div class="poi-categories">
-                <button class="cat-btn active" data-type="playground" data-label="Playground">
-                    <span class="cat-icon">🧸</span>Play
-                </button>
-                <button class="cat-btn" data-type="cafe" data-label="Cafe">
-                    <span class="cat-icon">☕</span>Cafe
-                </button>
-                <button class="cat-btn" data-type="snackbar" data-label="Snackbar">
-                    <span class="cat-icon">🍟</span>Snack
-                </button>
-                <button class="cat-btn" data-type="toilet" data-label="Toilet">
-                    <span class="cat-icon">🚻</span>WC
-                </button>
-                <button class="cat-btn" data-type="water" data-label="Water">
-                    <span class="cat-icon">💧</span>Water
-                </button>
-                <button class="cat-btn" data-type="shop" data-label="Shop">
-                    <span class="cat-icon">🛒</span>Shop
-                </button>
-                <button class="cat-btn" data-type="bench" data-label="Bench">
-                    <span class="cat-icon">🪑</span>Rest
-                </button>
-                <button class="cat-btn" data-type="viewpoint" data-label="View">
-                    <span class="cat-icon">🔭</span>View
-                </button>
-                <button class="cat-btn" data-type="park" data-label="Park">
-                    <span class="cat-icon">🌳</span>Park
-                </button>
-                <button class="cat-btn" data-type="ice_cream" data-label="Ice Cream">
-                    <span class="cat-icon">🍦</span>Ice
-                </button>
-                <button class="cat-btn" data-type="pharmacy" data-label="Pharmacy">
-                    <span class="cat-icon">🏥</span>Meds
-                </button>
-                <button class="cat-btn" data-type="bus_stop" data-label="Bus Stop">
-                    <span class="cat-icon">🚌</span>Bus
-                </button>
-            </div>
-            <p id="poi-status" style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 10px;">Select a category</p>
-            <div id="poi-list" class="poi-list">
-                <div class="loading-poi">
-                    <div class="spinner"></div>
-                    Locating you first...
-                </div>
-            </div>
-            <button id="close-poi" class="close-help" style="background: var(--green); margin-top: 15px;">Close</button>
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="help-title">How it works</div>
+            <p id="help-text">1. Press 'Set Home' when you start.<br>2. Walk anywhere.<br>3. Use the arrow to find your way back.</p>
+            <button class="btn-close" onclick="closeModal('help-modal')">Close</button>
         </div>
     </div>
 
-    <!-- Help Overlay -->
-    <div id="help-overlay">
-        <div class="help-content">
-            <h2 id="help-title">How it works (for humans)</h2>
-            <div id="help-steps">
-                <!-- Steps will be added by JS -->
-            </div>
-            <button id="close-help" class="close-help">Got it!</button>
-        </div>
-    </div>
-
-    <!-- Custom Confirm Modal -->
-    <div id="confirm-overlay">
-        <div class="confirm-content">
-            <h2 id="confirm-title">Set Home Go Home</h2>
-            <p id="confirm-msg"></p>
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="confirm-title">Are you sure?</div>
+            <p id="confirm-msg">This will overwrite your home location.</p>
             <div class="confirm-btns">
-                <button id="confirm-no-btn" class="confirm-btn confirm-no">No</button>
-                <button id="confirm-yes-btn" class="confirm-btn confirm-yes">Yes</button>
+                <button id="confirm-yes" class="confirm-btn">Yes</button>
+                <button id="confirm-no" class="confirm-btn">No</button>
             </div>
         </div>
     </div>
-
-    <!-- Compass Screen -->
-    <div id="compass-screen" class="screen">
-        <div class="compass-container">
-            <div class="compass-marks">
-                <div class="mark mark-n">N</div>
-                <div class="mark mark-e">E</div>
-                <div class="mark mark-s">S</div>
-                <div class="mark mark-w">W</div>
-            </div>
-            <div id="arrow" class="arrow"></div>
-        </div>
-        
-        <div class="distance-display">
-            <span id="dist-label">Distance</span>: <span id="distance-val">0</span> m<br>
-            <span id="eta-display" style="font-size: 1.5rem; opacity: 0.8;">Time to Home: -- min</span>
-        </div>
-        
-        <button id="stop-btn" class="stop-btn">STOP</button>
-    </div>
-
-    <!-- Trip Complete Screen -->
-    <div id="trip-complete-screen" class="screen">
-        <div id="complete-title" class="complete-title">🏁 Trip Complete</div>
-        <div class="stats"><span id="time-label">Time</span>: <span id="trip-time">0</span> <span id="min-label">minutes</span></div>
-        <button id="start-new-btn" class="reset-btn">Start New Trip</button>
-    </div>
-
-    <!-- Confetti Library -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
-        // State variables
-        let homeLat = null;
-        let homeLon = null;
-        let currentLat = null;
-        let currentLon = null;
-        let currentSpeed = null; // m/s
-        let heading = 0;
-        let watchId = null;
-        let startTime = null;
-        let arrivalTriggered = false;
-        let currentLang = localStorage.getItem('appLang') || 'en';
-
         const translations = {
             en: {
-                goHome: "Go Home",
                 setHome: "Set Home",
-                homeSet: "Home Set",
-                homeSetPoi: "Home Set (POI)",
-                locating: "Locating...",
-                pressSetHome: "Press Set Home first",
-                distance: "Distance",
-                timeToHome: "Time to Home",
-                standingStill: "Standing still",
-                stop: "STOP",
-                tripComplete: "🏁 Trip Complete",
-                time: "Time",
-                minutes: "minutes",
-                startNew: "Start New Trip",
-                install: "📱 Install App",
-                coffee: "If you like the app<br>☕ Buy me a coffee<br>@Master8383",
-                helpTitle: "How it works (for humans)",
-                helpSteps: [
-                    "<strong>1. Set Home:</strong> Tap this at your car, tent, or that one tree you think you'll remember (you won't).",
-                    "<strong>2. Wander off:</strong> Go hiking, get lost, chase a squirrel. We don't judge.",
-                    "<strong>3. Go Home:</strong> When you're tired/hungry, tap this. Follow the arrow like your life depends on it (it might).",
-                    "<strong>4. Green Arrow:</strong> You're facing the right way. Keep going, hero!",
-                    "<strong>5. Arrival:</strong> When the phone vibrates and confetti flies, you're back! Time for a snack."
-                ],
-                close: "Close",
-                gotIt: "Got it!",
-                findPlaces: "Find Places",
-                locatingYou: "Locating you...",
-                searchingPoi: "Searching for nearby locations...",
-                noPoiFound: "No locations found within 3km.",
-                gpsError: "GPS error",
-                connError: "Connection error",
-                targetSet: "Target set to:",
-                confirmStop1: "Are you sure you want to stop? The trip will end and be cleared.",
-                confirmStop2: "Are you absolutely sure? You will need to 'Set Home' again.",
-                yes: "Yes",
-                no: "No",
-                ok: "OK",
-                selectLang: "Select Language"
+                goHome: "Go Home",
+                overwrite: "Overwrite Home?",
+                overwriteMsg: "This will save your current location as Home.",
+                arrived: "You have arrived!",
+                waiting: "Waiting for GPS...",
+                distance: "Distance: ",
+                findNearby: "Find Nearby",
+                helpTitle: "How it works",
+                helpText: "1. Press 'Set Home' when you start. 2. Walk anywhere. 3. Use the arrow to find your way back.",
+                playground: "Playground", cafe: "Cafe", snackbar: "Snackbar", toilet: "Toilet", water: "Water", supermarket: "Shop",
+                bench: "Bench", viewpoint: "View", park: "Park", icecream: "Ice Cream", pharmacy: "Pharmacy", busstop: "Bus Stop",
+                yes: "Yes", no: "No", close: "Close"
             },
             nl: {
-                goHome: "Ga naar Huis",
                 setHome: "Stel Huis in",
-                homeSet: "Huis Ingesteld",
-                homeSetPoi: "Doel Ingesteld (POI)",
-                locating: "Zoeken...",
-                pressSetHome: "Stel eerst je huis in",
-                distance: "Afstand",
-                timeToHome: "Tijd naar Huis",
-                standingStill: "Stilstand",
-                stop: "STOP",
-                tripComplete: "🏁 Trip Voltooid",
-                time: "Tijd",
-                minutes: "minuten",
-                startNew: "Nieuwe Trip",
-                install: "📱 Installeer App",
-                coffee: "Vind je de app leuk?<br>☕ Koop een koffie<br>@Master8383",
+                goHome: "Ga naar Huis",
+                overwrite: "Huis overschrijven?",
+                overwriteMsg: "Dit slaat je huidige locatie op als Huis.",
+                arrived: "Je bent er!",
+                waiting: "Wachten op GPS...",
+                distance: "Afstand: ",
+                findNearby: "In de buurt",
                 helpTitle: "Hoe het werkt",
-                helpSteps: [
-                    "<strong>1. Stel Huis in:</strong> Tik hier bij je auto, tent, of die ene boom die je denkt te onthouden (dat lukt niet).",
-                    "<strong>2. Dwaal rond:</strong> Ga wandelen, verdwaal, achtervolg een eekhoorn. Wij oordelen niet.",
-                    "<strong>3. Ga naar Huis:</strong> Als je moe/hongerig bent, tik hier. Volg de pijl alsof je leven ervan afhangt (dat zou best kunnen).",
-                    "<strong>4. Groene Pijl:</strong> Je loopt de goede kant op. Zet hem op, held!",
-                    "<strong>5. Aankomst:</strong> Als de telefoon trilt en er confetti vliegt, ben je er! Tijd voor een snack."
-                ],
-                close: "Sluiten",
-                gotIt: "Begrepen!",
-                findPlaces: "Plaatsen Zoeken",
-                locatingYou: "Locatie bepalen...",
-                searchingPoi: "Zoeken naar plaatsen in de buurt...",
-                noPoiFound: "Geen plaatsen gevonden binnen 3km.",
-                gpsError: "GPS fout",
-                connError: "Verbindingsfout",
-                targetSet: "Doel ingesteld op:",
-                confirmStop1: "Weet je zeker dat je wilt stoppen? De route wordt gewist.",
-                confirmStop2: "Heel zeker? Je moet daarna opnieuw je startpunt instellen.",
-                yes: "Ja",
-                no: "Nee",
-                ok: "OK",
-                selectLang: "Kies Taal"
+                helpText: "1. Druk op 'Stel Huis in' bij vertrek. 2. Ga wandelen. 3. Gebruik de pijl om terug te keren.",
+                playground: "Speeltuin", cafe: "Cafe", snackbar: "Snackbar", toilet: "Toilet", water: "Water", supermarket: "Winkel",
+                bench: "Bankje", viewpoint: "Uitzicht", park: "Park", icecream: "Ijsjes", pharmacy: "Apotheek", busstop: "Bus halte",
+                yes: "Ja", no: "Nee", close: "Sluiten"
             },
             de: {
-                goHome: "Nach Hause",
                 setHome: "Heimat setzen",
-                homeSet: "Heimat gesetzt",
-                homeSetPoi: "Ziel gesetzt (POI)",
-                locating: "Suchen...",
-                pressSetHome: "Zuerst Heimat setzen",
-                distance: "Entfernung",
-                timeToHome: "Zeit nach Hause",
-                standingStill: "Stillstand",
-                stop: "STOPP",
-                tripComplete: "🏁 Trip beendet",
-                time: "Zeit",
-                minutes: "Minuten",
-                startNew: "Neuer Trip",
-                install: "📱 App installieren",
-                coffee: "Gefällt dir de App?<br>☕ Kaffee spendieren<br>@Master8383",
-                helpTitle: "Wie het funktioniert",
-                helpSteps: [
-                    "<strong>1. Heimat setzen:</strong> Tippe hier bei deinem Auto, Zelt oder dem Baum, den du dir merken willst (wirst du niet).",
-                    "<strong>2. Wandern:</strong> Geh wandern, verirr dich, jag ein Eichhörnchen. Wir urteilen nicht.",
-                    "<strong>3. Nach Hause:</strong> Wenn du müde/hungrig bist, tippe hier. Folg dem Pfeil, als ginge es um dein Leben (könnte sein).",
-                    "<strong>4. Grüner Pfeil:</strong> Du bist auf dem richtigen Weg. Weiter so, Held!",
-                    "<strong>5. Ankunft:</strong> Wenn das Handy vibriert und Konfetti fliegt, bist du da! Zeit für einen Snack."
-                ],
-                close: "Schließen",
-                gotIt: "Verstanden!",
-                findPlaces: "Orte finden",
-                locatingYou: "Suche Standort...",
-                searchingPoi: "Suche Orte in der Nähe...",
-                noPoiFound: "Keine Orte im Umkreis van 3km gefunden.",
-                gpsError: "GPS-Fehler",
-                connError: "Verbindungsfehler",
-                targetSet: "Ziel gesetzt auf:",
-                confirmStop1: "Bist du sicher? Der Trip wird beendet und gelöscht.",
-                confirmStop2: "Ganz sicher? Du musst den Startpunkt neu setzen.",
-                yes: "Ja",
-                no: "Nein",
-                ok: "OK",
-                selectLang: "Sprache wählen"
+                goHome: "Nach Hause",
+                overwrite: "Heimat überschreiben?",
+                overwriteMsg: "Dies speichert Ihren aktuellen Standort als Heimat.",
+                arrived: "Angekommen!",
+                waiting: "Warte auf GPS...",
+                distance: "Entfernung: ",
+                findNearby: "In der Nähe",
+                helpTitle: "So funktioniert es",
+                helpText: "1. Drücken Sie 'Heimat setzen' beim Start. 2. Gehen Sie wandern. 3. Folgen Sie dem Pfeil zurück.",
+                playground: "Spielplatz", cafe: "Café", snackbar: "Imbiss", toilet: "Toilette", water: "Wasser", supermarket: "Supermarkt",
+                bench: "Bank", viewpoint: "Aussicht", park: "Park", icecream: "Eis", pharmacy: "Apotheke", busstop: "Bushaltestelle",
+                yes: "Ja", no: "Nein", close: "Schließen"
             },
             fr: {
-                goHome: "Rentrer",
-                setHome: "Définir Home",
-                homeSet: "Home défini",
-                homeSetPoi: "Cible définie (POI)",
-                locating: "Recherche...",
-                pressSetHome: "Définir Home d'abord",
-                distance: "Distance",
-                timeToHome: "Temps restant",
-                standingStill: "À l'arrêt",
-                stop: "STOP",
-                tripComplete: "🏁 Trip terminé",
-                time: "Temps",
-                minutes: "minutes",
-                startNew: "Nouveau Trip",
-                install: "📱 Installer l'App",
-                coffee: "Vous aimez l'app ?<br>☕ Offrez un café<br>@Master8383",
+                setHome: "Définir Maison",
+                goHome: "Aller Maison",
+                overwrite: "Écraser Maison ?",
+                overwriteMsg: "Ceci enregistrera votre position actuelle comme Maison.",
+                arrived: "Vous êtes arrivé !",
+                waiting: "Attente du GPS...",
+                distance: "Distance : ",
+                findNearby: "À proximité",
                 helpTitle: "Comment ça marche",
-                helpSteps: [
-                    "<strong>1. Définir Home :</strong> Appuyez ici à votre voiture, tente ou cet arbre que vous pensez retenir (non).",
-                    "<strong>2. Balade :</strong> Allez marcher, perdez-vous, poursuivez un écureuil. On ne juge pas.",
-                    "<strong>3. Rentrer :</strong> Quand vous êtes fatigué/affamé, appuyez ici. Suivez la flèche comme si votre vie en dépendait.",
-                    "<strong>4. Flèche verte :</strong> Vous êtes dans la bonne direction. Allez, champion !",
-                    "<strong>5. Arrivée :</strong> Quand le téléphone vibre et les confettis volent, vous y êtes ! L'heure du goûter."
-                ],
-                close: "Fermer",
-                gotIt: "Compris !",
-                findPlaces: "Trouver lieux",
-                locatingYou: "Localisation...",
-                searchingPoi: "Recherche de lieux à proximité...",
-                noPoiFound: "Aucun lieu trouvé à moins de 3km.",
-                gpsError: "Erreur GPS",
-                connError: "Erreur connexion",
-                targetSet: "Cible définie sur :",
-                confirmStop1: "Voulez-vous vraiment arrêter ? Le trajet sera effacé.",
-                confirmStop2: "Sûr ? Vous devrez redéfinir votre point de départ.",
-                yes: "Oui",
-                no: "Non",
-                ok: "OK",
-                selectLang: "Choisir langue"
+                helpText: "1. Appuyez sur 'Définir Maison' au départ. 2. Marchez. 3. Suivez la flèche pour revenir.",
+                playground: "Terrain de jeux", cafe: "Café", snackbar: "Snack", toilet: "Toilettes", water: "Eau", supermarket: "Supermarché",
+                bench: "Banc", viewpoint: "Vue", park: "Parc", icecream: "Glace", pharmacy: "Pharmacie", busstop: "Arrêt de bus",
+                yes: "Oui", no: "Non", close: "Fermer"
             },
             es: {
-                goHome: "Ir a Casa",
                 setHome: "Fijar Casa",
-                homeSet: "Casa fijada",
-                homeSetPoi: "Objetivo fijado (POI)",
-                locating: "Buscando...",
-                pressSetHome: "Fija Casa primero",
-                distance: "Distancia",
-                timeToHome: "Tiempo a Casa",
-                standingStill: "Parado",
-                stop: "STOP",
-                tripComplete: "🏁 Trip completado",
-                time: "Tiempo",
-                minutes: "minutos",
-                startNew: "Nuevo Trip",
-                install: "📱 Instalar App",
-                coffee: "¿Te gusta la app?<br>☕ Invítame a un café<br>@Master8383",
+                goHome: "Ir a Casa",
+                overwrite: "¿Sobrescribir?",
+                overwriteMsg: "Esto guardará tu ubicación actual como Casa.",
+                arrived: "¡Has llegado!",
+                waiting: "Esperando GPS...",
+                distance: "Distancia: ",
+                findNearby: "Cerca",
                 helpTitle: "Cómo funciona",
-                helpSteps: [
-                    "<strong>1. Fijar Casa:</strong> Pulsa aquí en tu coche, tienda o ese árbol que crees que recordarás (no será así).",
-                    "<strong>2. Deambular:</strong> Camina, piérdete, persigue una ardilla. No juzgamos.",
-                    "<strong>3. Ir a Casa:</strong> Cuando estés cansado/hambriento, pulsa aquí. Sigue la flecha como si te fuera la vida en ello.",
-                    "<strong>4. Flecha verde:</strong> Vas por el buen camino. ¡Sigue así, héroe!",
-                    "<strong>5. Llegada:</strong> Cuando el móvil vibre y vuele confeti, ¡has llegado! Hora de merendar."
-                ],
-                close: "Cerrar",
-                gotIt: "¡Entendido!",
-                findPlaces: "Buscar lugares",
-                locatingYou: "Localizando...",
-                searchingPoi: "Buscando lugares cercanos...",
-                noPoiFound: "No se encontraron lugares en 3km.",
-                gpsError: "Error GPS",
-                connError: "Error de conexión",
-                targetSet: "Objetivo fijado en:",
-                confirmStop1: "¿Seguro que quieres parar? Se borrará la ruta.",
-                confirmStop2: "¿Muy seguro? Tendrás que fijar el punto de inicio de nuevo.",
-                yes: "Sí",
-                no: "No",
-                ok: "OK",
-                selectLang: "Elegir idioma"
+                helpText: "1. Pulsa 'Fijar Casa' al salir. 2. Camina. 3. Sigue la flecha para volver.",
+                playground: "Parque infantil", cafe: "Café", snackbar: "Snack", toilet: "Baño", water: "Agua", supermarket: "Tienda",
+                bench: "Banco", viewpoint: "Mirador", park: "Parque", icecream: "Helado", pharmacy: "Farmacia", busstop: "Parada bus",
+                yes: "Sí", no: "No", close: "Cerrar"
             },
             it: {
+                setHome: "Imposta Casa",
                 goHome: "Vai a Casa",
-                setHome: "Fissa Casa",
-                homeSet: "Casa fissata",
-                homeSetPoi: "Obiettivo fissato (POI)",
-                locating: "Ricerca...",
-                pressSetHome: "Fissa prima Casa",
-                distance: "Distanza",
-                timeToHome: "Tempo a Casa",
-                standingStill: "Fermo",
-                stop: "STOP",
-                tripComplete: "🏁 Trip completato",
-                time: "Tempo",
-                minutes: "minuti",
-                startNew: "Nuovo Trip",
-                install: "📱 Installa App",
-                coffee: "Ti piace l'app?<br>☕ Offrimi un caffè<br>@Master8383",
+                overwrite: "Sovrascrivere?",
+                overwriteMsg: "Questo salverà la tua posizione attuale come Casa.",
+                arrived: "Sei arrivato!",
+                waiting: "In attesa di GPS...",
+                distance: "Distanza: ",
+                findNearby: "Nelle vicinanze",
                 helpTitle: "Come funziona",
-                helpSteps: [
-                    "<strong>1. Fissa Casa:</strong> Premi qui alla tua auto, tenda o quell'albero che pensi di ricordare (non succederà).",
-                    "<strong>2. Vagabondare:</strong> Cammina, perditi, insegui uno scoiattolo. Non giudichiamo.",
-                    "<strong>3. Vai a Casa:</strong> Quando sei stanco/affamato, premi qui. Segui la freccia come se la tua vita dipendesse da questo.",
-                    "<strong>4. Freccia verde:</strong> Sei sulla strada giusta. Continua così, eroe!",
-                    "<strong>5. Arrivo:</strong> Quando il telefono vibra e volano coriandoli, sei arrivato! Ora di merenda."
-                ],
-                close: "Chiudi",
-                gotIt: "Capito!",
-                findPlaces: "Trova luoghi",
-                locatingYou: "Localizzazione...",
-                searchingPoi: "Ricerca luoghi vicini...",
-                noPoiFound: "Nessun luogo trovato entro 3km.",
-                gpsError: "Errore GPS",
-                connError: "Errore connessione",
-                targetSet: "Obiettivo fissato su:",
-                confirmStop1: "Vuoi davvero fermarti? Il percorso verrà cancellato.",
-                confirmStop2: "Sicuro? Dovrai fissare di nuovo il punto di partenza.",
-                yes: "Sì",
-                no: "No",
-                ok: "OK",
-                selectLang: "Scegli lingua"
+                helpText: "1. Premi 'Imposta Casa' alla partenza. 2. Cammina. 3. Segui la freccia per tornare.",
+                playground: "Parco giochi", cafe: "Caffè", snackbar: "Snack bar", toilet: "Bagno", water: "Acqua", supermarket: "Negozio",
+                bench: "Panchina", viewpoint: "Vista", park: "Parco", icecream: "Gelato", pharmacy: "Farmacia", busstop: "Fermata bus",
+                yes: "Sì", no: "No", close: "Chiudi"
             },
             pl: {
-                goHome: "Do Domu",
                 setHome: "Ustaw Dom",
-                homeSet: "Dom ustawiony",
-                homeSetPoi: "Cel ustawiony (POI)",
-                locating: "Lokalizacja...",
-                pressSetHome: "Najpierw ustaw Dom",
-                distance: "Dystans",
-                timeToHome: "Czas do Domu",
-                standingStill: "Postój",
-                stop: "STOP",
-                tripComplete: "🏁 Trip ukończony",
-                time: "Czas",
-                minutes: "minut",
-                startNew: "Nowy Trip",
-                install: "📱 Zainstaluj App",
-                coffee: "Lubisz aplikację?<br>☕ Postaw kawę<br>@Master8383",
+                goHome: "Do Domu",
+                overwrite: "Nadpisać?",
+                overwriteMsg: "To zapisze Twoją aktualną lokalizację jako Dom.",
+                arrived: "Dotarłeś!",
+                waiting: "Czekam na GPS...",
+                distance: "Dystans: ",
+                findNearby: "W pobliżu",
                 helpTitle: "Jak to działa",
-                helpSteps: [
-                    "<strong>1. Ustaw Dom:</strong> Naciśnij to przy aucie, namiocie lub tym jednym drzewie (którego i tak nie zapamiętasz).",
-                    "<strong>2. Wędruj:</strong> Idź na spacer, zgub się, goń wiewiórkę. Nie oceniamy.",
-                    "<strong>3. Do Domu:</strong> Gdy będziesz zmęczony/głodny, naciśnij to. Idź za strzałką, jakby od tego zależało Twoje życie.",
-                    "<strong>4. Zielona Strzałka:</strong> Idziesz w dobrą stronę. Tak trzymaj, bohaterze!",
-                    "<strong>5. Przybycie:</strong> Gdy telefon zawibruje i poleci konfetti, jesteś na miejscu! Czas na przekąskę."
-                ],
-                close: "Zamknij",
-                gotIt: "Zrozumiałem!",
-                findPlaces: "Znajdź miejsca",
-                locatingYou: "Lokalizowanie...",
-                searchingPoi: "Szukanie miejsc w pobliżu...",
-                noPoiFound: "Nie znaleziono miejsc w promieniu 3km.",
-                gpsError: "Błąd GPS",
-                connError: "Błąd połączenia",
-                targetSet: "Cel ustawiony na:",
-                confirmStop1: "Czy na pewno chcesz przerwać? Trasa zostanie wyczyszczona.",
-                confirmStop2: "Na pewno? Będziesz musiał ponownie ustawić punkt startu.",
-                yes: "Tak",
-                no: "Nie",
-                ok: "OK",
-                selectLang: "Wybierz język"
+                helpText: "1. Naciśnij 'Ustaw Dom' na starcie. 2. Idź na spacer. 3. Użyj strzałki, aby wrócić.",
+                playground: "Plac zabaw", cafe: "Kawiarnia", snackbar: "Bar", toilet: "Toaleta", water: "Woda", supermarket: "Sklep",
+                bench: "Ławka", viewpoint: "Widok", park: "Park", icecream: "Lody", pharmacy: "Apteka", busstop: "Przystanek",
+                yes: "Tak", no: "Nie", close: "Zamknij"
             },
             pt: {
-                goHome: "Ir para Casa",
                 setHome: "Definir Casa",
-                homeSet: "Casa definida",
-                homeSetPoi: "Alvo definido (POI)",
-                locating: "Localizando...",
-                pressSetHome: "Defina Casa primeiro",
-                distance: "Distância",
-                timeToHome: "Tempo até Casa",
-                standingStill: "Parado",
-                stop: "STOP",
-                tripComplete: "🏁 Trip concluída",
-                time: "Tempo",
-                minutes: "minutos",
-                startNew: "Nova Trip",
-                install: "📱 Instalar App",
-                coffee: "Gosta da app?<br>☕ Pague um café<br>@Master8383",
+                goHome: "Ir para Casa",
+                overwrite: "Substituir?",
+                overwriteMsg: "Isso salvará sua localização atual como Casa.",
+                arrived: "Chegou!",
+                waiting: "Aguardando GPS...",
+                distance: "Distância: ",
+                findNearby: "Próximo",
                 helpTitle: "Como funciona",
-                helpSteps: [
-                    "<strong>1. Definir Casa:</strong> Prima aqui no seu carro, tenda ou naquela árvore que acha que vai lembrar (não vai).",
-                    "<strong>2. Vaguear:</strong> Vá caminhar, perca-se, persiga um esquilo. Nós não julgamos.",
-                    "<strong>3. Ir para Casa:</strong> Quando estiver cansado/faminto, prima aqui. Siga a seta como se a sua vida dependesse disso.",
-                    "<strong>4. Seta Verde:</strong> Está na direção certa. Continue assim, herói!",
-                    "<strong>5. Chegada:</strong> Quando o telemóvel vibrar e voar confetes, chegou! Hora do lanche."
-                ],
-                close: "Fechar",
-                gotIt: "Entendi!",
-                findPlaces: "Encontrar locais",
-                locatingYou: "Localizando...",
-                searchingPoi: "A procurar locais próximos...",
-                noPoiFound: "Nenhum local encontrado em 3km.",
-                gpsError: "Erro GPS",
-                connError: "Erro de ligação",
-                targetSet: "Alvo definido para:",
-                confirmStop1: "Tem a certeza que quer parar? O trajeto será apagado.",
-                confirmStop2: "Absoluta? Terá de definir o ponto de partida novamente.",
-                yes: "Sim",
-                no: "Não",
-                ok: "OK",
-                selectLang: "Escolher idioma"
+                helpText: "1. Pressione 'Definir Casa' ao sair. 2. Caminhe. 3. Siga a seta para voltar.",
+                playground: "Parque infantil", cafe: "Café", snackbar: "Lanche", toilet: "Banheiro", water: "Água", supermarket: "Loja",
+                bench: "Banco", viewpoint: "Vista", park: "Parque", icecream: "Sorvete", pharmacy: "Farmácia", busstop: "Paragem",
+                yes: "Sim", no: "Não", close: "Fechar"
             },
             tr: {
-                goHome: "Eve Git",
                 setHome: "Evi Ayarla",
-                homeSet: "Ev Ayarlandı",
-                homeSetPoi: "Hedef Ayarlandı (POI)",
-                locating: "Aranıyor...",
-                pressSetHome: "Önce Evi Ayarla",
-                distance: "Mesafe",
-                timeToHome: "Eve Kalan Süre",
-                standingStill: "Duruyor",
-                stop: "DUR",
-                tripComplete: "🏁 Gezi Tamamlandı",
-                time: "Süre",
-                minutes: "dakika",
-                startNew: "Yeni Gezi",
-                install: "📱 Uygulamayı Yükle",
-                coffee: "Uygulamayı sevdiniz mi?<br>☕ Bir kahve ısmarlayın<br>@Master8383",
-                helpTitle: "Nasıl Çalışır?",
-                helpSteps: [
-                    "<strong>1. Evi Ayarla:</strong> Araba, çadır weya o hatırlayacağınızı sandığınız ağaçta (hatırlamayacaksınız) buna basın.",
-                    "<strong>2. Dolaşın:</strong> Yürüyüşe çıkın, kaybolun, bir sincabı kovalayın. Yargılamıyoruz.",
-                    "<strong>3. Eve Git:</strong> Yorulduğunuzda buna basın. Okun yönünü hayatınız buna bağlıymış gibi (olabilir) takip edin.",
-                    "<strong>4. Yeşil Ok:</strong> Doğru yöne bakıyorsunuz. Devam et kahraman!",
-                    "<strong>5. Varış:</strong> Telefon titreyip konfetiler uçtuğunda vardınız demektir! Atıştırma vakti."
-                ],
-                close: "Kapat",
-                gotIt: "Anladım!",
-                findPlaces: "Yer Bul",
-                locatingYou: "Konum bulunuyor...",
-                searchingPoi: "Yakındaki yerler aranıyor...",
-                noPoiFound: "3 km içinde yer bulunamadı.",
-                gpsError: "GPS hatası",
-                connError: "Bağlantı hatası",
-                targetSet: "Hedef belirlendi:",
-                confirmStop1: "Durdurmak istediğinize emin misiniz? Gezi silinecektir.",
-                confirmStop2: "Tamamen emin misiniz? Başlangıç noktasını tekrar ayarlamanız gerekecek.",
-                yes: "Evet",
-                no: "Hayır",
-                ok: "Tamam",
-                selectLang: "Dil Seçin"
+                goHome: "Eve Git",
+                overwrite: "Üzerine Yaz?",
+                overwriteMsg: "Mevcut konumunuz Ev olarak kaydedilecek.",
+                arrived: "Vardınız!",
+                waiting: "GPS bekleniyor...",
+                distance: "Mesafe: ",
+                findNearby: "Yakınlarda",
+                helpTitle: "Nasıl çalışır",
+                helpText: "1. Başlarken 'Evi Ayarla'ya basın. 2. Yürüyüşe çıkın. 3. Dönmek için oku kullanın.",
+                playground: "Oyun parkı", cafe: "Kafe", snackbar: "Büfe", toilet: "Tuvalet", water: "Su", supermarket: "Market",
+                bench: "Banka", viewpoint: "Manzara", park: "Park", icecream: "Dondurma", pharmacy: "Eczane", busstop: "Durak",
+                yes: "Evet", no: "Hayır", close: "Kapat"
             },
             ru: {
+                setHome: "Дом",
                 goHome: "Домой",
-                setHome: "Установить Дом",
-                homeSet: "Дом установлен",
-                homeSetPoi: "Цель установлена (POI)",
-                locating: "Поиск...",
-                pressSetHome: "Сначала установите Дом",
-                distance: "Дистанция",
-                timeToHome: "Время до Дома",
-                standingStill: "На месте",
-                stop: "СТОП",
-                tripComplete: "🏁 Поход завершен",
-                time: "Время",
-                minutes: "минут",
-                startNew: "Новый поход",
-                install: "📱 Установить приложение",
-                coffee: "Нравится приложение?<br>☕ Купи мне кофе<br>@Master8383",
+                overwrite: "Перезаписать?",
+                overwriteMsg: "Это сохранит ваше текущее местоположение как Дом.",
+                arrived: "Вы пришли!",
+                waiting: "Поиск GPS...",
+                distance: "Дистанция: ",
+                findNearby: "Рядом",
                 helpTitle: "Как это работает",
-                helpSteps: [
-                    "<strong>1. Установить Дом:</strong> Нажми здесь у машины, палатки или того дерева (которое ты не запомнишь).",
-                    "<strong>2. Гуляй:</strong> Иди в поход, потеряйся, погоняйся за белкой. Мы не осуждаем.",
-                    "<strong>3. Домой:</strong> Когда устанешь, нажми сюда. Следуй за стрелкой, будто от этого зависит жизнь.",
-                    "<strong>4. Зеленая стрелка:</strong> Идешь в верном направлении. Так держать, герой!",
-                    "<strong>5. Прибытие:</strong> Когда телефон завибрирует и полетит конфетти — ты на месте! Время перекусить."
-                ],
-                close: "Закрыть",
-                gotIt: "Понятно!",
-                findPlaces: "Найти места",
-                locatingYou: "Определение локации...",
-                searchingPoi: "Поиск мест поблизости...",
-                noPoiFound: "Места в радиусе 3 км не найдены.",
-                gpsError: "Ошибка GPS",
-                connError: "Ошибка соединения",
-                targetSet: "Цель установлена:",
-                confirmStop1: "Уверены, что хотите прервать? Маршрут будет удален.",
-                confirmStop2: "Точно? Придется заново устанавливать точку старта.",
-                yes: "Да",
-                no: "Нет",
-                ok: "OK",
-                selectLang: "Выбрать язык"
+                helpText: "1. Нажмите 'Дом' в начале. 2. Гуляйте. 3. Используйте стрелку, чтобы вернуться.",
+                playground: "Площадка", cafe: "Кафе", snackbar: "Закусочная", toilet: "Туалет", water: "Вода", supermarket: "Магазин",
+                bench: "Скамейка", viewpoint: "Вид", park: "Парк", icecream: "Мороженое", pharmacy: "Аптека", busstop: "Остановка",
+                yes: "Да", no: "Нет", close: "Закрыть"
             },
             ar: {
-                goHome: "العودة للمنزل",
-                setHome: "تحديد المنزل",
-                homeSet: "تم تحديد المنزل",
-                homeSetPoi: "تم تحديد الهدف (POI)",
-                locating: "جاري التحديد...",
-                pressSetHome: "حدد المنزل أولاً",
-                distance: "المسافة",
-                timeToHome: "الوقت للمنزل",
-                standingStill: "متوقف",
-                stop: "إيقاف",
-                tripComplete: "🏁 اكتملت الرحلة",
-                time: "الوقت",
-                minutes: "دقائق",
-                startNew: "رحلة جديدة",
-                install: "📱 تثبيت التطبيق",
-                coffee: "أعجبك التطبيق؟<br>☕ اشترِ لي قهوة<br>@Master8383",
-                helpTitle: "كيف يعمل التطبيق",
-                helpSteps: [
-                    "<strong>1. تحديد المنزل:</strong> اضغط هنا عند سيارتك أو خيمتك أو تلك الشجرة التي تظن أنك ستتذكرها (لن تفعل).",
-                    "<strong>2. تجول:</strong> اذهب للمشي، تِه قليلاً، طارد سنجاباً. نحن لا نحكم عليك.",
-                    "<strong>3. العودة للمنزل:</strong> عندما تتعب، اضغط هنا. اتبع السهم كأن حياتك تعتمد عليه (قد يكون كذلك).",
-                    "<strong>4. السهم الأخضر:</strong> أنت في الاتجاه الصحيح. استمر يا بطل!",
-                    "<strong>5. الوصول:</strong> عندما يهتز الهاتف وتطير الألعاب النارية، لقد وصلت! وقت الوجبة الخفيفة."
-                ],
-                close: "إغلاق",
-                gotIt: "فهمت!",
-                findPlaces: "البحث عن أماكن",
-                locatingYou: "جاري تحديد موقعك...",
-                searchingPoi: "البحث عن أماكن قريبة...",
-                noPoiFound: "لم يتم العثور على أماكن ضمن 3 كم.",
-                gpsError: "خطأ في GPS",
-                connError: "خطأ في الاتصال",
-                targetSet: "تم تحديد الهدف إلى:",
-                confirmStop1: "هل أنت متأكد من الإيقاف؟ سيتم مسح الرحلة.",
-                confirmStop2: "هل أنت متأكد تماماً؟ ستحتاج لتحديد نقطة البداية مجدداً.",
-                yes: "نعم",
-                no: "لا",
-                ok: "موافق",
-                selectLang: "اختر اللغة"
+                setHome: "تعيين المنزل",
+                goHome: "الذهاب للمنزل",
+                overwrite: "هل تريد التغيير؟",
+                overwriteMsg: "سيتم حفظ موقعك الحالي كمنزل.",
+                arrived: "لقد وصلت!",
+                waiting: "في انتظار GPS...",
+                distance: "المسافة: ",
+                findNearby: "البحث بالقرب",
+                helpTitle: "كيف يعمل",
+                helpText: "1. اضغط 'تعيين المنزل' عند البدء. 2. امشِ في أي مكان. 3. استخدم السهم للعودة.",
+                playground: "ملعب", cafe: "مقهى", snackbar: "وجبات خفيفة", toilet: "حمام", water: "ماء", supermarket: "متجر",
+                bench: "مقعد", viewpoint: "منظر", park: "حديقة", icecream: "آيس كريم", pharmacy: "صيدلية", busstop: "موقف باص",
+                yes: "نعم", no: "لا", close: "إغلاق"
             },
             hi: {
-                goHome: "घर जाएँ",
                 setHome: "घर सेट करें",
-                homeSet: "घर सेट हो गया",
-                homeSetPoi: "लक्ष्य सेट (POI)",
-                locating: "ढूँढ रहे हैं...",
-                pressSetHome: "पहले घर सेट करें",
-                distance: "दूरी",
-                timeToHome: "घर तक का समय",
-                standingStill: "रुके हुए",
-                stop: "रुकें",
-                tripComplete: "🏁 यात्रा पूर्ण",
-                time: "समय",
-                minutes: "मिनट",
-                startNew: "नई यात्रा",
-                install: "📱 ऐप इंस्टॉल करें",
-                coffee: "ऐप पसंद आया?<br>☕ कॉफी पिलाएँ<br>@Master8383",
+                goHome: "घर जाएं",
+                overwrite: "बदलें?",
+                overwriteMsg: "यह आपके वर्तमान स्थान को घर के रूप में सहेज लेगा।",
+                arrived: "आप पहुँच गए!",
+                waiting: "GPS की प्रतीक्षा...",
+                distance: "दूरी: ",
+                findNearby: "आस-पास खोजें",
                 helpTitle: "यह कैसे काम करता है",
-                helpSteps: [
-                    "<strong>1. घर सेट करें:</strong> अपनी कार, टेंट या उस पेड़ के पास इसे दबाएँ जिसे आप याद रखेंगे (आप नहीं रखेंगे)।",
-                    "<strong>2. घूमें-फिरें:</strong> लंबी पैदल यात्रा करें, खो जाएँ, गिलहरी का पीछा करें। हम बुरा नहीं मानते।",
-                    "<strong>3. घर जाएँ:</strong> जब आप थक जाएँ, तो इसे दबाएँ। तीर का पालन ऐसे करें जैसे आपकी जान उस पर टिकी हो।",
-                    "<strong>4. हरा तीर:</strong> आप सही दिशा में हैं। चलते रहें, हीरो!",
-                    "<strong>5. आगमन:</strong> जब फोन कंपन करे और कॉन्फेटी उड़े, तो आप पहुँच गए! नाश्ते का समय।"
-                ],
-                close: "बंद करें",
-                gotIt: "समझ गए!",
-                findPlaces: "जगह ढूँढें",
-                locatingYou: "स्थान ढूँढ रहे हैं...",
-                searchingPoi: "आस-पास की जगहें ढूँढ रहे हैं...",
-                noPoiFound: "3 किमी के भीतर कोई जगह नहीं मिली।",
-                gpsError: "जीपीएस त्रुटि",
-                connError: "कनेक्शन त्रुटि",
-                targetSet: "लक्षय यहाँ सेट है:",
-                confirmStop1: "क्या आप वाकई रुकना चाहते हैं? यात्रा साफ़ हो जाएगी।",
-                confirmStop2: "क्या आप पूरी तरह से आश्वस्त हैं? आपको फिर से घर सेट करना होगा।",
-                yes: "हाँ",
-                no: "नहीं",
-                ok: "ठीक है",
-                selectLang: "भाषा चुनें"
+                helpText: "1. शुरू करते समय 'घर सेट करें' दबाएं। 2. कहीं भी घूमें। 3. वापस आने के लिए तीर का उपयोग करें।",
+                playground: "खेल का मैदान", cafe: "कैफे", snackbar: "नाश्ता", toilet: "शौचालय", water: "पानी", supermarket: "दुकान",
+                bench: "बेंच", viewpoint: "दृश्य", park: "पार्क", icecream: "आइसक्रीम", pharmacy: "फार्मेसी", busstop: "बस स्टॉप",
+                yes: "हाँ", no: "नहीं", close: "बंद करें"
             },
             zh: {
+                setHome: "设置家",
                 goHome: "回家",
-                setHome: "设置起点",
-                homeSet: "起点已设置",
-                homeSetPoi: "目标已设置 (POI)",
-                locating: "定位中...",
-                pressSetHome: "请先设置起点",
-                distance: "距离",
-                timeToHome: "预计用时",
-                standingStill: "静止",
-                stop: "停止",
-                tripComplete: "🏁 旅程完成",
-                time: "用时",
-                minutes: "分钟",
-                startNew: "开始新旅程",
-                install: "📱 安装应用",
-                coffee: "喜欢这个应用吗？<br>☕ 请我喝杯咖啡<br>@Master8383",
-                helpTitle: "使用说明",
-                helpSteps: [
-                    "<strong>1. 设置起点：</strong> 在你的车、帐篷或某棵树旁点击此按钮（你肯定会忘在那儿）。",
-                    "<strong>2. 随意漫步：</strong> 去远足、去迷路、去追松鼠。我们不会评价。",
-                    "<strong>3. 回家：</strong> 累了或饿了时点击此按钮。像命悬一线一样跟着箭头走（可能真是这样）。",
-                    "<strong>4. 绿色箭头：</strong> 你的方向正确。继续加油，英雄！",
-                    "<strong>5. 到达：</strong> 当手机震动并撒出彩纸时，你到了！该吃零食了。"
-                ],
-                close: "关闭",
-                gotIt: "知道了！",
-                findPlaces: "查找地点",
-                locatingYou: "正在定位...",
-                searchingPoi: "正在搜索附近地点...",
-                noPoiFound: "3公里内未找到地点。",
-                gpsError: "GPS错误",
-                connError: "连接错误",
-                targetSet: "目标设置为：",
-                confirmStop1: "确定要停止吗？行程将被清除。",
-                confirmStop2: "真的确定吗？你需要重新设置起点。",
-                yes: "是",
-                no: "否",
-                ok: "确定",
-                selectLang: "选择语言"
+                overwrite: "覆盖原地址？",
+                overwriteMsg: "这将把当前位置存为'家'。",
+                arrived: "你已经到了！",
+                waiting: "正在等待 GPS...",
+                distance: "距离：",
+                findNearby: "寻找附近",
+                helpTitle: "如何运作",
+                helpText: "1. 出发时按'设置家'。 2. 随意走动。 3. 使用箭头找回家的路。",
+                playground: "游乐场", cafe: "咖啡馆", snackbar: "小吃店", toilet: "厕所", water: "饮用水", supermarket: "超市",
+                bench: "长椅", viewpoint: "观景点", park: "公园", icecream: "冰淇淋", pharmacy: "药店", busstop: "公交站",
+                yes: "是", no: "否", close: "关闭"
             }
         };
 
-        const languages = [
-            { code: 'en', name: 'English' },
-            { code: 'nl', name: 'Nederlands' },
-            { code: 'de', name: 'Deutsch' },
-            { code: 'fr', name: 'Français' },
-            { code: 'es', name: 'Español' },
-            { code: 'it', name: 'Italiano' },
-            { code: 'pl', name: 'Polski' },
-            { code: 'pt', name: 'Português' },
-            { code: 'tr', name: 'Türkçe' },
-            { code: 'ru', name: 'Русский' },
-            { code: 'ar', name: 'العربية' },
-            { code: 'hi', name: 'हिन्दी' },
-            { code: 'zh', name: '中文' }
-        ];
+        let currentLang = localStorage.getItem('lang') || 'en';
+        let homeLoc = JSON.parse(localStorage.getItem('homeLoc'));
+        let currentLoc = null;
+        let watchId = null;
+        let compassHeading = 0;
 
-        // UI Elements
-        const homeScreen = document.getElementById('home-screen');
-        const compassScreen = document.getElementById('compass-screen');
-        const completeScreen = document.getElementById('trip-complete-screen');
-        
+        // Elements
         const setHomeBtn = document.getElementById('set-home-btn');
         const goHomeBtn = document.getElementById('go-home-btn');
-        const stopBtn = document.getElementById('stop-btn');
-        const startNewBtn = document.getElementById('start-new-btn');
-        const installBtn = document.getElementById('install-btn');
-        const openHelp = document.getElementById('open-help');
-        const closeHelp = document.getElementById('close-help');
-        const helpOverlay = document.getElementById('help-overlay');
-        const helpTitle = document.getElementById('help-title');
-        const helpSteps = document.getElementById('help-steps');
-        const openPoiBtn = document.getElementById('open-poi');
-        const closePoiBtn = document.getElementById('close-poi');
-        const poiOverlay = document.getElementById('poi-overlay');
-        const poiList = document.getElementById('poi-list');
-        const poiTitle = document.getElementById('poi-title');
-        const poiStatus = document.getElementById('poi-status');
-        const catBtns = document.querySelectorAll('.cat-btn');
-        const openLangBtn = document.getElementById('open-lang');
-        const closeLangBtn = document.getElementById('close-lang');
-        const langOverlay = document.getElementById('lang-overlay');
-        const langList = document.getElementById('lang-list');
-        const langModalTitle = document.getElementById('lang-modal-title');
-        const confirmOverlay = document.getElementById('confirm-overlay');
-        const confirmMsg = document.getElementById('confirm-msg');
-        const confirmYesBtn = document.getElementById('confirm-yes-btn');
-        const confirmNoBtn = document.getElementById('confirm-no-btn');
-        const donationLink = document.getElementById('donation-link');
-        const distLabel = document.getElementById('dist-label');
-        const completeTitle = document.getElementById('complete-title');
-        const timeLabel = document.getElementById('time-label');
-        const minLabel = document.getElementById('min-label');
-        
+        const navUI = document.getElementById('navigation-ui');
         const arrow = document.getElementById('arrow');
-        const distanceVal = document.getElementById('distance-val');
-        const etaDisplay = document.getElementById('eta-display');
-        const tripTimeDisplay = document.getElementById('trip-time');
-
-        // Language Management
-        function setLanguage(langCode) {
-            currentLang = langCode;
-            localStorage.setItem('appLang', langCode);
-            updateUI();
-            renderLangList();
-        }
+        const distanceEl = document.getElementById('distance');
+        const statusEl = document.getElementById('status');
+        const poiBtn = document.getElementById('poi-btn');
+        const langBtn = document.getElementById('lang-btn');
+        const helpBtn = document.getElementById('help-btn');
 
         function updateUI() {
             const t = translations[currentLang];
-            goHomeBtn.innerText = t.goHome;
-            if (!homeLat) {
-                setHomeBtn.innerText = t.setHome;
-            } else {
-                setHomeBtn.innerText = setHomeBtn.innerText.includes('POI') || setHomeBtn.innerText.includes(':') ? t.homeSetPoi : t.homeSet;
-            }
-            stopBtn.innerText = t.stop;
-            startNewBtn.innerText = t.startNew;
-            installBtn.innerText = t.install;
-            donationLink.innerHTML = t.coffee;
-            closeHelp.innerText = t.gotIt;
-            helpTitle.innerText = t.helpTitle;
-            helpSteps.innerHTML = t.helpSteps.map(step => `<p>${step}</p>`).join('');
-            poiTitle.innerText = t.findPlaces;
-            closePoiBtn.innerText = t.close;
-            closeLangBtn.innerText = t.close;
-            langModalTitle.innerText = t.selectLang;
-            distLabel.innerText = t.distance;
-            completeTitle.innerText = t.tripComplete;
-            timeLabel.innerText = t.time;
-            minLabel.innerText = t.minutes;
-
-            // Update POI category labels
-            const poiLabels = {
-                playground: currentLang === 'nl' ? 'Speel' : 'Play',
-                cafe: currentLang === 'nl' ? 'Cafe' : 'Cafe',
-                snackbar: currentLang === 'nl' ? 'Snack' : 'Snack',
-                toilet: currentLang === 'nl' ? 'WC' : 'WC',
-                water: currentLang === 'nl' ? 'Water' : 'Water',
-                shop: currentLang === 'nl' ? 'Winkel' : 'Shop',
-                bench: currentLang === 'nl' ? 'Rust' : 'Rest',
-                viewpoint: currentLang === 'nl' ? 'Zicht' : 'View',
-                park: currentLang === 'nl' ? 'Park' : 'Park',
-                ice_cream: currentLang === 'nl' ? 'Ijs' : 'Ice',
-                pharmacy: currentLang === 'nl' ? 'Apotheek' : 'Meds',
-                bus_stop: currentLang === 'nl' ? 'Bus' : 'Bus'
-            };
-
-            catBtns.forEach(btn => {
-                const type = btn.dataset.type;
-                const icon = btn.querySelector('.cat-icon').outerHTML;
-                btn.innerHTML = `${icon}${poiLabels[type] || btn.dataset.label}`;
+            document.getElementById('label-set-home').innerText = t.setHome;
+            document.getElementById('label-go-home').innerText = t.goHome;
+            document.getElementById('poi-title').innerText = t.findNearby;
+            document.getElementById('help-title').innerText = t.helpTitle;
+            document.getElementById('help-text').innerText = t.helpText;
+            document.querySelectorAll('.btn-close').forEach(b => b.innerText = t.close);
+            document.querySelectorAll('.poi-label').forEach(s => {
+                const key = s.getAttribute('data-key');
+                if(t[key]) s.innerText = t[key];
             });
-            
-            // RTL support for Arabic
             document.body.style.direction = currentLang === 'ar' ? 'rtl' : 'ltr';
-        }
-
-        function renderLangList() {
-            langList.innerHTML = '';
-            languages.forEach(lang => {
-                const div = document.createElement('div');
-                div.className = `lang-item ${currentLang === lang.code ? 'active' : ''}`;
-                div.innerText = lang.name;
-                div.onclick = () => {
-                    setLanguage(lang.code);
-                    langOverlay.style.display = 'none';
-                };
-                langList.appendChild(div);
-            });
-        }
-
-        openLangBtn.addEventListener('click', () => {
-            langOverlay.style.display = 'flex';
-        });
-
-        closeLangBtn.addEventListener('click', () => {
-            langOverlay.style.display = 'none';
-        });
-
-        // Initialize UI
-        updateUI();
-        renderLangList();
-
-        // PWA Install Prompt
-        let deferredPrompt;
-        
-        // Check if already installed
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-            installBtn.style.display = 'none';
-        }
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            // Only show if not already in standalone mode
-            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-                return;
-            }
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'block';
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                installBtn.style.display = 'none';
-            }
-            deferredPrompt = null;
-        });
-
-        // Help Overlay Logic
-        openHelp.addEventListener('click', () => {
-            helpOverlay.style.display = 'flex';
-        });
-
-        closeHelp.addEventListener('click', () => {
-            helpOverlay.style.display = 'none';
-        });
-
-        helpOverlay.addEventListener('click', (e) => {
-            if (e.target === helpOverlay) {
-                helpOverlay.style.display = 'none';
-            }
-        });
-
-        // POI Logic
-        let currentCategory = 'playground';
-        
-        const poiQueries = {
-            playground: 'node["leisure"="playground"]',
-            cafe: 'node["amenity"="cafe"]',
-            snackbar: 'node["amenity"="fast_food"]',
-            toilet: 'node["amenity"="toilets"]',
-            water: 'node["amenity"="drinking_water"]',
-            shop: 'node["shop"="supermarket"]',
-            bench: 'node["amenity"="bench"]',
-            viewpoint: 'node["tourism"="viewpoint"]',
-            park: 'node["leisure"="park"]',
-            ice_cream: 'node["amenity"="ice_cream"]',
-            pharmacy: 'node["amenity"="pharmacy"]',
-            bus_stop: 'node["highway"="bus_stop"]'
-        };
-
-        openPoiBtn.addEventListener('click', () => {
-            poiOverlay.style.display = 'flex';
-            fetchPOIs();
-        });
-
-        closePoiBtn.addEventListener('click', () => {
-            poiOverlay.style.display = 'none';
-        });
-
-        catBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                catBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentCategory = btn.dataset.type;
-                poiTitle.innerText = `${translations[currentLang].findPlaces}: ${btn.dataset.label}`;
-                fetchPOIs();
-            });
-        });
-
-        async function fetchPOIs() {
-            const t = translations[currentLang];
-            poiList.innerHTML = `
-                <div class="loading-poi">
-                    <div class="spinner"></div>
-                    ${t.locatingYou}
-                </div>`;
-            poiStatus.innerText = "Accessing GPS...";
             
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                
-                poiList.innerHTML = `
-                    <div class="loading-poi">
-                        <div class="spinner"></div>
-                        ${t.searchingPoi}
-                    </div>`;
-                poiStatus.innerText = `Searching within 3km...`;
-                
-                const queryTag = poiQueries[currentCategory];
-                const query = `[out:json];${queryTag}(around:3000,${lat},${lon});out;`;
-                const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
-                
-                try {
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    
-                    if (data.elements && data.elements.length > 0) {
-                        poiList.innerHTML = '';
-                        poiStatus.innerText = `Found ${data.elements.length} locations`;
-                        
-                        const pois = data.elements.map(item => {
-                            const d = getDistance(lat, lon, item.lat, item.lon);
-                            return { ...item, distance: d };
-                        }).sort((a, b) => a.distance - b.distance);
-
-                        pois.slice(0, 15).forEach(poi => {
-                            const div = document.createElement('div');
-                            div.className = 'poi-item';
-                            const name = poi.tags.name || `Unnamed ${currentCategory}`;
-                            div.innerHTML = `
-                                <h4>${name}</h4>
-                                <p>${Math.round(poi.distance)} meters away</p>
-                            `;
-                            div.onclick = () => {
-                                homeLat = poi.lat;
-                                homeLon = poi.lon;
-                                setHomeBtn.classList.add('home-set');
-                                setHomeBtn.innerText = `${t.homeSetPoi}: ${currentCategory.toUpperCase()}`;
-                                poiOverlay.style.display = 'none';
-                                customAlert(`${t.targetSet} ${name}`);
-                            };
-                            poiList.appendChild(div);
-                        });
-                    } else {
-                        poiList.innerHTML = `<div class="loading-poi">${t.noPoiFound}</div>`;
-                        poiStatus.innerText = "Try another category";
-                    }
-                } catch (error) {
-                    poiList.innerHTML = `<div class="loading-poi">${t.connError}</div>`;
-                    poiStatus.innerText = "Connection error";
-                    console.error(error);
-                }
-            }, (error) => {
-                poiList.innerHTML = `<div class="loading-poi">${t.gpsError}</div>`;
-                poiStatus.innerText = "GPS error";
-            });
-        }
-
-        // Custom Alert Logic
-        function customAlert(message) {
-            const t = translations[currentLang];
-            return new Promise((resolve) => {
-                confirmMsg.innerText = message;
-                confirmNoBtn.style.display = 'none';
-                confirmYesBtn.innerText = t.ok;
-                confirmOverlay.style.display = 'flex';
-
-                const onOk = () => {
-                    cleanup();
-                    resolve();
-                };
-
-                const cleanup = () => {
-                    confirmOverlay.style.display = 'none';
-                    confirmNoBtn.style.display = 'block';
-                    confirmYesBtn.innerText = t.yes;
-                    confirmYesBtn.removeEventListener('click', onOk);
-                };
-
-                confirmYesBtn.addEventListener('click', onOk, { once: true });
-            });
-        }
-
-        // Custom Confirm Logic
-        function customConfirm(message) {
-            const t = translations[currentLang];
-            return new Promise((resolve) => {
-                confirmMsg.innerText = message;
-                confirmNoBtn.style.display = 'block';
-                confirmNoBtn.innerText = t.no;
-                confirmYesBtn.innerText = t.yes;
-                confirmOverlay.style.display = 'flex';
-
-                const onYes = () => {
-                    cleanup();
-                    resolve(true);
-                };
-
-                const onNo = () => {
-                    cleanup();
-                    resolve(false);
-                };
-
-                const cleanup = () => {
-                    confirmOverlay.style.display = 'none';
-                    confirmYesBtn.removeEventListener('click', onYes);
-                    confirmNoBtn.removeEventListener('click', onNo);
-                };
-
-                confirmYesBtn.addEventListener('click', onYes, { once: true });
-                confirmNoBtn.addEventListener('click', onNo, { once: true });
-            });
-        }
-
-        // Utils: Haversine distance
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371000; // Radius of Earth in meters
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        // Utils: Bearing calculation
-        function getBearing(lat1, lon1, lat2, lon2) {
-            const y = Math.sin((lon2 - lon1) * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180);
-            const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
-                      Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos((lon2 - lon1) * Math.PI / 180);
-            const bearing = Math.atan2(y, x) * 180 / Math.PI;
-            return (bearing + 360) % 360;
-        }
-
-        // Set Home Functionality
-        setHomeBtn.addEventListener('click', () => {
-            const t = translations[currentLang];
-            if (!navigator.geolocation) {
-                customAlert("Geolocation is not supported by your browser");
-                return;
+            if (homeLoc) {
+                setHomeBtn.style.opacity = "0.6";
+                navUI.style.display = "flex";
+                goHomeBtn.style.display = "flex";
             }
-
-            setHomeBtn.innerText = t.locating;
-            
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    homeLat = position.coords.latitude;
-                    homeLon = position.coords.longitude;
-                    
-                    setHomeBtn.classList.add('home-set');
-                    setHomeBtn.innerText = t.homeSet;
-                    console.log(`Home set at: ${homeLat}, ${homeLon}`);
-                },
-                (error) => {
-                    customAlert(`Error: ${error.message}`);
-                    setHomeBtn.innerText = t.setHome;
-                },
-                { enableHighAccuracy: true }
-            );
-        });
-
-        // Go Home Functionality
-        goHomeBtn.addEventListener('click', () => {
-            const t = translations[currentLang];
-            if (homeLat === null || homeLon === null) {
-                customAlert(t.pressSetHome);
-                return;
-            }
-
-            showScreen(compassScreen);
-            startNavigation();
-        });
-
-        function showScreen(screen) {
-            [homeScreen, compassScreen, completeScreen].forEach(s => s.classList.remove('active'));
-            screen.classList.add('active');
         }
 
-        function startNavigation() {
-            startTime = new Date();
-            arrivalTriggered = false;
-            
-            // Start GPS tracking
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            updateUI();
+            closeModal('lang-modal');
+        }
+
+        // Geolocation
+        if ("geolocation" in navigator) {
             watchId = navigator.geolocation.watchPosition(
-                (position) => {
-                    currentLat = position.coords.latitude;
-                    currentLon = position.coords.longitude;
-                    currentSpeed = position.coords.speed; // m/s
+                (pos) => {
+                    currentLoc = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+                    statusEl.style.display = "none";
                     updateNavigation();
                 },
-                (error) => console.error(error),
+                (err) => {
+                    statusEl.innerText = "GPS Error: " + err.message;
+                },
                 { enableHighAccuracy: true }
             );
-
-            // Start Device Orientation
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                // iOS 13+
-                DeviceOrientationEvent.requestPermission()
-                    .then(response => {
-                        if (response == 'granted') {
-                            window.addEventListener('deviceorientation', handleOrientation);
-                        }
-                    })
-                    .catch(console.error);
-            } else {
-                window.addEventListener('deviceorientation', handleOrientation);
-            }
         }
 
+        // Compass
+        window.addEventListener('deviceorientationabsolute', handleOrientation);
+        window.addEventListener('deviceorientation', handleOrientation);
+
         function handleOrientation(event) {
-            // For Android (event.alpha)
             if (event.webkitCompassHeading) {
-                heading = event.webkitCompassHeading; // iOS
-            } else if (event.alpha !== null) {
-                heading = 360 - event.alpha; // Android/Generic
+                compassHeading = event.webkitCompassHeading;
+            } else if (event.alpha) {
+                compassHeading = 360 - event.alpha;
             }
             updateNavigation();
         }
 
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3;
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180;
+            const Δλ = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function calculateBearing(lat1, lon1, lat2, lon2) {
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const λ1 = lon1 * Math.PI/180;
+            const λ2 = lon2 * Math.PI/180;
+            const y = Math.sin(λ2-λ1) * Math.cos(φ2);
+            const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(λ2-λ1);
+            return (Math.atan2(y, x) * 180/Math.PI + 360) % 360;
+        }
+
         function updateNavigation() {
-            if (currentLat === null || homeLat === null) return;
-
-            const t = translations[currentLang];
-            const distance = getDistance(currentLat, currentLon, homeLat, homeLon);
-            const bearing = getBearing(currentLat, currentLon, homeLat, homeLon);
+            if (!homeLoc || !currentLoc) return;
             
-            // Calculate arrow direction
-            // direction = bearing - heading
-            let direction = (bearing - heading + 360) % 360;
+            const dist = calculateDistance(currentLoc.lat, currentLoc.lon, homeLoc.lat, homeLoc.lon);
+            const bearing = calculateBearing(currentLoc.lat, currentLoc.lon, homeLoc.lat, homeLoc.lon);
             
-            // Update UI
-            arrow.style.transform = `rotate(${direction}deg)`;
-            distanceVal.innerText = Math.round(distance);
+            distanceEl.innerText = dist > 1000 ? (dist/1000).toFixed(1) + "km" : Math.round(dist) + "m";
+            
+            const arrowRotation = (bearing - compassHeading + 360) % 360;
+            arrow.style.transform = `rotate(${arrowRotation}deg)`;
 
-            // Update ETA based on current speed
-            if (currentSpeed && currentSpeed > 0.2) {
-                const speedKmh = currentSpeed * 3.6;
-                const timeMinutes = Math.round((distance / currentSpeed) / 60);
-                etaDisplay.innerText = `${t.timeToHome}: ${timeMinutes} min (${speedKmh.toFixed(1)} km/h)`;
-            } else {
-                etaDisplay.innerText = `${t.timeToHome}: -- min (${t.standingStill})`;
-            }
-
-            // Direction Feedback: Correct Direction
-            // If |direction| < 20° (or > 340°)
-            const diff = Math.abs(direction > 180 ? direction - 360 : direction);
-            if (diff < 20) {
-                arrow.classList.add('green');
-            } else {
-                arrow.classList.remove('green');
-            }
-
-            // Near Destination: Blink if < 50m
-            if (distance < 50) {
-                arrow.classList.add('blink');
-            } else {
-                arrow.classList.remove('blink');
-            }
-
-            // Arrival Detection: < 20m
-            if (distance < 20 && !arrivalTriggered) {
-                onArrival();
+            if (dist < 20) {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                statusEl.innerText = translations[currentLang].arrived;
+                statusEl.style.display = "block";
             }
         }
 
-        function onArrival() {
-            arrivalTriggered = true;
-            
-            // Stop tracking
-            stopNavigation();
-
-            // Confetti
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-
-            // Vibration
-            if (navigator.vibrate) {
-                navigator.vibrate([200, 100, 200, 100, 200]);
+        setHomeBtn.onclick = () => {
+            if (homeLoc) {
+                showConfirm(translations[currentLang].overwrite, translations[currentLang].overwriteMsg, () => {
+                    saveHome();
+                });
+            } else {
+                saveHome();
             }
+        };
 
-            // Sound (using simple Beep)
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
-            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 0.1);
-            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.5);
-
-            // Calculate duration
-            const endTime = new Date();
-            const durationMinutes = Math.round((endTime - startTime) / 60000);
-            tripTimeDisplay.innerText = durationMinutes;
-
-            // Show Trip Complete screen after delay
-            setTimeout(() => {
-                showScreen(completeScreen);
-            }, 3000);
+        function saveHome() {
+            if (!currentLoc) {
+                alert("Waiting for GPS signal...");
+                return;
+            }
+            homeLoc = { ...currentLoc };
+            localStorage.setItem('homeLoc', JSON.stringify(homeLoc));
+            updateUI();
         }
 
-        function stopNavigation() {
-            if (watchId !== null) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-            }
-            window.removeEventListener('deviceorientation', handleOrientation);
+        // Modal Logic
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        poiBtn.onclick = () => openModal('poi-modal');
+        langBtn.onclick = () => openModal('lang-modal');
+        helpBtn.onclick = () => openModal('help-modal');
+
+        function showConfirm(title, msg, onYes) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-msg').innerText = msg;
+            document.getElementById('confirm-yes').innerText = translations[currentLang].yes;
+            document.getElementById('confirm-no').innerText = translations[currentLang].no;
+            openModal('confirm-modal');
+            document.getElementById('confirm-yes').onclick = () => {
+                onYes();
+                closeModal('confirm-modal');
+            };
+            document.getElementById('confirm-no').onclick = () => closeModal('confirm-modal');
         }
 
-        // Stop Button
-        stopBtn.addEventListener('click', async () => {
-            const t = translations[currentLang];
-            const firstConfirm = await customConfirm(t.confirmStop1);
-            if (firstConfirm) {
-                const secondConfirm = await customConfirm(t.confirmStop2);
-                if (secondConfirm) {
-                    stopNavigation();
-                    resetAppState();
-                    showScreen(homeScreen);
+        // POI Fetching
+        document.querySelectorAll('#poi-modal .grid-item').forEach(item => {
+            item.onclick = () => {
+                const type = item.getAttribute('data-type');
+                findPOI(type);
+            };
+        });
+
+        async function findPOI(type) {
+            if (!currentLoc) return;
+            statusEl.innerText = "Searching...";
+            statusEl.style.display = "block";
+            closeModal('poi-modal');
+
+            let query = '';
+            switch(type) {
+                case 'playground': query = 'node["amenity"="playground"]'; break;
+                case 'cafe': query = 'node["amenity"="cafe"]'; break;
+                case 'snackbar': query = 'node["amenity"="fast_food"]'; break;
+                case 'toilet': query = 'node["amenity"="toilets"]'; break;
+                case 'drinking_water': query = 'node["amenity"="drinking_water"]'; break;
+                case 'supermarket': query = 'node["shop"="supermarket"]'; break;
+                case 'bench': query = 'node["amenity"="bench"]'; break;
+                case 'viewpoint': query = 'node["tourism"="viewpoint"]'; break;
+                case 'park': query = 'way["leisure"="park"]'; break;
+                case 'ice_cream': query = 'node["amenity"="ice_cream"]'; break;
+                case 'pharmacy': query = 'node["amenity"="pharmacy"]'; break;
+                case 'bus_stop': query = 'node["highway"="bus_stop"]'; break;
+            }
+
+            const url = `https://overpass-api.de/api/interpreter?data=[out:json];${query}(around:3000,${currentLoc.lat},${currentLoc.lon});out center;`;
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.elements && data.elements.length > 0) {
+                    const nearest = data.elements[0];
+                    homeLoc = { lat: nearest.lat || nearest.center.lat, lon: nearest.lon || nearest.center.lon };
+                    updateUI();
+                    statusEl.innerText = "Target set to nearest " + type;
+                    setTimeout(() => statusEl.style.display = "none", 3000);
+                } else {
+                    statusEl.innerText = "None found within 3km";
                 }
+            } catch (e) {
+                statusEl.innerText = "Search failed";
             }
-        });
-
-        // Start New Trip
-        startNewBtn.addEventListener('click', () => {
-            stopNavigation();
-            resetAppState();
-            showScreen(homeScreen);
-        });
-
-        function resetCompassUI() {
-            distanceVal.innerText = "0";
-            arrow.style.transform = "rotate(0deg)";
-            arrow.classList.remove('green', 'blink');
         }
 
-        function resetAppState() {
-            const t = translations[currentLang];
-            homeLat = null;
-            homeLon = null;
-            arrivalTriggered = false;
-            resetCompassUI();
-            
-            setHomeBtn.classList.remove('home-set');
-            setHomeBtn.innerText = t.setHome;
-        }
+        // PWA Install
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').style.display = 'block';
+        });
 
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('SW registered'))
-                    .catch(err => console.error('SW registration failed', err));
+        document.getElementById('install-btn').onclick = () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choice) => {
+                if (choice.outcome === 'accepted') document.getElementById('install-btn').style.display = 'none';
             });
+        };
+
+        // Init
+        updateUI();
+
+        // SW
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
         }
     </script>
 </body>
