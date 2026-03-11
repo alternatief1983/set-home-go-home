@@ -39,22 +39,6 @@
             touch-action: manipulation;
         }
 
-        /* Top Bar Container for POI, Lang, Coffee, Help */
-        .top-controls {
-            position: absolute;
-            top: 10vh;
-            width: 90%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-        }
-
-        .side-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
         .mini-btn {
             width: 44px;
             height: 44px;
@@ -80,6 +64,24 @@
             border-radius: 20px;
             border: 1px solid rgba(255, 221, 0, 0.3);
             white-space: nowrap;
+            margin-bottom: 20px;
+            z-index: 10;
+        }
+
+        /* Bottom Bar Container for POI, Lang, Coffee, Help */
+        .bottom-controls {
+            position: fixed;
+            bottom: 25px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .right-btns {
+            display: flex;
+            gap: 10px;
         }
 
         .main-nav {
@@ -256,18 +258,7 @@
 </head>
 <body>
 
-    <div class="top-controls">
-        <div class="side-buttons">
-            <button class="mini-btn" id="poi-btn" title="POI">📍</button>
-            <button class="mini-btn" id="lang-btn" title="Language">🌐</button>
-        </div>
-        
-        <a href="https://www.buymeacoffee.com/" target="_blank" class="coffee-link">☕ Buy me a coffee</a>
-        
-        <div class="side-buttons">
-            <button class="mini-btn" id="help-btn" title="Help">❓</button>
-        </div>
-    </div>
+    <a href="https://www.buymeacoffee.com/" target="_blank" class="coffee-link">☕ Buy me a coffee</a>
 
     <div class="main-nav">
         <button id="set-home-btn" class="circle-btn">
@@ -280,6 +271,14 @@
             <button id="go-home-btn" class="circle-btn">
                 <span id="label-go-home">Go Home</span>
             </button>
+        </div>
+    </div>
+
+    <div class="bottom-controls">
+        <button class="mini-btn" id="poi-btn" title="POI">📍</button>
+        <div class="right-btns">
+            <button class="mini-btn" id="lang-btn" title="Language">🌐</button>
+            <button class="mini-btn" id="help-btn" title="Help">❓</button>
         </div>
     </div>
 
