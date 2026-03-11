@@ -188,6 +188,26 @@
             padding: 20px;
             font-style: italic;
             opacity: 0.7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 6px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* Modal / Help Overlay */
@@ -475,7 +495,10 @@
             <h2 style="color: var(--green);">Find Playground</h2>
             <p style="font-size: 0.9rem; opacity: 0.7;">Searching for nearest playgrounds...</p>
             <div id="poi-list" class="poi-list">
-                <div class="loading-poi">Locating you first...</div>
+                <div class="loading-poi">
+                    <div class="spinner"></div>
+                    Locating you first...
+                </div>
             </div>
             <button id="close-poi" class="close-help" style="background: var(--green); margin-top: 15px;">Close</button>
         </div>
@@ -629,13 +652,21 @@
         });
 
         async function fetchPlaygrounds() {
-            poiList.innerHTML = '<div class="loading-poi">Locating you...</div>';
+            poiList.innerHTML = `
+                <div class="loading-poi">
+                    <div class="spinner"></div>
+                    Locating you...
+                </div>`;
             
             navigator.geolocation.getCurrentPosition(async (position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 
-                poiList.innerHTML = '<div class="loading-poi">Searching for playgrounds nearby...</div>';
+                poiList.innerHTML = `
+                    <div class="loading-poi">
+                        <div class="spinner"></div>
+                        Searching for playgrounds nearby...
+                    </div>`;
                 
                 // Overpass API query for playgrounds within 3000m
                 const query = `[out:json];node["leisure"="playground"](around:3000,${lat},${lon});out;`;
