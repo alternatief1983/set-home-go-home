@@ -404,7 +404,7 @@
             <h2 id="confirm-title">Set Home Go Home</h2>
             <p id="confirm-msg"></p>
             <div class="confirm-btns">
-                <button id="confirm-no-btn" class="confirm-btn confirm-no">Cancel</button>
+                <button id="confirm-no-btn" class="confirm-btn confirm-no">No</button>
                 <button id="confirm-yes-btn" class="confirm-btn confirm-yes">Yes</button>
             </div>
         </div>
@@ -518,10 +518,37 @@
             }
         });
 
+        // Custom Alert Logic
+        function customAlert(message) {
+            return new Promise((resolve) => {
+                confirmMsg.innerText = message;
+                confirmNoBtn.style.display = 'none';
+                confirmYesBtn.innerText = 'OK';
+                confirmOverlay.style.display = 'flex';
+
+                const onOk = () => {
+                    cleanup();
+                    resolve();
+                };
+
+                const cleanup = () => {
+                    confirmOverlay.style.display = 'none';
+                    confirmNoBtn.style.display = 'block';
+                    confirmYesBtn.innerText = 'Yes';
+                    confirmYesBtn.removeEventListener('click', onOk);
+                };
+
+                confirmYesBtn.addEventListener('click', onOk, { once: true });
+            });
+        }
+
         // Custom Confirm Logic
         function customConfirm(message) {
             return new Promise((resolve) => {
                 confirmMsg.innerText = message;
+                confirmNoBtn.style.display = 'block';
+                confirmNoBtn.innerText = 'No';
+                confirmYesBtn.innerText = 'Yes';
                 confirmOverlay.style.display = 'flex';
 
                 const onYes = () => {
@@ -569,7 +596,7 @@
         // Set Home Functionality
         setHomeBtn.addEventListener('click', () => {
             if (!navigator.geolocation) {
-                alert("Geolocation is not supported by your browser");
+                customAlert("Geolocation is not supported by your browser");
                 return;
             }
 
@@ -585,7 +612,7 @@
                     console.log(`Home set at: ${homeLat}, ${homeLon}`);
                 },
                 (error) => {
-                    alert(`Error getting location: ${error.message}`);
+                    customAlert(`Error getting location: ${error.message}`);
                     setHomeBtn.innerText = "Set Home";
                 },
                 { enableHighAccuracy: true }
@@ -595,7 +622,7 @@
         // Go Home Functionality
         goHomeBtn.addEventListener('click', () => {
             if (homeLat === null || homeLon === null) {
-                alert("Press Set Home first");
+                customAlert("Press Set Home first");
                 return;
             }
 
