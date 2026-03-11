@@ -348,7 +348,8 @@
         </div>
         
         <div class="distance-display">
-            Distance: <span id="distance-val">0</span> m
+            Distance: <span id="distance-val">0</span> m<br>
+            <span id="eta-display" style="font-size: 1.5rem; opacity: 0.8;">ETA: -- min</span>
         </div>
         
         <button id="stop-btn" class="stop-btn">STOP</button>
@@ -370,6 +371,7 @@
         let homeLon = null;
         let currentLat = null;
         let currentLon = null;
+        let currentSpeed = null; // m/s
         let heading = 0;
         let watchId = null;
         let startTime = null;
@@ -391,6 +393,7 @@
         
         const arrow = document.getElementById('arrow');
         const distanceVal = document.getElementById('distance-val');
+        const etaDisplay = document.getElementById('eta-display');
         const tripTimeDisplay = document.getElementById('trip-time');
 
         // PWA Install Prompt
@@ -508,6 +511,7 @@
                 (position) => {
                     currentLat = position.coords.latitude;
                     currentLon = position.coords.longitude;
+                    currentSpeed = position.coords.speed; // m/s
                     updateNavigation();
                 },
                 (error) => console.error(error),
@@ -552,6 +556,15 @@
             // Update UI
             arrow.style.transform = `rotate(${direction}deg)`;
             distanceVal.innerText = Math.round(distance);
+
+            // Update ETA based on current speed
+            if (currentSpeed && currentSpeed > 0.2) {
+                const speedKmh = currentSpeed * 3.6;
+                const timeMinutes = Math.round((distance / currentSpeed) / 60);
+                etaDisplay.innerText = `ETA: ${timeMinutes} min (${speedKmh.toFixed(1)} km/h)`;
+            } else {
+                etaDisplay.innerText = "ETA: -- min (Standing still)";
+            }
 
             // Direction Feedback: Correct Direction
             // If |direction| < 20° (or > 340°)
