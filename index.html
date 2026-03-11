@@ -24,6 +24,10 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        a, button {
+            user-select: auto;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--black);
@@ -236,7 +240,7 @@
 <body>
     <!-- Home Screen -->
     <div id="home-screen" class="screen active">
-        <a href="https://paypal.me/Master8383" target="_blank" class="donation-btn">
+        <a href="https://paypal.me/Master8383" target="_blank" rel="noopener noreferrer" class="donation-btn">
             If you like the app<br>☕ Buy me a coffee<br>@Master8383
         </a>
         
@@ -305,7 +309,17 @@
 
         // PWA Install Prompt
         let deferredPrompt;
+        
+        // Check if already installed
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            installBtn.style.display = 'none';
+        }
+
         window.addEventListener('beforeinstallprompt', (e) => {
+            // Only show if not already in standalone mode
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                return;
+            }
             e.preventDefault();
             deferredPrompt = e;
             installBtn.style.display = 'block';
