@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Set Home – Go Home</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <style>
+        :root {
+            --red: #ff4d4d;
+            --green: #4caf50;
+            --blue: #2196f3;
+            --white: #ffffff;
+            --black: #000000;
+            --gray: #f0f0f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* Home Screen */
+        .donation-btn {
+            position: absolute;
+            top: 20px;
+            text-decoration: none;
+            color: var(--white);
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5vh;
+            margin-top: 10vh;
+            width: 90%;
+            align-items: center;
+        }
+
+        .circle-btn {
+            width: 40vh;
+            height: 40vh;
+            max-width: 80vw;
+            max-height: 80vw;
+            border-radius: 50%;
+            border: none;
+            color: var(--white);
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s, border 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            aspect-ratio: 1/1;
+        }
+
+        .circle-btn:active {
+            transform: scale(0.95);
+        }
+
+        #set-home-btn {
+            background-color: var(--red);
+            border: 12px solid transparent;
+        }
+
+        #set-home-btn.home-set {
+            background-color: var(--green);
+            border-color: transparent;
+        }
+
+        #go-home-btn {
+            background-color: var(--blue);
+            width: 30vh;
+            height: 30vh;
+            max-width: 60vw;
+            max-height: 60vw;
+            font-size: 2rem;
+        }
+
+        /* Compass Screen */
+        .compass-container {
+            position: relative;
+            width: 45vh;
+            height: 45vh;
+            max-width: 85vw;
+            max-height: 85vw;
+            border-radius: 50%;
+            border: 6px solid var(--white);
+            margin-bottom: 5vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1/1;
+        }
+
+        .compass-marks {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            font-weight: bold;
+            font-size: 2rem;
+        }
+
+        .mark {
+            position: absolute;
+            width: 40px;
+            text-align: center;
+        }
+
+        .mark-n { top: 15px; left: 50%; transform: translateX(-50%); }
+        .mark-e { right: 15px; top: 50%; transform: translateY(-50%); }
+        .mark-s { bottom: 15px; left: 50%; transform: translateX(-50%); }
+        .mark-w { left: 15px; top: 50%; transform: translateY(-50%); }
+
+        .arrow {
+            width: 0;
+            height: 0;
+            border-left: 4vh solid transparent;
+            border-right: 4vh solid transparent;
+            border-bottom: 12vh solid var(--white);
+            max-border-left: 8vw;
+            max-border-right: 8vw;
+            max-border-bottom: 24vw;
+            transition: transform 0.2s cubic-bezier(0.1, 0.7, 1.0, 0.1), color 0.3s;
+        }
+
+        .arrow.green {
+            border-bottom-color: var(--green);
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .blink {
+            animation: blink 0.5s infinite;
+        }
+
+        .distance-display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 6vh;
+        }
+
+        .stop-btn {
+            background: var(--red);
+            color: white;
+            border: none;
+            padding: 2.5vh 8vh;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Trip Complete Screen */
+        .complete-title {
+            font-size: 4rem;
+            margin-bottom: 4vh;
+        }
+
+        .stats {
+            font-size: 2.5rem;
+            margin-bottom: 8vh;
+        }
+
+        .reset-btn {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 3vh 10vh;
+            border-radius: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen active">
+        <a href="https://paypal.me/Master8383" target="_blank" class="donation-btn">
+            If you like the app<br>☕ Buy me a coffee<br>@Master8383
+        </a>
+        
+        <div class="btn-container">
+            <button id="go-home-btn" class="circle-btn">Go Home</button>
+            <button id="set-home-btn" class="circle-btn">Set Home</button>
+        </div>
+    </div>
+
+    <!-- Compass Screen -->
+    <div id="compass-screen" class="screen">
+        <div class="compass-container">
+            <div class="compass-marks">
+                <div class="mark mark-n">N</div>
+                <div class="mark mark-e">E</div>
+                <div class="mark mark-s">S</div>
+                <div class="mark mark-w">W</div>
+            </div>
+            <div id="arrow" class="arrow"></div>
+        </div>
+        
+        <div class="distance-display">
+            Distance: <span id="distance-val">0</span> m
+        </div>
+        
+        <button id="stop-btn" class="stop-btn">STOP</button>
+    </div>
+
+    <!-- Trip Complete Screen -->
+    <div id="trip-complete-screen" class="screen">
+        <div class="complete-title">🏁 Trip Complete</div>
+        <div class="stats">Time: <span id="trip-time">0</span> minutes</div>
+        <button id="start-new-btn" class="reset-btn">Start New Trip</button>
+    </div>
+
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        // State variables
+        let homeLat = null;
+        let homeLon = null;
+        let currentLat = null;
+        let currentLon = null;
+        let heading = 0;
+        let watchId = null;
+        let startTime = null;
+        let arrivalTriggered = false;
+
+        // UI Elements
+        const homeScreen = document.getElementById('home-screen');
+        const compassScreen = document.getElementById('compass-screen');
+        const completeScreen = document.getElementById('trip-complete-screen');
+        
+        const setHomeBtn = document.getElementById('set-home-btn');
+        const goHomeBtn = document.getElementById('go-home-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const startNewBtn = document.getElementById('start-new-btn');
+        
+        const arrow = document.getElementById('arrow');
+        const distanceVal = document.getElementById('distance-val');
+        const tripTimeDisplay = document.getElementById('trip-time');
+
+        // Utils: Haversine distance
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371000; // Radius of Earth in meters
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Utils: Bearing calculation
+        function getBearing(lat1, lon1, lat2, lon2) {
+            const y = Math.sin((lon2 - lon1) * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180);
+            const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
+                      Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos((lon2 - lon1) * Math.PI / 180);
+            const bearing = Math.atan2(y, x) * 180 / Math.PI;
+            return (bearing + 360) % 360;
+        }
+
+        // Set Home Functionality
+        setHomeBtn.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                alert("Geolocation is not supported by your browser");
+                return;
+            }
+
+            setHomeBtn.innerText = "Locating...";
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    homeLat = position.coords.latitude;
+                    homeLon = position.coords.longitude;
+                    
+                    setHomeBtn.classList.add('home-set');
+                    setHomeBtn.innerText = "Home Set";
+                    console.log(`Home set at: ${homeLat}, ${homeLon}`);
+                },
+                (error) => {
+                    alert(`Error getting location: ${error.message}`);
+                    setHomeBtn.innerText = "Set Home";
+                },
+                { enableHighAccuracy: true }
+            );
+        });
+
+        // Go Home Functionality
+        goHomeBtn.addEventListener('click', () => {
+            if (homeLat === null || homeLon === null) {
+                alert("Press Set Home first");
+                return;
+            }
+
+            showScreen(compassScreen);
+            startNavigation();
+        });
+
+        function showScreen(screen) {
+            [homeScreen, compassScreen, completeScreen].forEach(s => s.classList.remove('active'));
+            screen.classList.add('active');
+        }
+
+        function startNavigation() {
+            startTime = new Date();
+            arrivalTriggered = false;
+            
+            // Start GPS tracking
+            watchId = navigator.geolocation.watchPosition(
+                (position) => {
+                    currentLat = position.coords.latitude;
+                    currentLon = position.coords.longitude;
+                    updateNavigation();
+                },
+                (error) => console.error(error),
+                { enableHighAccuracy: true }
+            );
+
+            // Start Device Orientation
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                // iOS 13+
+                DeviceOrientationEvent.requestPermission()
+                    .then(response => {
+                        if (response == 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        }
+
+        function handleOrientation(event) {
+            // For Android (event.alpha)
+            if (event.webkitCompassHeading) {
+                heading = event.webkitCompassHeading; // iOS
+            } else if (event.alpha !== null) {
+                heading = 360 - event.alpha; // Android/Generic
+            }
+            updateNavigation();
+        }
+
+        function updateNavigation() {
+            if (currentLat === null || homeLat === null) return;
+
+            const distance = getDistance(currentLat, currentLon, homeLat, homeLon);
+            const bearing = getBearing(currentLat, currentLon, homeLat, homeLon);
+            
+            // Calculate arrow direction
+            // direction = bearing - heading
+            let direction = (bearing - heading + 360) % 360;
+            
+            // Update UI
+            arrow.style.transform = `rotate(${direction}deg)`;
+            distanceVal.innerText = Math.round(distance);
+
+            // Direction Feedback: Correct Direction
+            // If |direction| < 20° (or > 340°)
+            const diff = Math.abs(direction > 180 ? direction - 360 : direction);
+            if (diff < 20) {
+                arrow.classList.add('green');
+            } else {
+                arrow.classList.remove('green');
+            }
+
+            // Near Destination: Blink if < 50m
+            if (distance < 50) {
+                arrow.classList.add('blink');
+            } else {
+                arrow.classList.remove('blink');
+            }
+
+            // Arrival Detection: < 20m
+            if (distance < 20 && !arrivalTriggered) {
+                onArrival();
+            }
+        }
+
+        function onArrival() {
+            arrivalTriggered = true;
+            
+            // Stop tracking
+            stopNavigation();
+
+            // Confetti
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            // Vibration
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+
+            // Sound (using simple Beep since we don't have audio files)
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + 0.1);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.5);
+
+            // Calculate duration
+            const endTime = new Date();
+            const durationMinutes = Math.round((endTime - startTime) / 60000);
+            tripTimeDisplay.innerText = durationMinutes;
+
+            // Show Trip Complete screen after delay
+            setTimeout(() => {
+                showScreen(completeScreen);
+            }, 3000);
+        }
+
+        function stopNavigation() {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+            window.removeEventListener('deviceorientation', handleOrientation);
+        }
+
+        // Stop Button
+        stopBtn.addEventListener('click', () => {
+            if (confirm("Are you sure you want to stop? The trip will end and be cleared.")) {
+                if (confirm("Are you absolutely sure? You will need to 'Set Home' again.")) {
+                    stopNavigation();
+                    resetAppState();
+                    showScreen(homeScreen);
+                }
+            }
+        });
+
+        // Start New Trip
+        startNewBtn.addEventListener('click', () => {
+            stopNavigation();
+            resetAppState();
+            showScreen(homeScreen);
+        });
+
+        function resetCompassUI() {
+            distanceVal.innerText = "0";
+            arrow.style.transform = "rotate(0deg)";
+            arrow.classList.remove('green', 'blink');
+        }
+
+        function resetAppState() {
+            homeLat = null;
+            homeLon = null;
+            arrivalTriggered = false;
+            resetCompassUI();
+            
+            setHomeBtn.classList.remove('home-set');
+            setHomeBtn.innerText = "Set Home";
+        }
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW registration failed', err));
+            });
+        }
+    </script>
+</body>
+</html>
