@@ -1,10 +1,12 @@
-const CACHE_NAME = 'set-home-v13';
+const CACHE_NAME = 'set-home-v20';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
+  './arrival.mp3',
+  './click.mp3',
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'
 ];
 
