@@ -68,37 +68,6 @@
         }
 
         /* Home Screen */
-        .pro-badge {
-            display: none;
-            background: linear-gradient(45deg, #ffd700, #ff8c00);
-            color: black;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-left: 5px;
-            vertical-align: middle;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-        }
-
-        .go-pro-btn {
-            background: linear-gradient(45deg, #ffd700, #ff8c00);
-            color: black;
-            border: none;
-            padding: 15px 35px;
-            border-radius: 35px;
-            font-weight: bold;
-            font-size: 1.6rem;
-            margin-top: 20px;
-            cursor: pointer;
-            box-shadow: 0 6px 25px rgba(255, 215, 0, 0.5);
-            transition: transform 0.2s;
-        }
-
-        .go-pro-btn:active {
-            transform: scale(0.95);
-        }
-
         #install-btn {
             display: none;
             position: absolute;
@@ -986,10 +955,6 @@
 <body>
     <!-- Home Screen -->
     <div id="home-screen" class="screen active">
-        <div style="position: absolute; top: 30px; z-index: 10; width: 100%; display: flex; justify-content: center; align-items: center;">
-            <span id="pro-badge" class="pro-badge">PRO</span>
-            <button id="go-pro-btn" class="go-pro-btn">🚀 Go Pro</button>
-        </div>
         
         <div class="btn-container">
             <button id="go-home-btn" class="circle-btn">Go Home</button>
@@ -1188,9 +1153,6 @@
         let userPath = []; // To store the breadcrumb trail
         let polyline = null; // The Leaflet polyline object
         let isPowerSave = false;
-        let isPro = localStorage.getItem('isPro') === 'true';
-        let adInterval = null;
-        const PRO_PRODUCT_ID = 'com.master8383.sethomegohome.prounlock';
         const CACHE_NAME = 'set-home-v46';
 
         const translations = {
@@ -1245,10 +1207,6 @@
                 sosMsg: "My current location: ",
                 offlineMap: "📥 Offline Map",
                 powerSave: "🔋 PowerSave",
-                goPro: "🚀 Go Pro",
-                removeAds: "Remove Ads & Unlock All Features",
-                proActive: "PRO Active",
-                mapLockedMsg: "The Map is a PRO feature. Upgrade to PRO to unlock the map and remove all ads!",
                 downloadTitle: "Offline Map",
                 downloadDesc: "Download map tiles around current location for offline use.",
                 radius: "KM Radius",
@@ -1307,10 +1265,6 @@
                 sosMsg: "Mijn huidige locatie: ",
                 offlineMap: "📥 Offline Kaart",
                 powerSave: "🔋 PowerSave",
-                goPro: "🚀 Word Pro",
-                removeAds: "Verwijder Ads & Ontgrendel Alles",
-                proActive: "PRO Actief",
-                mapLockedMsg: "De kaart is een PRO-functie. Word PRO om de kaart te ontgrendelen en alle advertenties te verwijderen!",
                 downloadTitle: "Offline Kaart",
                 downloadDesc: "Download de kaart rondom je huidige locatie voor offline gebruik.",
                 radius: "KM Straal",
@@ -1369,10 +1323,6 @@
                 sosMsg: "Mein Standort: ",
                 offlineMap: "📥 Offline Karte",
                 powerSave: "🔋 PowerSave",
-                goPro: "🚀 Pro werden",
-                removeAds: "Werbung entfernen & alle Funktionen freischalten",
-                proActive: "PRO Aktiv",
-                mapLockedMsg: "Die Karte ist eine PRO-Funktion. Upgrade auf PRO, um die Karte freizuschalten und alle Anzeigen te entfernen!",
                 downloadTitle: "Offline Karte",
                 downloadDesc: "Kartenkacheln für Offline-Nutzung herunterladen.",
                 radius: "KM Radius",
@@ -1567,7 +1517,7 @@
                 time: "Czas",
                 minutes: "minut",
                 startNew: "Nowy Trip",
-                install: "📱 Zainstaluj",
+                install: "📱 Zainstaluj App",
                 helpTitle: "Jak to działa",
                 helpSteps: [
                     "<strong>1. Ustaw Dom:</strong> Naciśnij to przy aucie, namiocie lub tym jednym drzewie (którego i tak nie zapamiętasz).",
@@ -2008,9 +1958,6 @@
         const confirmMsg = document.getElementById('confirm-msg');
         const confirmYesBtn = document.getElementById('confirm-yes-btn');
         const confirmNoBtn = document.getElementById('confirm-no-btn');
-        const goProBtn = document.getElementById('go-pro-btn');
-        const proBadge = document.getElementById('pro-badge');
-        const adBanner = document.getElementById('ad-banner');
         const distLabel = document.getElementById('dist-label');
         const mapDistLabel = document.getElementById('map-dist-label');
         const chooseNavTitle = document.getElementById('choose-nav-title');
@@ -2046,7 +1993,6 @@
 
         function updateUI() {
             const t = translations[currentLang];
-            updateProUI();
             goHomeBtn.innerText = t.goHome;
             if (!homeLat) {
                 setHomeBtn.innerText = t.setHome;
@@ -2128,103 +2074,8 @@
             langOverlay.style.display = 'none';
         });
 
-        function updateProUI() {
-            const t = translations[currentLang];
-            if (isPro) {
-                goProBtn.style.display = 'none';
-                proBadge.style.display = 'inline-block';
-                
-                // Stop aggressive ads if Pro
-                if (adInterval) {
-                    clearInterval(adInterval);
-                    adInterval = null;
-                    console.log("AdMob: Aggressive ads disabled (PRO)");
-                }
-            } else {
-                goProBtn.style.display = 'block';
-                goProBtn.innerText = t.goPro || "🚀 Go Pro";
-                proBadge.style.display = 'none';
-
-                // Start ads if not already running
-                if (!adInterval) {
-                    console.log("AdMob: Starting ads (90s interval)");
-                    adInterval = setInterval(() => {
-                        showInterstitialAd();
-                    }, 90000);
-                }
-            }
-        }
-
-        function showInterstitialAd() {
-            if (isPro) return;
-            console.log("AdMob: Triggering Interstitial Ad (90s interval)");
-            
-            // Real Capacitor AdMob implementation:
-            if (window.Capacitor && window.Capacitor.Plugins.AdMob) {
-                const AdMob = window.Capacitor.Plugins.AdMob;
-                AdMob.showInterstitial();
-            }
-        }
-
-        // --- Store (In-App Purchase) Integration ---
-        function initStore() {
-            if (!window.store) {
-                console.log("Store: Plugin not available (Web/PWA mode). Simulation mode active.");
-                return;
-            }
-
-            // Register the Pro Unlock product
-            store.register({
-                id: PRO_PRODUCT_ID,
-                type: store.NON_CONSUMABLE
-            });
-
-            // Handle successful purchase
-            store.when(PRO_PRODUCT_ID).approved((p) => {
-                p.verify();
-            });
-
-            store.when(PRO_PRODUCT_ID).verified((p) => {
-                p.finish();
-                isPro = true;
-                localStorage.setItem('isPro', 'true');
-                updateProUI();
-                const t = translations[currentLang];
-                customAlert(t.proActive || "PRO Active!");
-            });
-
-            // Error handling
-            store.error((error) => {
-                console.error("Store Error: " + error.message);
-            });
-
-            store.refresh();
-        }
-
-        goProBtn.addEventListener('click', async () => {
-            playClickSound();
-            const t = translations[currentLang];
-            const confirmPro = await customConfirm(t.removeAds || "Remove Ads & Unlock All Features?");
-            
-            if (confirmPro) {
-                if (window.store) {
-                    // Real In-App Purchase logic
-                    store.order(PRO_PRODUCT_ID);
-                } else {
-                    // Fallback to simulation for web testing
-                    console.log("Store: Simulating purchase...");
-                    isPro = true;
-                    localStorage.setItem('isPro', 'true');
-                    updateProUI();
-                    customAlert(t.proActive || "PRO Active (Simulated)!");
-                }
-            }
-        });
-
-        // Initialize UI and Store
+        // Initialize UI
         updateUI();
-        initStore();
-        showInterstitialAd(); // Startup ad
         renderLangList();
 
         // Start background location tracking immediately
@@ -2558,16 +2409,8 @@
             startNavigation();
         });
 
-        selectMapBtn.addEventListener('click', async () => {
+        selectMapBtn.addEventListener('click', () => {
             playClickSound();
-            if (!isPro) {
-                const t = translations[currentLang];
-                const upgrade = await customConfirm(t.mapLockedMsg || "Map is a PRO feature. Upgrade now?");
-                if (upgrade) {
-                    goProBtn.click();
-                }
-                return;
-            }
             navigationType = 'map';
             showScreen(mapScreen);
             startNavigation();
@@ -2585,9 +2428,6 @@
         }
 
         function startNavigation() {
-            if (!isPro) {
-                showInterstitialAd();
-            }
             startTime = new Date();
             arrivalTriggered = false;
             
