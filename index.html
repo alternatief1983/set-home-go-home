@@ -68,17 +68,35 @@
         }
 
         /* Home Screen */
-        .donation-btn {
-            position: absolute;
-            top: 20px;
-            text-decoration: none;
-            color: var(--white);
-            font-size: 1.1rem;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 10;
+        .pro-badge {
+            display: none;
+            background: linear-gradient(45deg, #ffd700, #ff8c00);
+            color: black;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-left: 5px;
+            vertical-align: middle;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .go-pro-btn {
+            background: linear-gradient(45deg, #ffd700, #ff8c00);
+            color: black;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 35px;
+            font-weight: bold;
+            font-size: 1.6rem;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 6px 25px rgba(255, 215, 0, 0.5);
+            transition: transform 0.2s;
+        }
+
+        .go-pro-btn:active {
+            transform: scale(0.95);
         }
 
         #install-btn {
@@ -968,9 +986,10 @@
 <body>
     <!-- Home Screen -->
     <div id="home-screen" class="screen active">
-        <a id="donation-link" href="https://paypal.me/Master8383" target="_blank" rel="noopener noreferrer" class="donation-btn">
-            If you like the app<br>☕ Buy me a coffee<br>@Master8383
-        </a>
+        <div style="position: absolute; top: 120px; z-index: 10; width: 100%; display: flex; justify-content: center; align-items: center;">
+            <span id="pro-badge" class="pro-badge">PRO</span>
+            <button id="go-pro-btn" class="go-pro-btn">🚀 Go Pro</button>
+        </div>
         
         <div class="btn-container">
             <button id="go-home-btn" class="circle-btn">Go Home</button>
@@ -1169,6 +1188,9 @@
         let userPath = []; // To store the breadcrumb trail
         let polyline = null; // The Leaflet polyline object
         let isPowerSave = false;
+        let isPro = localStorage.getItem('isPro') === 'true';
+        let adInterval = null;
+        const PRO_PRODUCT_ID = 'com.master8383.sethomegohome.prounlock';
         const CACHE_NAME = 'set-home-v46';
 
         const translations = {
@@ -1188,7 +1210,6 @@
                 minutes: "minutes",
                 startNew: "Start New Trip",
                 install: "📱 Install App",
-                coffee: "If you like the app<br>☕ Buy me a coffee<br>@Master8383",
                 helpTitle: "How it works (for humans)",
                 helpSteps: [
                     "<strong>1. Set Home:</strong> Tap this at your car, tent, or that one tree you think you'll remember (you won't).",
@@ -1224,6 +1245,10 @@
                 sosMsg: "My current location: ",
                 offlineMap: "📥 Offline Map",
                 powerSave: "🔋 PowerSave",
+                goPro: "🚀 Go Pro",
+                removeAds: "Remove Ads & Unlock All Features",
+                proActive: "PRO Active",
+                mapLockedMsg: "The Map is a PRO feature. Upgrade to PRO to unlock the map and remove all ads!",
                 downloadTitle: "Offline Map",
                 downloadDesc: "Download map tiles around current location for offline use.",
                 radius: "KM Radius",
@@ -1247,7 +1272,6 @@
                 minutes: "minuten",
                 startNew: "Nieuwe Trip",
                 install: "📱 Installeer App",
-                coffee: "Vind je de app leuk?<br>☕ Koop een koffie<br>@Master8383",
                 helpTitle: "Hoe het werkt",
                 helpSteps: [
                     "<strong>1. Stel Huis in:</strong> Tik hier bij je auto, tent, of die ene boom die je denkt te onthouden (dat lukt niet).",
@@ -1283,6 +1307,10 @@
                 sosMsg: "Mijn huidige locatie: ",
                 offlineMap: "📥 Offline Kaart",
                 powerSave: "🔋 PowerSave",
+                goPro: "🚀 Word Pro",
+                removeAds: "Verwijder Ads & Ontgrendel Alles",
+                proActive: "PRO Actief",
+                mapLockedMsg: "De kaart is een PRO-functie. Word PRO om de kaart te ontgrendelen en alle advertenties te verwijderen!",
                 downloadTitle: "Offline Kaart",
                 downloadDesc: "Download de kaart rondom je huidige locatie voor offline gebruik.",
                 radius: "KM Straal",
@@ -1306,7 +1334,6 @@
                 minutes: "Minuten",
                 startNew: "Neuer Trip",
                 install: "📱 App installieren",
-                coffee: "Gefällt dir de App?<br>☕ Kaffee spendieren<br>@Master8383",
                 helpTitle: "Wie es funktioniert",
                 helpSteps: [
                     "<strong>1. Heimat setzen:</strong> Tippe hier bei deinem Auto, Zelt oder dem Baum, den du dir merken willst (wirst du nie).",
@@ -1342,6 +1369,10 @@
                 sosMsg: "Mein Standort: ",
                 offlineMap: "📥 Offline Karte",
                 powerSave: "🔋 PowerSave",
+                goPro: "🚀 Pro werden",
+                removeAds: "Werbung entfernen & alle Funktionen freischalten",
+                proActive: "PRO Aktiv",
+                mapLockedMsg: "Die Karte ist eine PRO-Funktion. Upgrade auf PRO, um die Karte freizuschalten und alle Anzeigen te entfernen!",
                 downloadTitle: "Offline Karte",
                 downloadDesc: "Kartenkacheln für Offline-Nutzung herunterladen.",
                 radius: "KM Radius",
@@ -1365,7 +1396,6 @@
                 minutes: "minutes",
                 startNew: "Nouveau Trip",
                 install: "📱 Installer l'App",
-                coffee: "Vous aimez l'app ?<br>☕ Offrez un café<br>@Master8383",
                 helpTitle: "Comment ça marche",
                 helpSteps: [
                     "<strong>1. Définir Home :</strong> Appuyez ici à votre voiture, tente ou cet arbre que vous pensez retenir (non).",
@@ -1424,7 +1454,6 @@
                 minutes: "minutos",
                 startNew: "Nuevo Trip",
                 install: "📱 Instalar App",
-                coffee: "¿Te gusta la app?<br>☕ Invítame a un café<br>@Master8383",
                 helpTitle: "Cómo funciona",
                 helpSteps: [
                     "<strong>1. Fijar Casa:</strong> Pulsa aquí en tu coche, tienda o ese árbol que crees que recordarás (no será así).",
@@ -1482,7 +1511,6 @@
                 minutes: "minuti",
                 startNew: "Nuovo Trip",
                 install: "📱 Installa App",
-                coffee: "Ti piace l'app?<br>☕ Offrimi un caffè<br>@Master8383",
                 helpTitle: "Come funziona",
                 helpSteps: [
                     "<strong>1. Fissa Casa:</strong> Premi qui alla tua auto, tenda o quell'albero che pensi di ricordare (non succederà).",
@@ -1539,8 +1567,7 @@
                 time: "Czas",
                 minutes: "minut",
                 startNew: "Nowy Trip",
-                install: "📱 Zainstaluj App",
-                coffee: "Lubisz aplikację?<br>☕ Postaw kawę<br>@Master8383",
+                install: "📱 Zainstaluj",
                 helpTitle: "Jak to działa",
                 helpSteps: [
                     "<strong>1. Ustaw Dom:</strong> Naciśnij to przy aucie, namiocie lub tym jednym drzewie (którego i tak nie zapamiętasz).",
@@ -1598,7 +1625,6 @@
                 minutes: "minutos",
                 startNew: "Nova Trip",
                 install: "📱 Instalar App",
-                coffee: "Gosta da app?<br>☕ Pague um café<br>@Master8383",
                 helpTitle: "Como funciona",
                 helpSteps: [
                     "<strong>1. Definir Casa:</strong> Prima aqui no seu carro, tenda ou naquela árvore que acha que vai lembrar (não vai).",
@@ -1656,7 +1682,6 @@
                 minutes: "dakika",
                 startNew: "Yeni Gezi",
                 install: "📱 Uygulamayı Yükle",
-                coffee: "Uygulamayı sevdiniz mi?<br>☕ Bir kahve ısmarlayın<br>@Master8383",
                 helpTitle: "Nasıl Çalışır?",
                 helpSteps: [
                     "<strong>1. Evi Ayarla:</strong> Araba, çadır weya o hatırlayacağınızı sandığınız ağaçta (hatırlamayacaksınız) buna basın.",
@@ -1714,7 +1739,6 @@
                 minutes: "минут",
                 startNew: "Новый поход",
                 install: "📱 Установить приложение",
-                coffee: "Нравится приложение?<br>☕ Купи мне кофе<br>@Master8383",
                 helpTitle: "Как это работает",
                 helpSteps: [
                     "<strong>1. Установить Дом:</strong> Нажми здесь у машины, палатки или того дерева (которое ты не запомнишь).",
@@ -1772,7 +1796,6 @@
                 minutes: "دقائق",
                 startNew: "رحلة جديدة",
                 install: "📱 تثبيت التطبيق",
-                coffee: "أعجبك التطبيق؟<br>☕ اشترِ لي قهوة<br>@Master8383",
                 helpTitle: "كيف يعمل التطبيق",
                 helpSteps: [
                     "<strong>1. تحديد المنزل:</strong> اضغط هنا عند سيارتك أو خيمتك أو تلك الشجرة التي تظن أنك ستتذكرها (لن تفعل).",
@@ -1830,7 +1853,6 @@
                 minutes: "मिनट",
                 startNew: "नई यात्रा",
                 install: "📱 ऐप इंस्टॉल करें",
-                coffee: "ऐप पसंद आया?<br>☕ कॉफी पिलाएँ<br>@Master8383",
                 helpTitle: "यह कैसे काम करता है",
                 helpSteps: [
                     "<strong>1. घर सेट करें:</strong> अपनी कार, टेंट या उस पेड़ के पास इसे दबाएँ जिसे आप याद रखेंगे (आप नहीं रखेंगे)।",
@@ -1888,7 +1910,6 @@
                 minutes: "分钟",
                 startNew: "开始新旅程",
                 install: "📱 安装应用",
-                coffee: "喜欢这个应用吗？<br>☕ 请我喝杯咖啡<br>@Master8383",
                 helpTitle: "使用说明",
                 helpSteps: [
                     "<strong>1. 设置起点：</strong> 在你的车、帐篷或某棵树旁点击此按钮（你肯定会忘在那儿）。",
@@ -1987,7 +2008,9 @@
         const confirmMsg = document.getElementById('confirm-msg');
         const confirmYesBtn = document.getElementById('confirm-yes-btn');
         const confirmNoBtn = document.getElementById('confirm-no-btn');
-        const donationLink = document.getElementById('donation-link');
+        const goProBtn = document.getElementById('go-pro-btn');
+        const proBadge = document.getElementById('pro-badge');
+        const adBanner = document.getElementById('ad-banner');
         const distLabel = document.getElementById('dist-label');
         const mapDistLabel = document.getElementById('map-dist-label');
         const chooseNavTitle = document.getElementById('choose-nav-title');
@@ -2023,6 +2046,7 @@
 
         function updateUI() {
             const t = translations[currentLang];
+            updateProUI();
             goHomeBtn.innerText = t.goHome;
             if (!homeLat) {
                 setHomeBtn.innerText = t.setHome;
@@ -2034,7 +2058,6 @@
             sosBtn.innerText = `🆘 ${t.sos || 'SOS'}`;
             startNewBtn.innerText = t.startNew;
             installBtn.innerText = t.install;
-            donationLink.innerHTML = t.coffee;
             closeHelp.innerText = t.gotIt;
             helpTitle.innerText = t.helpTitle;
             helpSteps.innerHTML = t.helpSteps.map(step => `<p>${step}</p>`).join('');
@@ -2105,8 +2128,103 @@
             langOverlay.style.display = 'none';
         });
 
-        // Initialize UI
+        function updateProUI() {
+            const t = translations[currentLang];
+            if (isPro) {
+                goProBtn.style.display = 'none';
+                proBadge.style.display = 'inline-block';
+                
+                // Stop aggressive ads if Pro
+                if (adInterval) {
+                    clearInterval(adInterval);
+                    adInterval = null;
+                    console.log("AdMob: Aggressive ads disabled (PRO)");
+                }
+            } else {
+                goProBtn.style.display = 'block';
+                goProBtn.innerText = t.goPro || "🚀 Go Pro";
+                proBadge.style.display = 'none';
+
+                // Start ads if not already running
+                if (!adInterval) {
+                    console.log("AdMob: Starting ads (90s interval)");
+                    adInterval = setInterval(() => {
+                        showInterstitialAd();
+                    }, 90000);
+                }
+            }
+        }
+
+        function showInterstitialAd() {
+            if (isPro) return;
+            console.log("AdMob: Triggering Interstitial Ad (90s interval)");
+            
+            // Real Capacitor AdMob implementation:
+            if (window.Capacitor && window.Capacitor.Plugins.AdMob) {
+                const AdMob = window.Capacitor.Plugins.AdMob;
+                AdMob.showInterstitial();
+            }
+        }
+
+        // --- Store (In-App Purchase) Integration ---
+        function initStore() {
+            if (!window.store) {
+                console.log("Store: Plugin not available (Web/PWA mode). Simulation mode active.");
+                return;
+            }
+
+            // Register the Pro Unlock product
+            store.register({
+                id: PRO_PRODUCT_ID,
+                type: store.NON_CONSUMABLE
+            });
+
+            // Handle successful purchase
+            store.when(PRO_PRODUCT_ID).approved((p) => {
+                p.verify();
+            });
+
+            store.when(PRO_PRODUCT_ID).verified((p) => {
+                p.finish();
+                isPro = true;
+                localStorage.setItem('isPro', 'true');
+                updateProUI();
+                const t = translations[currentLang];
+                customAlert(t.proActive || "PRO Active!");
+            });
+
+            // Error handling
+            store.error((error) => {
+                console.error("Store Error: " + error.message);
+            });
+
+            store.refresh();
+        }
+
+        goProBtn.addEventListener('click', async () => {
+            playClickSound();
+            const t = translations[currentLang];
+            const confirmPro = await customConfirm(t.removeAds || "Remove Ads & Unlock All Features?");
+            
+            if (confirmPro) {
+                if (window.store) {
+                    // Real In-App Purchase logic
+                    store.order(PRO_PRODUCT_ID);
+                } else {
+                    // Fallback to simulation for web testing
+                    console.log("Store: Simulating purchase...");
+                    isPro = true;
+                    localStorage.setItem('isPro', 'true');
+                    updateProUI();
+                    customAlert(t.proActive || "PRO Active (Simulated)!");
+                }
+            }
+        });
+
+        // Initialize UI and Store
         updateUI();
+        initStore();
+        showInterstitialAd(); // Startup ad
         renderLangList();
 
         // Start background location tracking immediately
@@ -2440,8 +2558,16 @@
             startNavigation();
         });
 
-        selectMapBtn.addEventListener('click', () => {
+        selectMapBtn.addEventListener('click', async () => {
             playClickSound();
+            if (!isPro) {
+                const t = translations[currentLang];
+                const upgrade = await customConfirm(t.mapLockedMsg || "Map is a PRO feature. Upgrade now?");
+                if (upgrade) {
+                    goProBtn.click();
+                }
+                return;
+            }
             navigationType = 'map';
             showScreen(mapScreen);
             startNavigation();
@@ -2459,6 +2585,9 @@
         }
 
         function startNavigation() {
+            if (!isPro) {
+                showInterstitialAd();
+            }
             startTime = new Date();
             arrivalTriggered = false;
             
