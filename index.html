@@ -957,6 +957,12 @@
             50% { transform: scale(1.3); box-shadow: 0 0 45px rgba(255, 77, 77, 0.8); }
             100% { transform: scale(1); box-shadow: 0 0 25px rgba(255, 77, 77, 1); }
         }
+
+        @keyframes pulse-yellow {
+            0% { transform: scale(1); box-shadow: 0 0 25px #ffeb3b; }
+            50% { transform: scale(1.3); box-shadow: 0 0 45px rgba(255, 235, 59, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 25px #ffeb3b; }
+        }
     </style>
 </head>
 <body>
@@ -1101,6 +1107,8 @@
             <span id="map-dist-label" style="font-weight: bold;">Distance</span>: <span id="map-distance-val">0</span> m<br>
             <span id="map-eta-display" style="opacity: 0.8; font-size: 0.9rem;">Time to Home: -- min</span>
         </div>
+        <button id="map-poi-btn" class="offline-btn">📍 Tussenstop</button>
+        <button id="powersave-btn" class="offline-btn">🔋 PowerSave</button>
         <button id="offline-map-btn" class="offline-btn">📥 Offline Map</button>
         <button id="sos-btn" class="sos-btn">🆘 SOS</button>
         <button id="map-stop-btn" class="stop-btn">STOP</button>
@@ -1143,6 +1151,8 @@
         // State variables
         let homeLat = null;
         let homeLon = null;
+        let waypointLat = null;
+        let waypointLon = null;
         let currentLat = null;
         let currentLon = null;
         let currentSpeed = null; // m/s
@@ -1155,8 +1165,11 @@
         let map = null;
         let userMarker = null;
         let homeMarker = null;
+        let waypointMarker = null;
         let userPath = []; // To store the breadcrumb trail
         let polyline = null; // The Leaflet polyline object
+        let isPowerSave = false;
+        const CACHE_NAME = 'set-home-v46';
 
         const translations = {
             en: {
@@ -1187,12 +1200,16 @@
                 close: "Close",
                 gotIt: "Got it!",
                 findPlaces: "Find Places",
+                waypoint: "Intermediate Stop",
                 locatingYou: "Locating you...",
                 searchingPoi: "Searching for nearby locations...",
                 noPoiFound: "No locations found within 3km.",
                 gpsError: "GPS error",
                 connError: "Connection error",
                 targetSet: "Target set to:",
+                waypointSet: "Intermediate stop set to:",
+                waypointReached: "Intermediate stop reached!",
+                continueToHome: "Continue to Home?",
                 confirmStop1: "Are you sure you want to stop? The trip will end and be cleared.",
                 confirmStop2: "Are you absolutely sure? You will need to 'Set Home' again.",
                 yes: "Yes",
@@ -1206,6 +1223,7 @@
                 sos: "SOS",
                 sosMsg: "My current location: ",
                 offlineMap: "📥 Offline Map",
+                powerSave: "🔋 PowerSave",
                 downloadTitle: "Offline Map",
                 downloadDesc: "Download map tiles around current location for offline use.",
                 radius: "KM Radius",
@@ -1241,12 +1259,16 @@
                 close: "Sluiten",
                 gotIt: "Begrepen!",
                 findPlaces: "Plaatsen Zoeken",
+                waypoint: "Tussenstop",
                 locatingYou: "Locatie bepalen...",
                 searchingPoi: "Zoeken naar plaatsen in de buurt...",
                 noPoiFound: "Geen plaatsen gevonden binnen 3km.",
                 gpsError: "GPS fout",
                 connError: "Verbindingsfout",
                 targetSet: "Doel ingesteld op:",
+                waypointSet: "Tussenstop ingesteld op:",
+                waypointReached: "Tussenstop bereikt!",
+                continueToHome: "Doorgaan naar Huis?",
                 confirmStop1: "Weet je zeker dat je wilt stoppen? De route wordt gewist.",
                 confirmStop2: "Heel zeker? Je moet daarna opnieuw je startpunt instellen.",
                 yes: "Ja",
@@ -1260,6 +1282,7 @@
                 sos: "SOS",
                 sosMsg: "Mijn huidige locatie: ",
                 offlineMap: "📥 Offline Kaart",
+                powerSave: "🔋 PowerSave",
                 downloadTitle: "Offline Kaart",
                 downloadDesc: "Download de kaart rondom je huidige locatie voor offline gebruik.",
                 radius: "KM Straal",
@@ -1284,9 +1307,9 @@
                 startNew: "Neuer Trip",
                 install: "📱 App installieren",
                 coffee: "Gefällt dir de App?<br>☕ Kaffee spendieren<br>@Master8383",
-                helpTitle: "Wie het funktioniert",
+                helpTitle: "Wie es funktioniert",
                 helpSteps: [
-                    "<strong>1. Heimat setzen:</strong> Tippe hier bei deinem Auto, Zelt oder dem Baum, den du dir merken willst (wirst du niet).",
+                    "<strong>1. Heimat setzen:</strong> Tippe hier bei deinem Auto, Zelt oder dem Baum, den du dir merken willst (wirst du nie).",
                     "<strong>2. Wandern:</strong> Geh wandern, verirr dich, jag ein Eichhörnchen. Wir urteilen nicht.",
                     "<strong>3. Nach Hause:</strong> Wenn du müde/hungrig bist, tippe hier. Folg dem Pfeil, als ginge es um dein Leben (könnte sein).",
                     "<strong>4. Grüner Pfeil:</strong> Du bist auf dem richtigen Weg. Weiter so, Held!",
@@ -1295,18 +1318,36 @@
                 close: "Schließen",
                 gotIt: "Verstanden!",
                 findPlaces: "Orte finden",
+                waypoint: "Zwischenstopp",
                 locatingYou: "Suche Standort...",
                 searchingPoi: "Suche Orte in der Nähe...",
-                noPoiFound: "Keine Orte im Umkreis van 3km gefunden.",
+                noPoiFound: "Keine Orte im Umkreis von 3km gefunden.",
                 gpsError: "GPS-Fehler",
                 connError: "Verbindungsfehler",
                 targetSet: "Ziel gesetzt auf:",
+                waypointSet: "Zwischenstopp gesetzt auf:",
+                waypointReached: "Zwischenstopp erreicht!",
+                continueToHome: "Weiter nach Hause?",
                 confirmStop1: "Bist du sicher? Der Trip wird beendet und gelöscht.",
                 confirmStop2: "Ganz sicher? Du musst den Startpunkt neu setzen.",
                 yes: "Ja",
                 no: "Nein",
                 ok: "OK",
-                selectLang: "Sprache wählen"
+                selectLang: "Sprache wählen",
+                chooseNav: "Navigation wählen",
+                compassView: "🧭 Kompass",
+                mapView: "🗺️ Karte",
+                cancel: "Abbrechen",
+                sos: "SOS",
+                sosMsg: "Mein Standort: ",
+                offlineMap: "📥 Offline Karte",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "Offline Karte",
+                downloadDesc: "Kartenkacheln für Offline-Nutzung herunterladen.",
+                radius: "KM Radius",
+                downloading: "Lade: ",
+                downloadDone: "Download abgeschlossen!",
+                downloadError: "Download fehlgeschlagen."
             },
             fr: {
                 goHome: "Rentrer",
@@ -1336,18 +1377,36 @@
                 close: "Fermer",
                 gotIt: "Compris !",
                 findPlaces: "Trouver lieux",
+                waypoint: "Etape",
                 locatingYou: "Localisation...",
                 searchingPoi: "Recherche de lieux à proximité...",
                 noPoiFound: "Aucun lieu trouvé à moins de 3km.",
                 gpsError: "Erreur GPS",
                 connError: "Erreur connexion",
                 targetSet: "Cible définie sur :",
+                waypointSet: "Etape définie sur :",
+                waypointReached: "Etape atteinte !",
+                continueToHome: "Continuer vers Home ?",
                 confirmStop1: "Voulez-vous vraiment arrêter ? Le trajet sera effacé.",
                 confirmStop2: "Sûr ? Vous devrez redéfinir votre point de départ.",
                 yes: "Oui",
                 no: "Non",
                 ok: "OK",
-                selectLang: "Choisir langue"
+                selectLang: "Choisir langue",
+                chooseNav: "Choisir navigation",
+                compassView: "🧭 Boussole",
+                mapView: "🗺️ Carte",
+                cancel: "Annuler",
+                sos: "SOS",
+                sosMsg: "Ma position : ",
+                offlineMap: "📥 Carte hors ligne",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "Carte hors ligne",
+                downloadDesc: "Télécharger les tuiles de la carte pour une utilisation hors ligne.",
+                radius: "KM de rayon",
+                downloading: "Téléchargement : ",
+                downloadDone: "Téléchargement terminé !",
+                downloadError: "Échec du téléchargement."
             },
             es: {
                 goHome: "Ir a Casa",
@@ -1383,12 +1442,29 @@
                 gpsError: "Error GPS",
                 connError: "Error de conexión",
                 targetSet: "Objetivo fijado en:",
+                waypointSet: "Parada intermedia fijada en:",
+                waypointReached: "¡Parada intermedia alcanzada!",
+                continueToHome: "¿Continuar a casa?",
                 confirmStop1: "¿Seguro que quieres parar? Se borrará la ruta.",
                 confirmStop2: "¿Muy seguro? Tendrás que fijar el punto de inicio de nuevo.",
                 yes: "Sí",
                 no: "No",
                 ok: "OK",
-                selectLang: "Elegir idioma"
+                selectLang: "Elegir idioma",
+                chooseNav: "Elegir navegación",
+                compassView: "🧭 Brújula",
+                mapView: "🗺️ Mapa",
+                cancel: "Cancelar",
+                sos: "SOS",
+                sosMsg: "Mi ubicación: ",
+                offlineMap: "📥 Mapa offline",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "Mapa offline",
+                downloadDesc: "Descargar mapas para uso offline.",
+                radius: "KM de radio",
+                downloading: "Descargando: ",
+                downloadDone: "¡Descarga completa!",
+                downloadError: "Error en la descarga."
             },
             it: {
                 goHome: "Vai a Casa",
@@ -1424,12 +1500,29 @@
                 gpsError: "Errore GPS",
                 connError: "Errore connessione",
                 targetSet: "Obiettivo fissato su:",
+                waypointSet: "Tappa intermedia fissata su:",
+                waypointReached: "Tappa raggiunta!",
+                continueToHome: "Continuare verso casa?",
                 confirmStop1: "Vuoi davvero fermarti? Il percorso verrà cancellato.",
                 confirmStop2: "Sicuro? Dovrai fissare di nuovo il punto di partenza.",
                 yes: "Sì",
                 no: "No",
                 ok: "OK",
-                selectLang: "Scegli lingua"
+                selectLang: "Scegli lingua",
+                chooseNav: "Scegli navigazione",
+                compassView: "🧭 Bussola",
+                mapView: "🗺️ Mappa",
+                cancel: "Annulla",
+                sos: "SOS",
+                sosMsg: "Mia posizione: ",
+                offlineMap: "📥 Mappa offline",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "Mappa offline",
+                downloadDesc: "Scarica mappe per uso offline.",
+                radius: "KM di raggio",
+                downloading: "Download: ",
+                downloadDone: "Download completato!",
+                downloadError: "Download fallito."
             },
             pl: {
                 goHome: "Do Domu",
@@ -1465,12 +1558,29 @@
                 gpsError: "Błąd GPS",
                 connError: "Błąd połączenia",
                 targetSet: "Cel ustawiony na:",
+                waypointSet: "Przystanek ustawiony na:",
+                waypointReached: "Przystanek osiągnięty!",
+                continueToHome: "Kontynuować do domu?",
                 confirmStop1: "Czy na pewno chcesz przerwać? Trasa zostanie wyczyszczona.",
                 confirmStop2: "Na pewno? Będziesz musiał ponownie ustawić punkt startu.",
                 yes: "Tak",
                 no: "Nie",
                 ok: "OK",
-                selectLang: "Wybierz język"
+                selectLang: "Wybierz język",
+                chooseNav: "Wybierz nawigację",
+                compassView: "🧭 Kompas",
+                mapView: "🗺️ Mapa",
+                cancel: "Anuluj",
+                sos: "SOS",
+                sosMsg: "Moja lokalizacja: ",
+                offlineMap: "📥 Mapa offline",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "Mapa offline",
+                downloadDesc: "Pobierz mapy do użytku offline.",
+                radius: "KM promień",
+                downloading: "Pobieranie: ",
+                downloadDone: "Pobieranie zakończone!",
+                downloadError: "Pobieranie nieudane."
             },
             pt: {
                 goHome: "Ir para Casa",
@@ -1506,12 +1616,29 @@
                 gpsError: "Erro GPS",
                 connError: "Erro de ligação",
                 targetSet: "Alvo definido para:",
+                waypointSet: "Paragem intermédia para:",
+                waypointReached: "Paragem alcançada!",
+                continueToHome: "Continuar para casa?",
                 confirmStop1: "Tem a certeza que quer parar? O trajeto será apagado.",
                 confirmStop2: "Absoluta? Terá de definir o ponto de partida novamente.",
                 yes: "Sim",
                 no: "Não",
                 ok: "OK",
-                selectLang: "Escolher idioma"
+                selectLang: "Escolher idioma",
+                chooseNav: "Escolher navegação",
+                compassView: "🧭 Bússola",
+                mapView: "🗺️ Mapa",
+                cancel: "Cancelar",
+                sos: "SOS",
+                sosMsg: "A minha localização: ",
+                offlineMap: "📥 Mapa offline",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "Mapa offline",
+                downloadDesc: "Descarregar mapas para uso offline.",
+                radius: "KM de raio",
+                downloading: "A descarregar: ",
+                downloadDone: "Download concluído!",
+                downloadError: "Download falhou."
             },
             tr: {
                 goHome: "Eve Git",
@@ -1547,12 +1674,29 @@
                 gpsError: "GPS hatası",
                 connError: "Bağlantı hatası",
                 targetSet: "Hedef belirlendi:",
+                waypointSet: "Ara durak belirlendi:",
+                waypointReached: "Ara durağa varıldı!",
+                continueToHome: "Eve devam edilsin mi?",
                 confirmStop1: "Durdurmak istediğinize emin misiniz? Gezi silinecektir.",
                 confirmStop2: "Tamamen emin misiniz? Başlangıç noktasını tekrar ayarlamanız gerekecek.",
                 yes: "Evet",
                 no: "Hayır",
                 ok: "Tamam",
-                selectLang: "Dil Seçin"
+                selectLang: "Dil Seçin",
+                chooseNav: "Navigasyon seçin",
+                compassView: "🧭 Pusula",
+                mapView: "🗺️ Harita",
+                cancel: "İptal",
+                sos: "SOS",
+                sosMsg: "Konumum: ",
+                offlineMap: "📥 Çevrimdışı Harita",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "Çevrimdışı Harita",
+                downloadDesc: "Haritayı çevrimdışı kullanım için indir.",
+                radius: "KM Yarıçap",
+                downloading: "İndiriliyor: ",
+                downloadDone: "İndirme tamamlandı!",
+                downloadError: "İndirme başarısız."
             },
             ru: {
                 goHome: "Домой",
@@ -1588,12 +1732,29 @@
                 gpsError: "Ошибка GPS",
                 connError: "Ошибка соединения",
                 targetSet: "Цель установлена:",
+                waypointSet: "Промежуточная точка:",
+                waypointReached: "Точка достигнута!",
+                continueToHome: "Продолжить домой?",
                 confirmStop1: "Уверены, что хотите прервать? Маршрут будет удален.",
                 confirmStop2: "Точно? Придется заново устанавливать точку старта.",
                 yes: "Да",
                 no: "Нет",
                 ok: "OK",
-                selectLang: "Выбрать язык"
+                selectLang: "Выбрать язык",
+                chooseNav: "Выбрать навигацию",
+                compassView: "🧭 Компас",
+                mapView: "🗺️ Карта",
+                cancel: "Отмена",
+                sos: "SOS",
+                sosMsg: "Мое местоположение: ",
+                offlineMap: "📥 Оффлайн карта",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "Оффлайн карта",
+                downloadDesc: "Скачать карту для оффлайн использования.",
+                radius: "КМ радиус",
+                downloading: "Загрузка: ",
+                downloadDone: "Загрузка завершена!",
+                downloadError: "Ошибка загрузки."
             },
             ar: {
                 goHome: "العودة للمنزل",
@@ -1629,12 +1790,29 @@
                 gpsError: "خطأ في GPS",
                 connError: "خطأ في الاتصال",
                 targetSet: "تم تحديد الهدف إلى:",
+                waypointSet: "تم تحديد نقطة التوقف:",
+                waypointReached: "تم الوصول لنقطة التوقف!",
+                continueToHome: "الاستمرار للمنزل؟",
                 confirmStop1: "هل أنت متأكد من الإيقاف؟ سيتم مسح الرحلة.",
                 confirmStop2: "هل أنت متأكد تماماً؟ ستحتاج لتحديد نقطة البداية مجدداً.",
                 yes: "نعم",
                 no: "لا",
                 ok: "موافق",
-                selectLang: "اختر اللغة"
+                selectLang: "اختر اللغة",
+                chooseNav: "اختر الملاحة",
+                compassView: "🧭 بوصلة",
+                mapView: "🗺️ خريطة",
+                cancel: "إلغاء",
+                sos: "SOS",
+                sosMsg: "موقعي الحالي: ",
+                offlineMap: "📥 خريطة أوفلاين",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "خريطة أوفلاين",
+                downloadDesc: "تحميل الخريطة للاستخدام بدون إنترنت.",
+                radius: "كيلومتر قطر",
+                downloading: "جاري التحميل: ",
+                downloadDone: "تم التحميل!",
+                downloadError: "فشل التحميل."
             },
             hi: {
                 goHome: "घर जाएँ",
@@ -1668,14 +1846,31 @@
                 searchingPoi: "आस-पास की जगहें ढूँढ रहे हैं...",
                 noPoiFound: "3 किमी के भीतर कोई जगह नहीं मिली।",
                 gpsError: "जीपीएस त्रुटि",
-                connError: "कनेक्शन त्रुटि",
+                connError: "जीपीएस त्रुटि",
                 targetSet: "लक्षय यहाँ सेट है:",
+                waypointSet: "रास्ते का पड़ाव सेट है:",
+                waypointReached: "पड़ाव पहुँच गए!",
+                continueToHome: "घर जारी रखें?",
                 confirmStop1: "क्या आप वाकई रुकना चाहते हैं? यात्रा साफ़ हो जाएगी।",
                 confirmStop2: "क्या आप पूरी तरह से आश्वस्त हैं? आपको फिर से घर सेट करना होगा।",
                 yes: "हाँ",
                 no: "नहीं",
                 ok: "ठीक है",
-                selectLang: "भाषा चुनें"
+                selectLang: "भाषा चुनें",
+                chooseNav: "नेविगेशन चुनें",
+                compassView: "🧭 कम्पास",
+                mapView: "🗺️ नक्शा",
+                cancel: "रद्द करें",
+                sos: "SOS",
+                sosMsg: "मेरा स्थान: ",
+                offlineMap: "📥 ऑफलाइन नक्शा",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "ऑफलाइन नक्शा",
+                downloadDesc: "ऑफलाइन उपयोग के लिए नक्शा डाउनलोड करें।",
+                radius: "KM त्रिज्या",
+                downloading: "डाउनलोड हो रहा है: ",
+                downloadDone: "डाउनलोड पूर्ण!",
+                downloadError: "डाउनलोड विफल।"
             },
             zh: {
                 goHome: "回家",
@@ -1711,12 +1906,29 @@
                 gpsError: "GPS错误",
                 connError: "连接错误",
                 targetSet: "目标设置为：",
+                waypointSet: "已设置中途停靠点：",
+                waypointReached: "已到达中途停靠点！",
+                continueToHome: "继续回家？",
                 confirmStop1: "确定要停止吗？行程将被清除。",
                 confirmStop2: "真的确定吗？你需要重新设置起点。",
                 yes: "是",
                 no: "否",
                 ok: "确定",
-                selectLang: "选择语言"
+                selectLang: "选择语言",
+                chooseNav: "选择导航方式",
+                compassView: "🧭 指南针",
+                mapView: "🗺️ 地图",
+                cancel: "取消",
+                sos: "SOS",
+                sosMsg: "我的当前位置：",
+                offlineMap: "📥 离线地图",
+                powerSave: "🔋 PowerSave",
+                downloadTitle: "离线地图",
+                downloadDesc: "下载当前位置周围的地图切片以供离线使用。",
+                radius: "公里半径",
+                downloading: "正在下载：",
+                downloadDone: "下载完成！",
+                downloadError: "下载失败。"
             }
         };
 
@@ -1759,6 +1971,7 @@
         const helpTitle = document.getElementById('help-title');
         const helpSteps = document.getElementById('help-steps');
         const openPoiBtn = document.getElementById('open-poi');
+        const mapPoiBtn = document.getElementById('map-poi-btn');
         const closePoiBtn = document.getElementById('close-poi');
         const poiOverlay = document.getElementById('poi-overlay');
         const poiList = document.getElementById('poi-list');
@@ -1791,6 +2004,7 @@
 
         // Offline Map Elements
         const offlineMapBtn = document.getElementById('offline-map-btn');
+        const powerSaveBtn = document.getElementById('powersave-btn');
         const downloadOverlay = document.getElementById('download-overlay');
         const closeDownloadBtn = document.getElementById('close-download');
         const downloadOptBtns = document.querySelectorAll('.download-opt-btn');
@@ -1837,6 +2051,9 @@
             completeTitle.innerText = t.tripComplete;
             timeLabel.innerText = t.time;
             minLabel.innerText = t.minutes;
+            mapPoiBtn.innerText = "📍 " + (t.waypoint || t.findPlaces);
+            powerSaveBtn.innerText = t.powerSave || "🔋 PowerSave";
+            offlineMapBtn.innerText = t.offlineMap;
 
             // Update POI category labels
             const poiLabels = {
@@ -1976,6 +2193,12 @@
             fetchPOIs();
         });
 
+        mapPoiBtn.addEventListener('click', () => {
+            playClickSound();
+            poiOverlay.style.display = 'flex';
+            fetchPOIs();
+        });
+
         closePoiBtn.addEventListener('click', () => {
             playClickSound();
             poiOverlay.style.display = 'none';
@@ -2031,13 +2254,26 @@
                             `;
                             div.onclick = () => {
                                 playClickSound();
-                                homeLat = poi.lat;
-                                homeLon = poi.lon;
-                                setHomeBtn.classList.add('home-set');
-                                openPoiBtn.classList.add('home-set');
-                                setHomeBtn.innerText = `${t.homeSetPoi}: ${currentCategory.toUpperCase()}`;
-                                poiOverlay.style.display = 'none';
-                                customAlert(`${t.targetSet} ${name}`);
+                                if (watchId !== null) {
+                                    // Already navigating - set as waypoint
+                                    waypointLat = poi.lat;
+                                    waypointLon = poi.lon;
+                                    poiOverlay.style.display = 'none';
+                                    customAlert(`${t.waypointSet} ${name}`);
+
+                                    if (navigationType === 'map' && map) {
+                                        updateMapMarkers();
+                                    }
+                                } else {
+                                    // Not navigating yet - set as home destination
+                                    homeLat = poi.lat;
+                                    homeLon = poi.lon;
+                                    setHomeBtn.classList.add('home-set');
+                                    openPoiBtn.classList.add('home-set');
+                                    setHomeBtn.innerText = `${t.homeSetPoi}: ${currentCategory.toUpperCase()}`;
+                                    poiOverlay.style.display = 'none';
+                                    customAlert(`${t.targetSet} ${name}`);
+                                }
                             };
                             poiList.appendChild(div);
                         });
@@ -2273,11 +2509,17 @@
             
             map = L.map('map').setView([currentLat || 0, currentLon || 0], 15);
             
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OSM'
             }).addTo(map);
 
-            // Large Glowing Home Icon
+            updateMapMarkers();
+        }
+
+        function updateMapMarkers() {
+            if (!map) return;
+
+            // Home Icon
             const homeIcon = L.divIcon({
                 className: 'home-marker-marker',
                 html: `
@@ -2289,7 +2531,19 @@
                 iconAnchor: [30, 30]
             });
 
-            // Directional User Icon
+            // Waypoint Icon (Yellow)
+            const waypointIcon = L.divIcon({
+                className: 'waypoint-marker-marker',
+                html: `
+                    <div class="home-marker-container">
+                        <div class="home-marker-dot" style="background: #ffeb3b; box-shadow: 0 0 25px #ffeb3b, 0 0 50px rgba(255, 235, 59, 0.6); animation: pulse-yellow 1.5s infinite;"></div>
+                    </div>
+                `,
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+
+            // User Icon
             const userIcon = L.divIcon({
                 className: 'user-direction-marker',
                 html: `
@@ -2302,10 +2556,21 @@
                 iconAnchor: [20, 20]
             });
 
+            if (homeMarker) map.removeLayer(homeMarker);
+            if (waypointMarker) map.removeLayer(waypointMarker);
+            if (userMarker) map.removeLayer(userMarker);
+            if (polyline) map.removeLayer(polyline);
+
             homeMarker = L.marker([homeLat, homeLon], {icon: homeIcon}).addTo(map);
+            
+            if (waypointLat && waypointLon) {
+                waypointMarker = L.marker([waypointLat, waypointLon], {icon: waypointIcon}).addTo(map);
+            } else {
+                waypointMarker = null;
+            }
+
             userMarker = L.marker([currentLat || 0, currentLon || 0], {icon: userIcon}).addTo(map);
             
-            // Initialize breadcrumb trail (polyline)
             polyline = L.polyline(userPath, {
                 color: 'var(--blue)',
                 weight: 5,
@@ -2313,17 +2578,23 @@
                 dashArray: '10, 10'
             }).addTo(map);
 
-            if (currentLat && currentLon) {
-                const group = new L.featureGroup([homeMarker, userMarker, polyline]);
-                map.fitBounds(group.getBounds().pad(0.2));
-            }
+            const layers = [homeMarker, userMarker];
+            if (waypointMarker) layers.push(waypointMarker);
+            
+            const group = new L.featureGroup(layers);
+            map.fitBounds(group.getBounds().pad(0.2));
         }
 
         function updateNavigation() {
             if (currentLat === null || homeLat === null) return;
 
             const t = translations[currentLang];
-            const distance = getDistance(currentLat, currentLon, homeLat, homeLon);
+            
+            // Determine current target (waypoint or home)
+            const targetLat = waypointLat !== null ? waypointLat : homeLat;
+            const targetLon = waypointLon !== null ? waypointLon : homeLon;
+            
+            const distance = getDistance(currentLat, currentLon, targetLat, targetLon);
             
             // Add current location to breadcrumb trail
             if (userPath.length === 0 || 
@@ -2347,19 +2618,23 @@
                         mapArrow.style.transform = `rotate(${heading}deg)`;
                     }
 
-                    const group = new L.featureGroup([homeMarker, userMarker, polyline]);
+                    const layers = [homeMarker, userMarker, polyline];
+                    if (waypointMarker) layers.push(waypointMarker);
+                    const group = new L.featureGroup(layers);
                     map.fitBounds(group.getBounds().pad(0.2));
                 }
             }
 
             // Update ETA based on current speed
             let etaText = "";
+            const etaLabel = waypointLat !== null ? (translations[currentLang].distance || "Distance") : t.timeToHome;
+            
             if (currentSpeed && currentSpeed > 0.2) {
                 const speedKmh = currentSpeed * 3.6;
                 const timeMinutes = Math.round((distance / currentSpeed) / 60);
-                etaText = `${t.timeToHome}: ${timeMinutes} min (${speedKmh.toFixed(1)} km/h)`;
+                etaText = `${etaLabel}: ${timeMinutes} min (${speedKmh.toFixed(1)} km/h)`;
             } else {
-                etaText = `${t.timeToHome}: -- min (${t.standingStill})`;
+                etaText = `${etaLabel}: -- min (${t.standingStill})`;
             }
 
             if (navigationType === 'compass') {
@@ -2370,7 +2645,7 @@
 
             // Compass specific logic
             if (navigationType === 'compass') {
-                const bearing = getBearing(currentLat, currentLon, homeLat, homeLon);
+                const bearing = getBearing(currentLat, currentLon, targetLat, targetLon);
                 let direction = (bearing - heading + 360) % 360;
                 arrow.style.transform = `rotate(${direction}deg)`;
 
@@ -2396,8 +2671,8 @@
             }
         }
 
-        function onArrival() {
-            arrivalTriggered = true;
+        async function onArrival() {
+            const t = translations[currentLang];
             
             // Confetti
             confetti({
@@ -2414,10 +2689,30 @@
             // Sound
             playArrivalSound();
 
+            if (waypointLat !== null) {
+                // Reached a waypoint
+                const stayAtWaypoint = await customConfirm(`${t.waypointReached} ${t.continueToHome}`);
+                if (stayAtWaypoint) {
+                    // Continue to Home
+                    waypointLat = null;
+                    waypointLon = null;
+                    if (navigationType === 'map' && map) {
+                        updateMapMarkers();
+                    }
+                } else {
+                    // Stop at waypoint
+                    stopNavigation();
+                    resetAppState();
+                    showScreen(homeScreen);
+                }
+                return;
+            }
+
+            arrivalTriggered = true;
+            
             // Behavior depends on navigation mode
             if (navigationType === 'map') {
                 // If on Map, stay on Map and let user decide when to stop
-                // We keep tracking (watchId) active so the user can still see their position
                 console.log("Arrived on Map mode - staying on map.");
             } else {
                 // If on Compass, stop tracking and show completion screen after delay
@@ -2522,6 +2817,22 @@
             }
         });
 
+        // PowerSave Functionality
+        powerSaveBtn.addEventListener('click', () => {
+            playClickSound();
+            isPowerSave = !isPowerSave;
+            const mapEl = document.getElementById('map');
+            if (isPowerSave) {
+                mapEl.style.filter = 'invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)';
+                powerSaveBtn.style.background = 'var(--green)';
+                powerSaveBtn.style.color = 'black';
+            } else {
+                mapEl.style.filter = 'none';
+                powerSaveBtn.style.background = 'radial-gradient(circle at 30% 30%, #1a1a1a, #000)';
+                powerSaveBtn.style.color = 'white';
+            }
+        });
+
         // Offline Map Functionality
         offlineMapBtn.addEventListener('click', () => {
             playClickSound();
@@ -2576,9 +2887,14 @@
                 const y1 = lat2tile(lat + latDiff, z);
                 const y2 = lat2tile(lat - latDiff, z);
 
-                for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
-                    for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
-                        tileUrls.push(`https://a.tile.openstreetmap.org/${z}/${x}/${y}.png`);
+                const xMin = Math.min(x1, x2);
+                const xMax = Math.max(x1, x2);
+                const yMin = Math.min(y1, y2);
+                const yMax = Math.max(y1, y2);
+
+                for (let x = xMin; x <= xMax; x++) {
+                    for (let y = yMin; y <= yMax; y++) {
+                        tileUrls.push(`https://tile.openstreetmap.org/${z}/${x}/${y}.png`);
                     }
                 }
             });
@@ -2586,21 +2902,35 @@
             tileUrls = [...new Set(tileUrls)].slice(0, 500); // Safety limit
             const totalTiles = tileUrls.length;
             let downloaded = 0;
+            let failed = 0;
 
             try {
                 const cache = await caches.open(CACHE_NAME);
                 for (const url of tileUrls) {
                     try {
-                        const response = await fetch(url);
-                        if (response.ok) await cache.put(url, response);
-                    } catch (e) {}
-                    downloaded++;
-                    const progress = Math.round((downloaded / totalTiles) * 100);
+                        const response = await fetch(url, { mode: 'cors' });
+                        if (response.ok) {
+                            await cache.put(url, response);
+                            downloaded++;
+                        } else {
+                            failed++;
+                        }
+                    } catch (e) {
+                        failed++;
+                        console.error("Tile fetch error:", e);
+                    }
+                    const progress = Math.round(((downloaded + failed) / totalTiles) * 100);
                     downloadProgressFill.style.width = `${progress}%`;
-                    downloadStatus.innerText = `${t.downloading}${progress}%`;
+                    downloadStatus.innerText = `${t.downloading}${progress}% (${downloaded} ok)`;
                 }
-                downloadStatus.innerText = t.downloadDone;
+                
+                if (downloaded > 0) {
+                    downloadStatus.innerText = `${t.downloadDone} (${downloaded} tiles)`;
+                } else {
+                    downloadStatus.innerText = t.downloadError;
+                }
             } catch (err) {
+                console.error("Download manager error:", err);
                 downloadStatus.innerText = t.downloadError;
             }
 
@@ -2630,6 +2960,8 @@
             const t = translations[currentLang];
             homeLat = null;
             homeLon = null;
+            waypointLat = null;
+            waypointLon = null;
             arrivalTriggered = false;
             userPath = []; // Clear breadcrumb trail
             resetCompassUI();
