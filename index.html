@@ -25,6 +25,7 @@
             --white: #ffffff;
             --black: #000000;
             --gray: #f0f0f0;
+            --gold: #ffd700;
         }
 
         * {
@@ -67,6 +68,101 @@
             display: flex;
         }
 
+        /* Pro Badge */
+        .pro-badge {
+            background: var(--gold);
+            color: black;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        /* Ad Overlay */
+        #ad-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .ad-content {
+            width: 100%;
+            height: 80%;
+            background: #222;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #555;
+            border: 2px dashed #444;
+            margin-bottom: 20px;
+        }
+
+        .close-ad-btn {
+            background: var(--white);
+            color: var(--black);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Pro Modal */
+        #pro-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 500;
+            padding: 30px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pro-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 25px;
+            border: 2px solid var(--gold);
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .pro-content h2 { color: var(--gold); margin-bottom: 20px; }
+        .pro-features { text-align: left; margin: 20px 0; }
+        .pro-features li { margin-bottom: 10px; list-style: none; display: flex; align-items: center; gap: 10px; }
+
+        .buy-pro-btn {
+            background: linear-gradient(45deg, #ffd700, #ff8c00);
+            color: black;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
         /* Home Screen */
         #install-btn {
             display: none;
@@ -81,10 +177,9 @@
             z-index: 10;
         }
 
-        .help-btn {
+        .help-btn, .lang-btn, .poi-btn {
             position: absolute;
             bottom: 20px;
-            right: 20px;
             background: rgba(0, 0, 0, 0.5);
             color: var(--white);
             border: 2px solid var(--green);
@@ -97,383 +192,18 @@
             justify-content: center;
             cursor: pointer;
             z-index: 10;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5), 
-                        inset 0 0 10px rgba(76, 175, 80, 0.2);
-            transition: all 0.2s ease;
-        }
-
-        .help-btn:active {
-            transform: scale(0.9);
-            box-shadow: 0 0 25px rgba(76, 175, 80, 0.8);
-        }
-
-        .lang-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 80px;
-            background: rgba(0, 0, 0, 0.5);
-            color: var(--white);
-            border: 2px solid var(--green);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5), 
-                        inset 0 0 10px rgba(76, 175, 80, 0.2);
-            transition: all 0.2s ease;
-        }
-
-        .lang-btn:active {
-            transform: scale(0.9);
-            box-shadow: 0 0 25px rgba(76, 175, 80, 0.8);
-        }
-
-        /* Language Modal */
-        #lang-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 150;
-            padding: 20px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lang-content {
-            background: #1a1a1a;
-            padding: 25px;
-            border-radius: 20px;
-            border: 2px solid var(--green);
-            max-width: 95%;
-            width: 300px;
-            max-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4), 
-                        inset 0 0 20px rgba(76, 175, 80, 0.1);
-        }
-
-        .lang-content h2 {
-            color: var(--green);
-            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-        }
-
-        .lang-list {
-            overflow-y: auto;
-            margin-top: 15px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .lang-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px 10px;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.9rem;
-            color: white;
-            transition: all 0.2s ease;
-        }
-
-        .lang-item.active {
-            background: rgba(76, 175, 80, 0.2);
-            border: 2px solid var(--green);
             box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
-            font-weight: bold;
-        }
-
-        .lang-item:active {
-            transform: scale(0.95);
-        }
-
-        .poi-btn {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            color: var(--white);
-            border: 2px solid var(--green);
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5), 
-                        inset 0 0 10px rgba(76, 175, 80, 0.2);
             transition: all 0.2s ease;
-            animation: pulse-green-border 2s infinite;
         }
 
-        .poi-btn.home-set {
-            animation: none;
-        }
-
-        .poi-btn:active {
-            transform: scale(0.9);
-            box-shadow: 0 0 25px rgba(76, 175, 80, 0.8);
-        }
+        .help-btn { right: 20px; }
+        .lang-btn { right: 80px; }
+        .poi-btn { left: 20px; animation: pulse-green-border 2s infinite; }
 
         @keyframes pulse-green-border {
-            0% { box-shadow: 0 0 10px rgba(76, 175, 80, 0.4), inset 0 0 5px rgba(76, 175, 80, 0.1); border-color: rgba(76, 175, 80, 0.6); }
-            50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.8), inset 0 0 10px rgba(76, 175, 80, 0.3); border-color: rgba(76, 175, 80, 1); }
-            100% { box-shadow: 0 0 10px rgba(76, 175, 80, 0.4), inset 0 0 5px rgba(76, 175, 80, 0.1); border-color: rgba(76, 175, 80, 0.6); }
-        }
-
-        /* POI Modal */
-        #poi-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 150;
-            padding: 20px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .poi-content {
-            background: #1a1a1a;
-            padding: 25px;
-            border-radius: 20px;
-            border: 2px solid var(--green);
-            max-width: 95%;
-            width: 400px;
-            max-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4), 
-                        inset 0 0 20px rgba(76, 175, 80, 0.1);
-        }
-
-        .poi-list {
-            overflow-y: auto;
-            margin-top: 15px;
-            flex: 1;
-        }
-
-        .poi-item {
-            background: rgba(255, 255, 255, 0.05);
-            margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: left;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-
-        .poi-item:active {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--green);
-        }
-
-        .poi-item h4 {
-            margin-bottom: 5px;
-            color: var(--green);
-        }
-
-        .poi-item p {
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-
-        .loading-poi {
-            padding: 20px;
-            font-style: italic;
-            opacity: 0.7;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* POI Categories */
-        .poi-categories {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .cat-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px 4px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .cat-btn.active {
-            background: rgba(76, 175, 80, 0.2);
-            border: 2px solid var(--green);
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
-            font-weight: bold;
-        }
-
-        .cat-icon {
-            font-size: 1.2rem;
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 6px solid rgba(255, 255, 255, 0.1);
-            border-left-color: var(--green);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            display: inline-block;
-            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Modal / Help Overlay */
-        #help-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 100;
-            padding: 30px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .help-content {
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 20px;
-            border: 2px solid var(--green);
-            max-width: 90%;
-            text-align: left;
-            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4), 
-                        inset 0 0 20px rgba(76, 175, 80, 0.1);
-        }
-
-        .help-content h2 {
-            margin-bottom: 20px;
-            color: var(--green);
-            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-        }
-
-        .help-content p {
-            margin-bottom: 15px;
-            line-height: 1.4;
-            color: white;
-        }
-
-        .close-help {
-            margin-top: 20px;
-            background: rgba(76, 175, 80, 0.2);
-            color: white;
-            border: 2px solid var(--green);
-            padding: 12px 30px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
-            transition: all 0.2s ease;
-        }
-
-        .close-help:active {
-            transform: scale(0.95);
-            background: var(--green);
-        }
-
-        /* Custom Confirmation Modal */
-        #confirm-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 200;
-            padding: 30px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .confirm-content {
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 20px;
-            border: 2px solid var(--red);
-            max-width: 90%;
-            text-align: center;
-        }
-
-        .confirm-content h2 {
-            margin-bottom: 20px;
-            color: var(--white);
-            font-size: 1.5rem;
-        }
-
-        .confirm-content p {
-            margin-bottom: 25px;
-            line-height: 1.4;
-            font-size: 1.2rem;
-        }
-
-        .confirm-btns {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        .confirm-btn {
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .confirm-yes {
-            background: var(--red);
-            color: white;
-        }
-
-        .confirm-no {
-            background: var(--gray);
-            color: black;
+            0% { box-shadow: 0 0 10px rgba(76, 175, 80, 0.4); border-color: rgba(76, 175, 80, 0.6); }
+            50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.8); border-color: rgba(76, 175, 80, 1); }
+            100% { box-shadow: 0 0 10px rgba(76, 175, 80, 0.4); border-color: rgba(76, 175, 80, 0.6); }
         }
 
         .btn-container {
@@ -506,2448 +236,277 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* Lighting effect overlay */
-        .circle-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
-        .circle-btn:active {
-            transform: scale(0.92);
-            box-shadow: inset 0 10px 20px rgba(0,0,0,0.4) !important;
-        }
-
         #set-home-btn {
             background: radial-gradient(circle at 30% 30%, #1a1a1a, #000);
-            box-shadow: 0 0 25px rgba(255, 77, 77, 0.5), 
-                        inset 0 0 20px rgba(0,0,0,0.8),
-                        inset 0 0 10px rgba(255, 77, 77, 0.2);
-            border: 2px solid var(--red);
+            box-shadow: 0 0 25px rgba(255, 77, 77, 0.5), border: 2px solid var(--red);
             animation: pulse-red-border 2s infinite;
-        }
-
-        #set-home-btn.home-set {
-            background: radial-gradient(circle at 30% 30%, #1a1a1a, #000);
-            box-shadow: 0 0 35px rgba(76, 175, 80, 0.8), 
-                        inset 0 0 20px rgba(0,0,0,0.8),
-                        inset 0 0 15px rgba(76, 175, 80, 0.3);
-            border: 3px solid var(--green);
-            animation: none;
-        }
-
-        @keyframes pulse-red-border {
-            0% { box-shadow: 0 0 15px rgba(255, 77, 77, 0.4), inset 0 0 10px rgba(255, 77, 77, 0.1); border-color: rgba(255, 77, 77, 0.6); }
-            50% { box-shadow: 0 0 35px rgba(255, 77, 77, 0.8), inset 0 0 15px rgba(255, 77, 77, 0.3); border-color: rgba(255, 77, 77, 1); }
-            100% { box-shadow: 0 0 15px rgba(255, 77, 77, 0.4), inset 0 0 10px rgba(255, 77, 77, 0.1); border-color: rgba(255, 77, 77, 0.6); }
         }
 
         #go-home-btn {
             background: radial-gradient(circle at 30% 30%, #1a1a1a, #000);
-            width: 28vh;
-            height: 28vh;
-            max-width: 55vw;
-            max-height: 55vw;
+            width: 28vh; height: 28vh;
             font-size: 1.8rem;
-            box-shadow: 0 0 25px rgba(76, 175, 80, 0.5), 
-                        inset 0 0 20px rgba(0,0,0,0.8),
-                        inset 0 0 10px rgba(76, 175, 80, 0.2);
-            border: 2px solid var(--green);
-        }
-
-        #select-compass-btn, #select-map-btn {
-            background: radial-gradient(circle at 30% 30%, #1a1a1a, #000);
-            width: 25vh;
-            height: 25vh;
-            font-size: 1.5rem;
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.4), 
-                        inset 0 0 15px rgba(0,0,0,0.8),
-                        inset 0 0 8px rgba(76, 175, 80, 0.2);
             border: 2px solid var(--green);
         }
 
         /* Compass Screen */
         .compass-container {
             position: relative;
-            width: 45vh;
-            height: 45vh;
-            max-width: 85vw;
-            max-height: 85vw;
+            width: 45vh; height: 45vh;
             border-radius: 50%;
             border: 3px solid var(--green);
             background: radial-gradient(circle at 50% 50%, #1a1a1a, #000);
-            box-shadow: 0 0 35px rgba(76, 175, 80, 0.6), 
-                        inset 0 0 30px rgba(0,0,0,0.8),
-                        inset 0 0 15px rgba(76, 175, 80, 0.2);
+            box-shadow: 0 0 35px rgba(76, 175, 80, 0.6);
             margin-bottom: 5vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1/1;
         }
-
-        .compass-marks {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            font-weight: bold;
-            font-size: 2rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .mark {
-            position: absolute;
-            width: 40px;
-            text-align: center;
-        }
-
-        .mark-n { top: 15px; left: 50%; transform: translateX(-50%); color: var(--red); }
-        .mark-e { right: 15px; top: 50%; transform: translateY(-50%); }
-        .mark-s { bottom: 15px; left: 50%; transform: translateX(-50%); }
-        .mark-w { left: 15px; top: 50%; transform: translateY(-50%); }
 
         .arrow {
-            width: 0;
-            height: 0;
+            width: 0; height: 0;
             border-left: 4vh solid transparent;
             border-right: 4vh solid transparent;
             border-bottom: 12vh solid var(--white);
-            max-border-left: 8vw;
-            max-border-right: 8vw;
-            max-border-bottom: 24vw;
-            transition: transform 0.2s cubic-bezier(0.1, 0.7, 1.0, 0.1), color 0.3s;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+            transition: transform 0.2s;
         }
-
-        .arrow.green {
-            border-bottom-color: var(--green);
-            filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.6));
-        }
-
-        @keyframes blink {
-            0% { opacity: 1; filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.8)); }
-            50% { opacity: 0.4; filter: drop-shadow(0 0 5px rgba(76, 175, 80, 0.2)); }
-            100% { opacity: 1; filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.8)); }
-        }
-
-        .blink {
-            animation: blink 0.5s infinite;
-        }
-
-        .distance-display {
-            font-size: 3.5rem;
-            font-weight: bold;
-            margin-bottom: 6vh;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .stop-btn {
-            background: radial-gradient(circle at 30% 30%, #ff6b6b, var(--red));
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            padding: 2.5vh 8vh;
-            border-radius: 20px;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(255, 77, 77, 0.3),
-                        inset 0 -5px 15px rgba(0,0,0,0.3),
-                        inset 0 5px 15px rgba(255,255,255,0.2);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.1s;
-        }
-
-        .stop-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
-        .stop-btn:active {
-            transform: scale(0.95);
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.4);
-        }
-
-        /* Trip Complete Screen */
-        .complete-title {
-            font-size: 4rem;
-            margin-bottom: 4vh;
-            text-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-            color: var(--green);
-        }
-
-        .stats {
-            font-size: 2.5rem;
-            margin-bottom: 8vh;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        .reset-btn {
-            background: radial-gradient(circle at 30% 30%, #4dabf7, var(--blue));
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            padding: 3vh 10vh;
-            border-radius: 25px;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.3),
-                        inset 0 -5px 15px rgba(0,0,0,0.3),
-                        inset 0 5px 15px rgba(255,255,255,0.2);
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.1s;
-        }
-
-        .reset-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
-            pointer-events: none;
-        }
-
-        .reset-btn:active {
-            transform: scale(0.95);
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.4);
-        }
-
-        .sos-btn {
-            background: radial-gradient(circle at 30% 30%, #ff5252, #b71c1c);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            padding: 1vh 3vh;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.3),
-                        inset 0 -3px 10px rgba(0,0,0,0.3),
-                        inset 0 3px 10px rgba(255,255,255,0.2);
-            margin-bottom: 2vh;
-            transition: transform 0.1s;
-        }
-
-        .sos-btn:active {
-            transform: scale(0.95);
-            box-shadow: inset 0 3px 10px rgba(0,0,0,0.4);
-        }
-
-        .offline-btn {
-            background: radial-gradient(circle at 30% 30%, #1a1a1a, #000);
-            color: white;
-            border: 2px solid var(--green);
-            padding: 1vh 3vh;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.4), 
-                        inset 0 0 10px rgba(76, 175, 80, 0.1);
-            margin-bottom: 2vh;
-            transition: all 0.2s;
-        }
-
-        .offline-btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 0 25px rgba(76, 175, 80, 0.6);
-        }
-
-        .download-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 300;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .download-content {
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 20px;
-            border: 2px solid var(--green);
-            max-width: 90%;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4);
-        }
-
-        .download-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 25px 0;
-        }
-
-        .download-opt-btn {
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-            border: 1px solid var(--green);
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        .download-opt-btn:active {
-            background: var(--green);
-        }
-
-        #download-progress-container {
-            display: none;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            width: 0%;
-            height: 100%;
-            background: var(--green);
-            box-shadow: 0 0 10px var(--green);
-            transition: width 0.3s;
-        }
-
-        /* Navigation Selection */
-        .selection-container {
-            display: flex;
-            flex-direction: column;
-            gap: 3vh;
-            width: 100%;
-            align-items: center;
-        }
-
-        .selection-title {
-            font-size: 2.5rem;
-            margin-bottom: 4vh;
-            color: var(--green);
-            text-shadow: 0 0 15px rgba(76, 175, 80, 0.8),
-                         0 0 5px rgba(255, 255, 255, 0.5);
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+        .arrow.green { border-bottom-color: var(--green); }
 
         /* Map Screen */
-        #map-screen {
-            justify-content: flex-start;
-            padding-top: 0;
-            padding-left: 0;
-            padding-right: 0;
+        #map { width: 100%; height: 60vh; border-bottom: 2px solid rgba(255, 255, 255, 0.2); margin-bottom: 2vh; }
+        .offline-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white; border: 1px solid var(--green);
+            padding: 1vh 3vh; border-radius: 12px;
+            margin-bottom: 1vh; width: 80%;
         }
 
-        #map {
-            width: 100%;
-            height: 60vh;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 2vh;
-            z-index: 1;
-        }
-
-        #map-stop-btn {
-            background: radial-gradient(circle at 30% 30%, #ff5252, #b71c1c);
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4),
-                        inset 0 -3px 10px rgba(0,0,0,0.3),
-                        inset 0 3px 10px rgba(255,255,255,0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            padding: 1vh 3vh;
-            border-radius: 12px;
-            font-size: 1rem;
-        }
-
-        .map-info {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 15px;
-            width: 90%;
-            margin-bottom: 2vh;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Map direction arrow */
-        .user-direction-container {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .user-direction-arrow {
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-bottom: 25px solid var(--blue);
-            filter: drop-shadow(0 0 5px rgba(33, 150, 243, 0.8));
-            transition: transform 0.2s ease-out;
-        }
-
-        .user-dot {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: var(--white);
-            border-radius: 50%;
-            border: 2px solid var(--blue);
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        /* Home Destination Marker */
-        .home-marker-container {
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .home-marker-dot {
-            width: 24px;
-            height: 24px;
-            background: #ff4d4d;
-            border-radius: 50%;
-            border: 4px solid white;
-            box-shadow: 0 0 25px rgba(255, 77, 77, 1),
-                        0 0 50px rgba(255, 77, 77, 0.6);
-            animation: pulse-red 1.5s infinite;
-        }
-
-        @keyframes pulse-red {
-            0% { transform: scale(1); box-shadow: 0 0 25px rgba(255, 77, 77, 1); }
-            50% { transform: scale(1.3); box-shadow: 0 0 45px rgba(255, 77, 77, 0.8); }
-            100% { transform: scale(1); box-shadow: 0 0 25px rgba(255, 77, 77, 1); }
-        }
-
-        @keyframes pulse-yellow {
-            0% { transform: scale(1); box-shadow: 0 0 25px #ffeb3b; }
-            50% { transform: scale(1.3); box-shadow: 0 0 45px rgba(255, 235, 59, 0.8); }
-            100% { transform: scale(1); box-shadow: 0 0 25px #ffeb3b; }
+        .locked-feature::after {
+            content: ' 🔒';
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
+    <!-- Full Screen Ad Overlay -->
+    <div id="ad-overlay">
+        <div class="ad-content">ADVERTISEMENT</div>
+        <button id="close-ad-btn" class="close-ad-btn">Close Ad</button>
+    </div>
+
+    <!-- Pro Offer Overlay -->
+    <div id="pro-offer-overlay" id="pro-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:2000; flex-direction:column; align-items:center; justify-content:center; padding:30px;">
+        <div class="pro-content">
+            <h2>Unlock PRO Navigation</h2>
+            <ul class="pro-features">
+                <li>🗺️ Full Map View</li>
+                <li>📍 Unlimited Waypoints</li>
+                <li>📥 Offline Maps</li>
+                <li>🔋 Power Saving Mode</li>
+                <li>🚫 No Advertisements</li>
+            </ul>
+            <button id="buy-pro-action" class="buy-pro-btn">Upgrade to PRO</button>
+            <button id="close-pro-offer" style="background:transparent; color:white; border:none; margin-top:20px; text-decoration:underline;">Maybe Later</button>
+        </div>
+    </div>
+
     <!-- Home Screen -->
     <div id="home-screen" class="screen active">
-        
         <div class="btn-container">
             <button id="go-home-btn" class="circle-btn">Go Home</button>
             <button id="set-home-btn" class="circle-btn">Set Home</button>
         </div>
-
         <button id="install-btn">📱 Install App</button>
         <div id="open-poi" class="poi-btn">📍</div>
         <div id="open-lang" class="lang-btn">🌐</div>
         <div id="open-help" class="help-btn">?</div>
     </div>
 
-    <!-- Language Modal -->
-    <div id="lang-overlay">
-        <div class="lang-content">
-            <h2 id="lang-modal-title">Select Language</h2>
-            <div id="lang-list" class="lang-list">
-                <!-- Languages will be added by JS -->
-            </div>
-            <button id="close-lang" class="close-help" style="margin-top: 15px;">Close</button>
-        </div>
-    </div>
-
-    <!-- POI Modal -->
-    <div id="poi-overlay">
-        <div class="poi-content">
-            <h2 id="poi-title" style="color: var(--green);">Find Places</h2>
-            <div class="poi-categories">
-                <button class="cat-btn active" data-type="playground" data-label="Playground">
-                    <span class="cat-icon">🧸</span>Play
-                </button>
-                <button class="cat-btn" data-type="cafe" data-label="Cafe">
-                    <span class="cat-icon">☕</span>Cafe
-                </button>
-                <button class="cat-btn" data-type="snackbar" data-label="Snackbar">
-                    <span class="cat-icon">🍟</span>Snack
-                </button>
-                <button class="cat-btn" data-type="toilet" data-label="Toilet">
-                    <span class="cat-icon">🚻</span>WC
-                </button>
-                <button class="cat-btn" data-type="water" data-label="Water">
-                    <span class="cat-icon">💧</span>Water
-                </button>
-                <button class="cat-btn" data-type="shop" data-label="Shop">
-                    <span class="cat-icon">🛒</span>Shop
-                </button>
-                <button class="cat-btn" data-type="bench" data-label="Bench">
-                    <span class="cat-icon">🪑</span>Rest
-                </button>
-                <button class="cat-btn" data-type="viewpoint" data-label="View">
-                    <span class="cat-icon">🔭</span>View
-                </button>
-                <button class="cat-btn" data-type="park" data-label="Park">
-                    <span class="cat-icon">🌳</span>Park
-                </button>
-                <button class="cat-btn" data-type="camp_site" data-label="Camp">
-                    <span class="cat-icon">⛺</span>Camp
-                </button>
-                <button class="cat-btn" data-type="pharmacy" data-label="Pharmacy">
-                    <span class="cat-icon">🏥</span>Meds
-                </button>
-                <button class="cat-btn" data-type="bus_stop" data-label="Bus Stop">
-                    <span class="cat-icon">🚌</span>Bus
-                </button>
-            </div>
-            <p id="poi-status" style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 10px;">Select a category</p>
-            <div id="poi-list" class="poi-list">
-                <div class="loading-poi">
-                    <div class="spinner"></div>
-                    Locating you first...
-                </div>
-            </div>
-            <button id="close-poi" class="close-help" style="background: var(--green); margin-top: 15px;">Close</button>
-        </div>
-    </div>
-
-    <!-- Help Overlay -->
-    <div id="help-overlay">
-        <div class="help-content">
-            <h2 id="help-title">How it works (for humans)</h2>
-            <div id="help-steps">
-                <!-- Steps will be added by JS -->
-            </div>
-            <button id="close-help" class="close-help">Got it!</button>
-        </div>
-    </div>
-
-    <!-- Custom Confirm Modal -->
-    <div id="confirm-overlay">
-        <div class="confirm-content">
-            <h2 id="confirm-title">Set Home Go Home</h2>
-            <p id="confirm-msg"></p>
-            <div class="confirm-btns">
-                <button id="confirm-no-btn" class="confirm-btn confirm-no">No</button>
-                <button id="confirm-yes-btn" class="confirm-btn confirm-yes">Yes</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Navigation Selection Screen -->
+    <!-- Navigation Selection -->
     <div id="selection-screen" class="screen">
-        <h2 id="choose-nav-title" class="selection-title">Choose Navigation</h2>
-        <div class="selection-container">
-            <button id="select-compass-btn" class="circle-btn">🧭 Compass</button>
-            <button id="select-map-btn" class="circle-btn">🗺️ Map</button>
+        <h2 id="choose-nav-title" style="color:var(--green); margin-bottom:4vh; font-size:2rem;">Choose Navigation</h2>
+        <div class="btn-container" style="margin-top:0;">
+            <button id="select-compass-btn" class="circle-btn" style="width:25vh; height:25vh; font-size:1.5rem;">🧭 Compass</button>
+            <button id="select-map-btn" class="circle-btn" style="width:25vh; height:25vh; font-size:1.5rem;">🗺️ Map <span class="pro-badge">PRO</span></button>
         </div>
-        <button id="cancel-selection-btn" class="stop-btn" style="margin-top: 5vh; font-size: 1.2rem; padding: 1.5vh 5vh;">Cancel</button>
+        <button id="cancel-selection-btn" style="margin-top:5vh; background:none; color:white; border:none; font-size:1.2rem;">Cancel</button>
     </div>
 
     <!-- Compass Screen -->
     <div id="compass-screen" class="screen">
         <div class="compass-container">
-            <div class="compass-marks">
-                <div class="mark mark-n">N</div>
-                <div class="mark mark-e">E</div>
-                <div class="mark mark-s">S</div>
-                <div class="mark mark-w">W</div>
-            </div>
             <div id="arrow" class="arrow"></div>
         </div>
-        
         <div class="distance-display">
-            <span id="dist-label">Distance</span>: <span id="distance-val">0</span> m<br>
-            <span id="eta-display" style="font-size: 1.5rem; opacity: 0.8;">Time to Home: -- min</span>
+            <span id="distance-val">0</span> m
         </div>
-        
-        <button id="stop-btn" class="stop-btn">STOP</button>
+        <button id="stop-btn" style="background:var(--red); padding:15px 50px; border-radius:15px; border:none; color:white; font-weight:bold; font-size:1.5rem;">STOP</button>
     </div>
 
     <!-- Map Screen -->
     <div id="map-screen" class="screen">
         <div id="map"></div>
-        <div class="map-info">
-            <span id="map-dist-label" style="font-weight: bold;">Distance</span>: <span id="map-distance-val">0</span> m<br>
-            <span id="map-eta-display" style="opacity: 0.8; font-size: 0.9rem;">Time to Home: -- min</span>
-        </div>
-        <button id="map-poi-btn" class="offline-btn">📍 Tussenstop</button>
+        <button id="map-poi-btn" class="offline-btn">📍 Intermediate Stop</button>
         <button id="powersave-btn" class="offline-btn">🔋 PowerSave</button>
         <button id="offline-map-btn" class="offline-btn">📥 Offline Map</button>
-        <button id="sos-btn" class="sos-btn">🆘 SOS</button>
-        <button id="map-stop-btn" class="stop-btn">STOP</button>
+        <button id="sos-btn" style="background:var(--red); color:white; border:none; padding:10px 20px; border-radius:10px; margin-bottom:10px;">🆘 SOS</button>
+        <button id="map-stop-btn" style="background:var(--red); padding:10px 30px; border-radius:10px; border:none; color:white;">STOP</button>
     </div>
 
-    <!-- Download Map Overlay -->
-    <div id="download-overlay" class="download-overlay">
-        <div class="download-content">
-            <h2 id="download-title">Offline Map</h2>
-            <p id="download-desc">Download map tiles around current location for offline use.</p>
-            
-            <div id="download-options" class="download-options">
-                <button class="download-opt-btn" data-radius="5">5 KM Radius</button>
-                <button class="download-opt-btn" data-radius="10">10 KM Radius</button>
-                <button class="download-opt-btn" data-radius="20">20 KM Radius</button>
-            </div>
-
-            <div id="download-progress-container">
-                <p id="download-status">Downloading: 0%</p>
-                <div class="progress-bar-bg">
-                    <div id="download-progress-fill" class="progress-bar-fill"></div>
-                </div>
-            </div>
-
-            <button id="close-download" class="close-help" style="margin-top: 20px;">Cancel</button>
+    <!-- Modals (Help, POI, Lang, etc.) -->
+    <div id="help-overlay" class="screen" style="position:fixed; background:rgba(0,0,0,0.9); z-index:100;">
+        <div class="pro-content" style="border-color:var(--green); text-align:left;">
+            <h2 id="help-title">How it works</h2>
+            <div id="help-steps"></div>
+            <button id="close-help" class="buy-pro-btn" style="background:var(--green);">Got it!</button>
         </div>
     </div>
 
-    <!-- Trip Complete Screen -->
-    <div id="trip-complete-screen" class="screen">
-        <div id="complete-title" class="complete-title">🏁 Trip Complete</div>
-        <div class="stats"><span id="time-label">Time</span>: <span id="trip-time">0</span> <span id="min-label">minutes</span></div>
-        <button id="start-new-btn" class="reset-btn">Start New Trip</button>
-    </div>
-
-    <!-- Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
     <script>
-        // State variables
-        let homeLat = null;
-        let homeLon = null;
-        let waypointLat = null;
-        let waypointLon = null;
-        let currentLat = null;
-        let currentLon = null;
-        let currentSpeed = null; // m/s
-        let heading = 0;
-        let watchId = null;
-        let startTime = null;
-        let arrivalTriggered = false;
-        let currentLang = localStorage.getItem('appLang') || 'en';
-        let navigationType = 'compass'; // 'compass' or 'map'
-        let map = null;
-        let userMarker = null;
-        let homeMarker = null;
-        let waypointMarker = null;
-        let userPath = []; // To store the breadcrumb trail
-        let polyline = null; // The Leaflet polyline object
-        let isPowerSave = false;
-        const CACHE_NAME = 'set-home-v46';
+        // State
+        let isPro = localStorage.getItem('isPro') === 'true';
+        let adTimer = null;
+        let lastAdTime = Date.now();
 
-        const translations = {
-            en: {
-                goHome: "Go Home",
-                setHome: "Set Home",
-                homeSet: "Home Set",
-                homeSetPoi: "Home Set (POI)",
-                locating: "Locating...",
-                pressSetHome: "Press Set Home first",
-                distance: "Distance",
-                timeToHome: "Time to Home",
-                standingStill: "Standing still",
-                stop: "STOP",
-                tripComplete: "🏁 Trip Complete",
-                time: "Time",
-                minutes: "minutes",
-                startNew: "Start New Trip",
-                install: "📱 Install App",
-                helpTitle: "How it works (for humans)",
-                helpSteps: [
-                    "<strong>1. Set Home:</strong> Tap this at your car, tent, or that one tree you think you'll remember (you won't).",
-                    "<strong>2. Wander off:</strong> Go hiking, get lost, chase a squirrel. We don't judge.",
-                    "<strong>3. Go Home:</strong> When you're tired/hungry, tap this. Follow the arrow like your life depends on it (it might).",
-                    "<strong>4. Green Arrow:</strong> You're facing the right way. Keep going, hero!",
-                    "<strong>5. Arrival:</strong> When the phone vibrates and confetti flies, you're back! Time for a snack."
-                ],
-                close: "Close",
-                gotIt: "Got it!",
-                findPlaces: "Find Places",
-                waypoint: "Intermediate Stop",
-                locatingYou: "Locating you...",
-                searchingPoi: "Searching for nearby locations...",
-                noPoiFound: "No locations found within 3km.",
-                gpsError: "GPS error",
-                connError: "Connection error",
-                targetSet: "Target set to:",
-                waypointSet: "Intermediate stop set to:",
-                waypointReached: "Intermediate stop reached!",
-                continueToHome: "Continue to Home?",
-                confirmStop1: "Are you sure you want to stop? The trip will end and be cleared.",
-                confirmStop2: "Are you absolutely sure? You will need to 'Set Home' again.",
-                yes: "Yes",
-                no: "No",
-                ok: "OK",
-                selectLang: "Select Language",
-                chooseNav: "Choose Navigation",
-                compassView: "🧭 Compass",
-                mapView: "🗺️ Map",
-                cancel: "Cancel",
-                sos: "SOS",
-                sosMsg: "My current location: ",
-                offlineMap: "📥 Offline Map",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "Offline Map",
-                downloadDesc: "Download map tiles around current location for offline use.",
-                radius: "KM Radius",
-                downloading: "Downloading: ",
-                downloadDone: "Download Complete!",
-                downloadError: "Download failed. Check connection."
-            },
-            nl: {
-                goHome: "Ga naar Huis",
-                setHome: "Stel Huis in",
-                homeSet: "Huis Ingesteld",
-                homeSetPoi: "Doel Ingesteld (POI)",
-                locating: "Zoeken...",
-                pressSetHome: "Stel eerst je huis in",
-                distance: "Afstand",
-                timeToHome: "Tijd naar Huis",
-                standingStill: "Stilstand",
-                stop: "STOP",
-                tripComplete: "🏁 Trip Voltooid",
-                time: "Tijd",
-                minutes: "minuten",
-                startNew: "Nieuwe Trip",
-                install: "📱 Installeer App",
-                helpTitle: "Hoe het werkt",
-                helpSteps: [
-                    "<strong>1. Stel Huis in:</strong> Tik hier bij je auto, tent, of die ene boom die je denkt te onthouden (dat lukt niet).",
-                    "<strong>2. Dwaal rond:</strong> Ga wandelen, verdwaal, achtervolg een eekhoorn. Wij oordelen niet.",
-                    "<strong>3. Ga naar Huis:</strong> Als je moe/hongerig bent, tik hier. Volg de pijl alsof je leven ervan afhangt (dat zou best kunnen).",
-                    "<strong>4. Groene Pijl:</strong> Je loopt de goede kant op. Zet hem op, held!",
-                    "<strong>5. Aankomst:</strong> Als de telefoon trilt en er confetti vliegt, ben je er! Tijd voor een snack."
-                ],
-                close: "Sluiten",
-                gotIt: "Begrepen!",
-                findPlaces: "Plaatsen Zoeken",
-                waypoint: "Tussenstop",
-                locatingYou: "Locatie bepalen...",
-                searchingPoi: "Zoeken naar plaatsen in de buurt...",
-                noPoiFound: "Geen plaatsen gevonden binnen 3km.",
-                gpsError: "GPS fout",
-                connError: "Verbindingsfout",
-                targetSet: "Doel ingesteld op:",
-                waypointSet: "Tussenstop ingesteld op:",
-                waypointReached: "Tussenstop bereikt!",
-                continueToHome: "Doorgaan naar Huis?",
-                confirmStop1: "Weet je zeker dat je wilt stoppen? De route wordt gewist.",
-                confirmStop2: "Heel zeker? Je moet daarna opnieuw je startpunt instellen.",
-                yes: "Ja",
-                no: "Nee",
-                ok: "OK",
-                selectLang: "Kies Taal",
-                chooseNav: "Kies Navigatie",
-                compassView: "🧭 Kompas",
-                mapView: "🗺️ Kaart",
-                cancel: "Annuleren",
-                sos: "SOS",
-                sosMsg: "Mijn huidige locatie: ",
-                offlineMap: "📥 Offline Kaart",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "Offline Kaart",
-                downloadDesc: "Download de kaart rondom je huidige locatie voor offline gebruik.",
-                radius: "KM Straal",
-                downloading: "Downloaden: ",
-                downloadDone: "Download Voltooid!",
-                downloadError: "Download mislukt. Controleer verbinding."
-            },
-            de: {
-                goHome: "Nach Hause",
-                setHome: "Heimat setzen",
-                homeSet: "Heimat gesetzt",
-                homeSetPoi: "Ziel gesetzt (POI)",
-                locating: "Suchen...",
-                pressSetHome: "Zuerst Heimat setzen",
-                distance: "Entfernung",
-                timeToHome: "Zeit nach Hause",
-                standingStill: "Stillstand",
-                stop: "STOPP",
-                tripComplete: "🏁 Trip beendet",
-                time: "Zeit",
-                minutes: "Minuten",
-                startNew: "Neuer Trip",
-                install: "📱 App installieren",
-                helpTitle: "Wie es funktioniert",
-                helpSteps: [
-                    "<strong>1. Heimat setzen:</strong> Tippe hier bei deinem Auto, Zelt oder dem Baum, den du dir merken willst (wirst du nie).",
-                    "<strong>2. Wandern:</strong> Geh wandern, verirr dich, jag ein Eichhörnchen. Wir urteilen nicht.",
-                    "<strong>3. Nach Hause:</strong> Wenn du müde/hungrig bist, tippe hier. Folg dem Pfeil, als ginge es um dein Leben (könnte sein).",
-                    "<strong>4. Grüner Pfeil:</strong> Du bist auf dem richtigen Weg. Weiter so, Held!",
-                    "<strong>5. Ankunft:</strong> Wenn das Handy vibriert und Konfetti fliegt, bist du da! Zeit für einen Snack."
-                ],
-                close: "Schließen",
-                gotIt: "Verstanden!",
-                findPlaces: "Orte finden",
-                waypoint: "Zwischenstopp",
-                locatingYou: "Suche Standort...",
-                searchingPoi: "Suche Orte in der Nähe...",
-                noPoiFound: "Keine Orte im Umkreis von 3km gefunden.",
-                gpsError: "GPS-Fehler",
-                connError: "Verbindungsfehler",
-                targetSet: "Ziel gesetzt auf:",
-                waypointSet: "Zwischenstopp gesetzt auf:",
-                waypointReached: "Zwischenstopp erreicht!",
-                continueToHome: "Weiter nach Hause?",
-                confirmStop1: "Bist du sicher? Der Trip wird beendet und gelöscht.",
-                confirmStop2: "Ganz sicher? Du musst den Startpunkt neu setzen.",
-                yes: "Ja",
-                no: "Nein",
-                ok: "OK",
-                selectLang: "Sprache wählen",
-                chooseNav: "Navigation wählen",
-                compassView: "🧭 Kompass",
-                mapView: "🗺️ Karte",
-                cancel: "Abbrechen",
-                sos: "SOS",
-                sosMsg: "Mein Standort: ",
-                offlineMap: "📥 Offline Karte",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "Offline Karte",
-                downloadDesc: "Kartenkacheln für Offline-Nutzung herunterladen.",
-                radius: "KM Radius",
-                downloading: "Lade: ",
-                downloadDone: "Download abgeschlossen!",
-                downloadError: "Download fehlgeschlagen."
-            },
-            fr: {
-                goHome: "Rentrer",
-                setHome: "Définir Home",
-                homeSet: "Home défini",
-                homeSetPoi: "Cible définie (POI)",
-                locating: "Recherche...",
-                pressSetHome: "Définir Home d'abord",
-                distance: "Distance",
-                timeToHome: "Temps restant",
-                standingStill: "À l'arrêt",
-                stop: "STOP",
-                tripComplete: "🏁 Trip terminé",
-                time: "Temps",
-                minutes: "minutes",
-                startNew: "Nouveau Trip",
-                install: "📱 Installer l'App",
-                helpTitle: "Comment ça marche",
-                helpSteps: [
-                    "<strong>1. Définir Home :</strong> Appuyez ici à votre voiture, tente ou cet arbre que vous pensez retenir (non).",
-                    "<strong>2. Balade :</strong> Allez marcher, perdez-vous, poursuivez un écureuil. On ne juge pas.",
-                    "<strong>3. Rentrer :</strong> Quand vous êtes fatigué/affamé, appuyez ici. Suivez la flèche comme si votre vie en dépendait.",
-                    "<strong>4. Flèche verte :</strong> Vous êtes dans la bonne direction. Allez, champion !",
-                    "<strong>5. Arrivée :</strong> Quand le téléphone vibre et les confettis volent, vous y êtes ! L'heure du goûter."
-                ],
-                close: "Fermer",
-                gotIt: "Compris !",
-                findPlaces: "Trouver lieux",
-                waypoint: "Etape",
-                locatingYou: "Localisation...",
-                searchingPoi: "Recherche de lieux à proximité...",
-                noPoiFound: "Aucun lieu trouvé à moins de 3km.",
-                gpsError: "Erreur GPS",
-                connError: "Erreur connexion",
-                targetSet: "Cible définie sur :",
-                waypointSet: "Etape définie sur :",
-                waypointReached: "Etape atteinte !",
-                continueToHome: "Continuer vers Home ?",
-                confirmStop1: "Voulez-vous vraiment arrêter ? Le trajet sera effacé.",
-                confirmStop2: "Sûr ? Vous devrez redéfinir votre point de départ.",
-                yes: "Oui",
-                no: "Non",
-                ok: "OK",
-                selectLang: "Choisir langue",
-                chooseNav: "Choisir navigation",
-                compassView: "🧭 Boussole",
-                mapView: "🗺️ Carte",
-                cancel: "Annuler",
-                sos: "SOS",
-                sosMsg: "Ma position : ",
-                offlineMap: "📥 Carte hors ligne",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "Carte hors ligne",
-                downloadDesc: "Télécharger les tuiles de la carte pour une utilisation hors ligne.",
-                radius: "KM de rayon",
-                downloading: "Téléchargement : ",
-                downloadDone: "Téléchargement terminé !",
-                downloadError: "Échec du téléchargement."
-            },
-            es: {
-                goHome: "Ir a Casa",
-                setHome: "Fijar Casa",
-                homeSet: "Casa fijada",
-                homeSetPoi: "Objetivo fijado (POI)",
-                locating: "Buscando...",
-                pressSetHome: "Fija Casa primero",
-                distance: "Distancia",
-                timeToHome: "Tiempo a Casa",
-                standingStill: "Parado",
-                stop: "STOP",
-                tripComplete: "🏁 Trip completado",
-                time: "Tiempo",
-                minutes: "minutos",
-                startNew: "Nuevo Trip",
-                install: "📱 Instalar App",
-                helpTitle: "Cómo funciona",
-                helpSteps: [
-                    "<strong>1. Fijar Casa:</strong> Pulsa aquí en tu coche, tienda o ese árbol que crees que recordarás (no será así).",
-                    "<strong>2. Deambular:</strong> Camina, piérdete, persigue una ardilla. No juzgamos.",
-                    "<strong>3. Ir a Casa:</strong> Cuando estés cansado/hambriento, pulsa aquí. Sigue la flecha como si te fuera la vida en ello.",
-                    "<strong>4. Flecha verde:</strong> Vas por el buen camino. ¡Sigue así, héroe!",
-                    "<strong>5. Llegada:</strong> Cuando el móvil vibre y vuele confeti, ¡has llegado! Hora de merendar."
-                ],
-                close: "Cerrar",
-                gotIt: "¡Entendido!",
-                findPlaces: "Buscar lugares",
-                locatingYou: "Localizando...",
-                searchingPoi: "Buscando lugares cercanos...",
-                noPoiFound: "No se encontraron lugares en 3km.",
-                gpsError: "Error GPS",
-                connError: "Error de conexión",
-                targetSet: "Objetivo fijado en:",
-                waypointSet: "Parada intermedia fijada en:",
-                waypointReached: "¡Parada intermedia alcanzada!",
-                continueToHome: "¿Continuar a casa?",
-                confirmStop1: "¿Seguro que quieres parar? Se borrará la ruta.",
-                confirmStop2: "¿Muy seguro? Tendrás que fijar el punto de inicio de nuevo.",
-                yes: "Sí",
-                no: "No",
-                ok: "OK",
-                selectLang: "Elegir idioma",
-                chooseNav: "Elegir navegación",
-                compassView: "🧭 Brújula",
-                mapView: "🗺️ Mapa",
-                cancel: "Cancelar",
-                sos: "SOS",
-                sosMsg: "Mi ubicación: ",
-                offlineMap: "📥 Mapa offline",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "Mapa offline",
-                downloadDesc: "Descargar mapas para uso offline.",
-                radius: "KM de radio",
-                downloading: "Descargando: ",
-                downloadDone: "¡Descarga completa!",
-                downloadError: "Error en la descarga."
-            },
-            it: {
-                goHome: "Vai a Casa",
-                setHome: "Fissa Casa",
-                homeSet: "Casa fissata",
-                homeSetPoi: "Obiettivo fissato (POI)",
-                locating: "Ricerca...",
-                pressSetHome: "Fissa prima Casa",
-                distance: "Distanza",
-                timeToHome: "Tempo a Casa",
-                standingStill: "Fermo",
-                stop: "STOP",
-                tripComplete: "🏁 Trip completato",
-                time: "Tempo",
-                minutes: "minuti",
-                startNew: "Nuovo Trip",
-                install: "📱 Installa App",
-                helpTitle: "Come funziona",
-                helpSteps: [
-                    "<strong>1. Fissa Casa:</strong> Premi qui alla tua auto, tenda o quell'albero che pensi di ricordare (non succederà).",
-                    "<strong>2. Vagabondare:</strong> Cammina, perditi, insegui uno scoiattolo. Non giudichiamo.",
-                    "<strong>3. Vai a Casa:</strong> Quando sei stanco/affamato, premi qui. Segui la freccia come se la tua vita dipendesse da questo.",
-                    "<strong>4. Freccia verde:</strong> Sei sulla strada giusta. Continua così, eroe!",
-                    "<strong>5. Arrivo:</strong> Quando il telefono vibra e volano coriandoli, sei arrivato! Ora di merenda."
-                ],
-                close: "Chiudi",
-                gotIt: "Capito!",
-                findPlaces: "Trova luoghi",
-                locatingYou: "Localizzazione...",
-                searchingPoi: "Ricerca luoghi vicini...",
-                noPoiFound: "Nessun luogo trovato entro 3km.",
-                gpsError: "Errore GPS",
-                connError: "Errore connessione",
-                targetSet: "Obiettivo fissato su:",
-                waypointSet: "Tappa intermedia fissata su:",
-                waypointReached: "Tappa raggiunta!",
-                continueToHome: "Continuare verso casa?",
-                confirmStop1: "Vuoi davvero fermarti? Il percorso verrà cancellato.",
-                confirmStop2: "Sicuro? Dovrai fissare di nuovo il punto di partenza.",
-                yes: "Sì",
-                no: "No",
-                ok: "OK",
-                selectLang: "Scegli lingua",
-                chooseNav: "Scegli navigazione",
-                compassView: "🧭 Bussola",
-                mapView: "🗺️ Mappa",
-                cancel: "Annulla",
-                sos: "SOS",
-                sosMsg: "Mia posizione: ",
-                offlineMap: "📥 Mappa offline",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "Mappa offline",
-                downloadDesc: "Scarica mappe per uso offline.",
-                radius: "KM di raggio",
-                downloading: "Download: ",
-                downloadDone: "Download completato!",
-                downloadError: "Download fallito."
-            },
-            pl: {
-                goHome: "Do Domu",
-                setHome: "Ustaw Dom",
-                homeSet: "Dom ustawiony",
-                homeSetPoi: "Cel ustawiony (POI)",
-                locating: "Lokalizacja...",
-                pressSetHome: "Najpierw ustaw Dom",
-                distance: "Dystans",
-                timeToHome: "Czas do Domu",
-                standingStill: "Postój",
-                stop: "STOP",
-                tripComplete: "🏁 Trip ukończony",
-                time: "Czas",
-                minutes: "minut",
-                startNew: "Nowy Trip",
-                install: "📱 Zainstaluj App",
-                helpTitle: "Jak to działa",
-                helpSteps: [
-                    "<strong>1. Ustaw Dom:</strong> Naciśnij to przy aucie, namiocie lub tym jednym drzewie (którego i tak nie zapamiętasz).",
-                    "<strong>2. Wędruj:</strong> Idź na spacer, zgub się, goń wiewiórkę. Nie oceniamy.",
-                    "<strong>3. Do Domu:</strong> Gdy będziesz zmęczony/głodny, naciśnij to. Idź za strzałką, jakby od tego zależało Twoje życie.",
-                    "<strong>4. Zielona Strzałka:</strong> Idziesz w dobrą stronę. Tak trzymaj, bohaterze!",
-                    "<strong>5. Przybycie:</strong> Gdy telefon zawibruje i poleci konfetti, jesteś na miejscu! Czas na przekąskę."
-                ],
-                close: "Zamknij",
-                gotIt: "Zrozumiałem!",
-                findPlaces: "Znajdź miejsca",
-                locatingYou: "Lokalizowanie...",
-                searchingPoi: "Szukanie miejsc w pobliżu...",
-                noPoiFound: "Nie znaleziono miejsc w promieniu 3km.",
-                gpsError: "Błąd GPS",
-                connError: "Błąd połączenia",
-                targetSet: "Cel ustawiony na:",
-                waypointSet: "Przystanek ustawiony na:",
-                waypointReached: "Przystanek osiągnięty!",
-                continueToHome: "Kontynuować do domu?",
-                confirmStop1: "Czy na pewno chcesz przerwać? Trasa zostanie wyczyszczona.",
-                confirmStop2: "Na pewno? Będziesz musiał ponownie ustawić punkt startu.",
-                yes: "Tak",
-                no: "Nie",
-                ok: "OK",
-                selectLang: "Wybierz język",
-                chooseNav: "Wybierz nawigację",
-                compassView: "🧭 Kompas",
-                mapView: "🗺️ Mapa",
-                cancel: "Anuluj",
-                sos: "SOS",
-                sosMsg: "Moja lokalizacja: ",
-                offlineMap: "📥 Mapa offline",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "Mapa offline",
-                downloadDesc: "Pobierz mapy do użytku offline.",
-                radius: "KM promień",
-                downloading: "Pobieranie: ",
-                downloadDone: "Pobieranie zakończone!",
-                downloadError: "Pobieranie nieudane."
-            },
-            pt: {
-                goHome: "Ir para Casa",
-                setHome: "Definir Casa",
-                homeSet: "Casa definida",
-                homeSetPoi: "Alvo definido (POI)",
-                locating: "Localizando...",
-                pressSetHome: "Defina Casa primeiro",
-                distance: "Distância",
-                timeToHome: "Tempo até Casa",
-                standingStill: "Parado",
-                stop: "STOP",
-                tripComplete: "🏁 Trip concluída",
-                time: "Tempo",
-                minutes: "minutos",
-                startNew: "Nova Trip",
-                install: "📱 Instalar App",
-                helpTitle: "Como funciona",
-                helpSteps: [
-                    "<strong>1. Definir Casa:</strong> Prima aqui no seu carro, tenda ou naquela árvore que acha que vai lembrar (não vai).",
-                    "<strong>2. Vaguear:</strong> Vá caminhar, perca-se, persiga um esquilo. Nós não julgamos.",
-                    "<strong>3. Ir para Casa:</strong> Quando estiver cansado/faminto, prima aqui. Siga a seta como se a sua vida dependesse disso.",
-                    "<strong>4. Seta Verde:</strong> Está na direção certa. Continue assim, herói!",
-                    "<strong>5. Chegada:</strong> Quando o telemóvel vibrar e voar confetes, chegou! Hora do lanche."
-                ],
-                close: "Fechar",
-                gotIt: "Entendi!",
-                findPlaces: "Encontrar locais",
-                locatingYou: "Localizando...",
-                searchingPoi: "A procurar locais próximos...",
-                noPoiFound: "Nenhum local encontrado em 3km.",
-                gpsError: "Erro GPS",
-                connError: "Erro de ligação",
-                targetSet: "Alvo definido para:",
-                waypointSet: "Paragem intermédia para:",
-                waypointReached: "Paragem alcançada!",
-                continueToHome: "Continuar para casa?",
-                confirmStop1: "Tem a certeza que quer parar? O trajeto será apagado.",
-                confirmStop2: "Absoluta? Terá de definir o ponto de partida novamente.",
-                yes: "Sim",
-                no: "Não",
-                ok: "OK",
-                selectLang: "Escolher idioma",
-                chooseNav: "Escolher navegação",
-                compassView: "🧭 Bússola",
-                mapView: "🗺️ Mapa",
-                cancel: "Cancelar",
-                sos: "SOS",
-                sosMsg: "A minha localização: ",
-                offlineMap: "📥 Mapa offline",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "Mapa offline",
-                downloadDesc: "Descarregar mapas para uso offline.",
-                radius: "KM de raio",
-                downloading: "A descarregar: ",
-                downloadDone: "Download concluído!",
-                downloadError: "Download falhou."
-            },
-            tr: {
-                goHome: "Eve Git",
-                setHome: "Evi Ayarla",
-                homeSet: "Ev Ayarlandı",
-                homeSetPoi: "Hedef Ayarlandı (POI)",
-                locating: "Aranıyor...",
-                pressSetHome: "Önce Evi Ayarla",
-                distance: "Mesafe",
-                timeToHome: "Eve Kalan Süre",
-                standingStill: "Duruyor",
-                stop: "DUR",
-                tripComplete: "🏁 Gezi Tamamlandı",
-                time: "Süre",
-                minutes: "dakika",
-                startNew: "Yeni Gezi",
-                install: "📱 Uygulamayı Yükle",
-                helpTitle: "Nasıl Çalışır?",
-                helpSteps: [
-                    "<strong>1. Evi Ayarla:</strong> Araba, çadır weya o hatırlayacağınızı sandığınız ağaçta (hatırlamayacaksınız) buna basın.",
-                    "<strong>2. Dolaşın:</strong> Yürüyüşe çıkın, kaybolun, bir sincabı kovalayın. Yargılamıyoruz.",
-                    "<strong>3. Eve Git:</strong> Yorulduğunuzda buna basın. Okun yönünü hayatınız buna bağlıymış gibi (olabilir) takip edin.",
-                    "<strong>4. Yeşil Ok:</strong> Doğru yöne bakıyorsunuz. Devam et kahraman!",
-                    "<strong>5. Varış:</strong> Telefon titreyip konfetiler uçtuğunda vardınız demektir! Atıştırma vakti."
-                ],
-                close: "Kapat",
-                gotIt: "Anladım!",
-                findPlaces: "Yer Bul",
-                locatingYou: "Konum bulunuyor...",
-                searchingPoi: "Yakındaki yerler aranıyor...",
-                noPoiFound: "3 km içinde yer bulunamadı.",
-                gpsError: "GPS hatası",
-                connError: "Bağlantı hatası",
-                targetSet: "Hedef belirlendi:",
-                waypointSet: "Ara durak belirlendi:",
-                waypointReached: "Ara durağa varıldı!",
-                continueToHome: "Eve devam edilsin mi?",
-                confirmStop1: "Durdurmak istediğinize emin misiniz? Gezi silinecektir.",
-                confirmStop2: "Tamamen emin misiniz? Başlangıç noktasını tekrar ayarlamanız gerekecek.",
-                yes: "Evet",
-                no: "Hayır",
-                ok: "Tamam",
-                selectLang: "Dil Seçin",
-                chooseNav: "Navigasyon seçin",
-                compassView: "🧭 Pusula",
-                mapView: "🗺️ Harita",
-                cancel: "İptal",
-                sos: "SOS",
-                sosMsg: "Konumum: ",
-                offlineMap: "📥 Çevrimdışı Harita",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "Çevrimdışı Harita",
-                downloadDesc: "Haritayı çevrimdışı kullanım için indir.",
-                radius: "KM Yarıçap",
-                downloading: "İndiriliyor: ",
-                downloadDone: "İndirme tamamlandı!",
-                downloadError: "İndirme başarısız."
-            },
-            ru: {
-                goHome: "Домой",
-                setHome: "Установить Дом",
-                homeSet: "Дом установлен",
-                homeSetPoi: "Цель установлена (POI)",
-                locating: "Поиск...",
-                pressSetHome: "Сначала установите Дом",
-                distance: "Дистанция",
-                timeToHome: "Время до Дома",
-                standingStill: "На месте",
-                stop: "СТОП",
-                tripComplete: "🏁 Поход завершен",
-                time: "Время",
-                minutes: "минут",
-                startNew: "Новый поход",
-                install: "📱 Установить приложение",
-                helpTitle: "Как это работает",
-                helpSteps: [
-                    "<strong>1. Установить Дом:</strong> Нажми здесь у машины, палатки или того дерева (которое ты не запомнишь).",
-                    "<strong>2. Гуляй:</strong> Иди в поход, потеряйся, погоняйся за белкой. Мы не осуждаем.",
-                    "<strong>3. Домой:</strong> Когда устанешь, нажми сюда. Следуй за стрелкой, будто от этого зависит жизнь.",
-                    "<strong>4. Зеленая стрелка:</strong> Идешь в верном направлении. Так держать, герой!",
-                    "<strong>5. Прибытие:</strong> Когда телефон завибрирует и полетит конфетти — ты на месте! Время перекусить."
-                ],
-                close: "Закрыть",
-                gotIt: "Понятно!",
-                findPlaces: "Найти места",
-                locatingYou: "Определение локации...",
-                searchingPoi: "Поиск мест поблизости...",
-                noPoiFound: "Места в радиусе 3 км не найдены.",
-                gpsError: "Ошибка GPS",
-                connError: "Ошибка соединения",
-                targetSet: "Цель установлена:",
-                waypointSet: "Промежуточная точка:",
-                waypointReached: "Точка достигнута!",
-                continueToHome: "Продолжить домой?",
-                confirmStop1: "Уверены, что хотите прервать? Маршрут будет удален.",
-                confirmStop2: "Точно? Придется заново устанавливать точку старта.",
-                yes: "Да",
-                no: "Нет",
-                ok: "OK",
-                selectLang: "Выбрать язык",
-                chooseNav: "Выбрать навигацию",
-                compassView: "🧭 Компас",
-                mapView: "🗺️ Карта",
-                cancel: "Отмена",
-                sos: "SOS",
-                sosMsg: "Мое местоположение: ",
-                offlineMap: "📥 Оффлайн карта",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "Оффлайн карта",
-                downloadDesc: "Скачать карту для оффлайн использования.",
-                radius: "КМ радиус",
-                downloading: "Загрузка: ",
-                downloadDone: "Загрузка завершена!",
-                downloadError: "Ошибка загрузки."
-            },
-            ar: {
-                goHome: "العودة للمنزل",
-                setHome: "تحديد المنزل",
-                homeSet: "تم تحديد المنزل",
-                homeSetPoi: "تم تحديد الهدف (POI)",
-                locating: "جاري التحديد...",
-                pressSetHome: "حدد المنزل أولاً",
-                distance: "المسافة",
-                timeToHome: "الوقت للمنزل",
-                standingStill: "متوقف",
-                stop: "إيقاف",
-                tripComplete: "🏁 اكتملت الرحلة",
-                time: "الوقت",
-                minutes: "دقائق",
-                startNew: "رحلة جديدة",
-                install: "📱 تثبيت التطبيق",
-                helpTitle: "كيف يعمل التطبيق",
-                helpSteps: [
-                    "<strong>1. تحديد المنزل:</strong> اضغط هنا عند سيارتك أو خيمتك أو تلك الشجرة التي تظن أنك ستتذكرها (لن تفعل).",
-                    "<strong>2. تجول:</strong> اذهب للمشي، تِه قليلاً، طارد سنجاباً. نحن لا نحكم عليك.",
-                    "<strong>3. العودة للمنزل:</strong> عندما تتعب، اضغط هنا. اتبع السهم كأن حياتك تعتمد عليه (قد يكون كذلك).",
-                    "<strong>4. السهم الأخضر:</strong> أنت في الاتجاه الصحيح. استمر يا بطل!",
-                    "<strong>5. الوصول:</strong> عندما يهتز الهاتف وتطير الألعاب النارية، لقد وصلت! وقت الوجبة الخفيفة."
-                ],
-                close: "إغلاق",
-                gotIt: "فهمت!",
-                findPlaces: "البحث عن أماكن",
-                locatingYou: "جاري تحديد موقعك...",
-                searchingPoi: "البحث عن أماكن قريبة...",
-                noPoiFound: "لم يتم العثور على أماكن ضمن 3 كم.",
-                gpsError: "خطأ في GPS",
-                connError: "خطأ في الاتصال",
-                targetSet: "تم تحديد الهدف إلى:",
-                waypointSet: "تم تحديد نقطة التوقف:",
-                waypointReached: "تم الوصول لنقطة التوقف!",
-                continueToHome: "الاستمرار للمنزل؟",
-                confirmStop1: "هل أنت متأكد من الإيقاف؟ سيتم مسح الرحلة.",
-                confirmStop2: "هل أنت متأكد تماماً؟ ستحتاج لتحديد نقطة البداية مجدداً.",
-                yes: "نعم",
-                no: "لا",
-                ok: "موافق",
-                selectLang: "اختر اللغة",
-                chooseNav: "اختر الملاحة",
-                compassView: "🧭 بوصلة",
-                mapView: "🗺️ خريطة",
-                cancel: "إلغاء",
-                sos: "SOS",
-                sosMsg: "موقعي الحالي: ",
-                offlineMap: "📥 خريطة أوفلاين",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "خريطة أوفلاين",
-                downloadDesc: "تحميل الخريطة للاستخدام بدون إنترنت.",
-                radius: "كيلومتر قطر",
-                downloading: "جاري التحميل: ",
-                downloadDone: "تم التحميل!",
-                downloadError: "فشل التحميل."
-            },
-            hi: {
-                goHome: "घर जाएँ",
-                setHome: "घर सेट करें",
-                homeSet: "घर सेट हो गया",
-                homeSetPoi: "लक्ष्य सेट (POI)",
-                locating: "ढूँढ रहे हैं...",
-                pressSetHome: "पहले घर सेट करें",
-                distance: "दूरी",
-                timeToHome: "घर तक का समय",
-                standingStill: "रुके हुए",
-                stop: "रुकें",
-                tripComplete: "🏁 यात्रा पूर्ण",
-                time: "समय",
-                minutes: "मिनट",
-                startNew: "नई यात्रा",
-                install: "📱 ऐप इंस्टॉल करें",
-                helpTitle: "यह कैसे काम करता है",
-                helpSteps: [
-                    "<strong>1. घर सेट करें:</strong> अपनी कार, टेंट या उस पेड़ के पास इसे दबाएँ जिसे आप याद रखेंगे (आप नहीं रखेंगे)।",
-                    "<strong>2. घूमें-फिरें:</strong> लंबी पैदल यात्रा करें, खो जाएँ, गिलहरी का पीछा करें। हम बुरा नहीं मानते।",
-                    "<strong>3. घर जाएँ:</strong> जब आप थक जाएँ, तो इसे दबाएँ। तीर का पालन ऐसे करें जैसे आपकी जान उस पर टिकी हो।",
-                    "<strong>4. हरा तीर:</strong> आप सही दिशा में हैं। चलते रहें, हीरो!",
-                    "<strong>5. आगमन:</strong> जब फोन कंपन करे और कॉन्फेटी उड़े, तो आप पहुँच गए! नाश्ते का समय।"
-                ],
-                close: "बंद करें",
-                gotIt: "समझ गए!",
-                findPlaces: "जगह ढूँढें",
-                locatingYou: "स्थान ढूँढ रहे हैं...",
-                searchingPoi: "आस-पास की जगहें ढूँढ रहे हैं...",
-                noPoiFound: "3 किमी के भीतर कोई जगह नहीं मिली।",
-                gpsError: "जीपीएस त्रुटि",
-                connError: "जीपीएस त्रुटि",
-                targetSet: "लक्षय यहाँ सेट है:",
-                waypointSet: "रास्ते का पड़ाव सेट है:",
-                waypointReached: "पड़ाव पहुँच गए!",
-                continueToHome: "घर जारी रखें?",
-                confirmStop1: "क्या आप वाकई रुकना चाहते हैं? यात्रा साफ़ हो जाएगी।",
-                confirmStop2: "क्या आप पूरी तरह से आश्वस्त हैं? आपको फिर से घर सेट करना होगा।",
-                yes: "हाँ",
-                no: "नहीं",
-                ok: "ठीक है",
-                selectLang: "भाषा चुनें",
-                chooseNav: "नेविगेशन चुनें",
-                compassView: "🧭 कम्पास",
-                mapView: "🗺️ नक्शा",
-                cancel: "रद्द करें",
-                sos: "SOS",
-                sosMsg: "मेरा स्थान: ",
-                offlineMap: "📥 ऑफलाइन नक्शा",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "ऑफलाइन नक्शा",
-                downloadDesc: "ऑफलाइन उपयोग के लिए नक्शा डाउनलोड करें।",
-                radius: "KM त्रिज्या",
-                downloading: "डाउनलोड हो रहा है: ",
-                downloadDone: "डाउनलोड पूर्ण!",
-                downloadError: "डाउनलोड विफल।"
-            },
-            zh: {
-                goHome: "回家",
-                setHome: "设置起点",
-                homeSet: "起点已设置",
-                homeSetPoi: "目标已设置 (POI)",
-                locating: "定位中...",
-                pressSetHome: "请先设置起点",
-                distance: "距离",
-                timeToHome: "预计用时",
-                standingStill: "静止",
-                stop: "停止",
-                tripComplete: "🏁 旅程完成",
-                time: "用时",
-                minutes: "分钟",
-                startNew: "开始新旅程",
-                install: "📱 安装应用",
-                helpTitle: "使用说明",
-                helpSteps: [
-                    "<strong>1. 设置起点：</strong> 在你的车、帐篷或某棵树旁点击此按钮（你肯定会忘在那儿）。",
-                    "<strong>2. 随意漫步：</strong> 去远足、去迷路、去追松鼠。我们不会评价。",
-                    "<strong>3. 回家：</strong> 累了或饿了时点击此按钮。像命悬一线一样跟着箭头走（可能真是这样）。",
-                    "<strong>4. 绿色箭头：</strong> 你的方向正确。继续加油，英雄！",
-                    "<strong>5. 到达：</strong> 当手机震动并撒出彩纸时，你到了！该吃零食了。"
-                ],
-                close: "关闭",
-                gotIt: "知道了！",
-                findPlaces: "查找地点",
-                locatingYou: "正在定位...",
-                searchingPoi: "正在搜索附近地点...",
-                noPoiFound: "3公里内未找到地点。",
-                gpsError: "GPS错误",
-                connError: "连接错误",
-                targetSet: "目标设置为：",
-                waypointSet: "已设置中途停靠点：",
-                waypointReached: "已到达中途停靠点！",
-                continueToHome: "继续回家？",
-                confirmStop1: "确定要停止吗？行程将被清除。",
-                confirmStop2: "真的确定吗？你需要重新设置起点。",
-                yes: "是",
-                no: "否",
-                ok: "确定",
-                selectLang: "选择语言",
-                chooseNav: "选择导航方式",
-                compassView: "🧭 指南针",
-                mapView: "🗺️ 地图",
-                cancel: "取消",
-                sos: "SOS",
-                sosMsg: "我的当前位置：",
-                offlineMap: "📥 离线地图",
-                powerSave: "🔋 PowerSave",
-                downloadTitle: "离线地图",
-                downloadDesc: "下载当前位置周围的地图切片以供离线使用。",
-                radius: "公里半径",
-                downloading: "正在下载：",
-                downloadDone: "下载完成！",
-                downloadError: "下载失败。"
-            }
-        };
-
-        const languages = [
-            { code: 'en', name: 'English' },
-            { code: 'nl', name: 'Nederlands' },
-            { code: 'de', name: 'Deutsch' },
-            { code: 'fr', name: 'Français' },
-            { code: 'es', name: 'Español' },
-            { code: 'it', name: 'Italiano' },
-            { code: 'pl', name: 'Polski' },
-            { code: 'pt', name: 'Português' },
-            { code: 'tr', name: 'Türkçe' },
-            { code: 'ru', name: 'Русский' },
-            { code: 'ar', name: 'العربية' },
-            { code: 'hi', name: 'हिन्दी' },
-            { code: 'zh', name: '中文' }
-        ];
+        // Navigation State
+        let homeLat = null, homeLon = null, currentLat = null, currentLon = null;
+        let watchId = null, heading = 0;
 
         // UI Elements
-        const homeScreen = document.getElementById('home-screen');
-        const selectionScreen = document.getElementById('selection-screen');
-        const compassScreen = document.getElementById('compass-screen');
-        const mapScreen = document.getElementById('map-screen');
-        const completeScreen = document.getElementById('trip-complete-screen');
-        
-        const setHomeBtn = document.getElementById('set-home-btn');
-        const goHomeBtn = document.getElementById('go-home-btn');
-        const selectCompassBtn = document.getElementById('select-compass-btn');
-        const selectMapBtn = document.getElementById('select-map-btn');
-        const cancelSelectionBtn = document.getElementById('cancel-selection-btn');
-        const stopBtn = document.getElementById('stop-btn');
-        const mapStopBtn = document.getElementById('map-stop-btn');
-        const sosBtn = document.getElementById('sos-btn');
-        const startNewBtn = document.getElementById('start-new-btn');
-        const installBtn = document.getElementById('install-btn');
-        const openHelp = document.getElementById('open-help');
-        const closeHelp = document.getElementById('close-help');
-        const helpOverlay = document.getElementById('help-overlay');
-        const helpTitle = document.getElementById('help-title');
-        const helpSteps = document.getElementById('help-steps');
-        const openPoiBtn = document.getElementById('open-poi');
-        const mapPoiBtn = document.getElementById('map-poi-btn');
-        const closePoiBtn = document.getElementById('close-poi');
-        const poiOverlay = document.getElementById('poi-overlay');
-        const poiList = document.getElementById('poi-list');
-        const poiTitle = document.getElementById('poi-title');
-        const poiStatus = document.getElementById('poi-status');
-        const catBtns = document.querySelectorAll('.cat-btn');
-        const openLangBtn = document.getElementById('open-lang');
-        const closeLangBtn = document.getElementById('close-lang');
-        const langOverlay = document.getElementById('lang-overlay');
-        const langList = document.getElementById('lang-list');
-        const langModalTitle = document.getElementById('lang-modal-title');
-        const confirmOverlay = document.getElementById('confirm-overlay');
-        const confirmMsg = document.getElementById('confirm-msg');
-        const confirmYesBtn = document.getElementById('confirm-yes-btn');
-        const confirmNoBtn = document.getElementById('confirm-no-btn');
-        const distLabel = document.getElementById('dist-label');
-        const mapDistLabel = document.getElementById('map-dist-label');
-        const chooseNavTitle = document.getElementById('choose-nav-title');
-        const completeTitle = document.getElementById('complete-title');
-        const timeLabel = document.getElementById('time-label');
-        const minLabel = document.getElementById('min-label');
-        
-        const arrow = document.getElementById('arrow');
-        const distanceVal = document.getElementById('distance-val');
-        const mapDistanceVal = document.getElementById('map-distance-val');
-        const etaDisplay = document.getElementById('eta-display');
-        const mapEtaDisplay = document.getElementById('map-eta-display');
-        const tripTimeDisplay = document.getElementById('trip-time');
-
-        // Offline Map Elements
-        const offlineMapBtn = document.getElementById('offline-map-btn');
-        const powerSaveBtn = document.getElementById('powersave-btn');
-        const downloadOverlay = document.getElementById('download-overlay');
-        const closeDownloadBtn = document.getElementById('close-download');
-        const downloadOptBtns = document.querySelectorAll('.download-opt-btn');
-        const downloadProgressContainer = document.getElementById('download-progress-container');
-        const downloadStatus = document.getElementById('download-status');
-        const downloadProgressFill = document.getElementById('download-progress-fill');
-        const downloadOptions = document.getElementById('download-options');
-
-        // Language Management
-        function setLanguage(langCode) {
-            currentLang = langCode;
-            localStorage.setItem('appLang', langCode);
-            updateUI();
-            renderLangList();
+        const screens = ['home-screen', 'selection-screen', 'compass-screen', 'map-screen'];
+        function showScreen(id) {
+            screens.forEach(s => document.getElementById(s).style.display = (s === id ? 'flex' : 'none'));
         }
 
-        function updateUI() {
-            const t = translations[currentLang];
-            goHomeBtn.innerText = t.goHome;
-            if (!homeLat) {
-                setHomeBtn.innerText = t.setHome;
-            } else {
-                setHomeBtn.innerText = setHomeBtn.innerText.includes('POI') || setHomeBtn.innerText.includes(':') ? t.homeSetPoi : t.homeSet;
-            }
-            stopBtn.innerText = t.stop;
-            mapStopBtn.innerText = t.stop;
-            sosBtn.innerText = `🆘 ${t.sos || 'SOS'}`;
-            startNewBtn.innerText = t.startNew;
-            installBtn.innerText = t.install;
-            closeHelp.innerText = t.gotIt;
-            helpTitle.innerText = t.helpTitle;
-            helpSteps.innerHTML = t.helpSteps.map(step => `<p>${step}</p>`).join('');
-            poiTitle.innerText = t.findPlaces;
-            closePoiBtn.innerText = t.close;
-            closeLangBtn.innerText = t.close;
-            langModalTitle.innerText = t.selectLang;
-            distLabel.innerText = t.distance;
-            mapDistLabel.innerText = t.distance;
-            chooseNavTitle.innerText = t.chooseNav || "Choose Navigation";
-            selectCompassBtn.innerText = t.compassView || "🧭 Compass";
-            selectMapBtn.innerText = t.mapView || "🗺️ Map";
-            cancelSelectionBtn.innerText = t.cancel || "Cancel";
-            completeTitle.innerText = t.tripComplete;
-            timeLabel.innerText = t.time;
-            minLabel.innerText = t.minutes;
-            mapPoiBtn.innerText = "📍 " + (t.waypoint || t.findPlaces);
-            powerSaveBtn.innerText = t.powerSave || "🔋 PowerSave";
-            offlineMapBtn.innerText = t.offlineMap;
-
-            // Update POI category labels
-            const poiLabels = {
-                playground: currentLang === 'nl' ? 'Speel' : 'Play',
-                cafe: currentLang === 'nl' ? 'Cafe' : 'Cafe',
-                snackbar: currentLang === 'nl' ? 'Snack' : 'Snack',
-                toilet: currentLang === 'nl' ? 'WC' : 'WC',
-                water: currentLang === 'nl' ? 'Water' : 'Water',
-                shop: currentLang === 'nl' ? 'Winkel' : 'Shop',
-                bench: currentLang === 'nl' ? 'Rust' : 'Rest',
-                viewpoint: currentLang === 'nl' ? 'Zicht' : 'View',
-                park: currentLang === 'nl' ? 'Park' : 'Park',
-                camp_site: currentLang === 'nl' ? 'Camp' : 'Camp',
-                pharmacy: currentLang === 'nl' ? 'Apotheek' : 'Meds',
-                bus_stop: currentLang === 'nl' ? 'Bus' : 'Bus'
-            };
-
-            catBtns.forEach(btn => {
-                const type = btn.dataset.type;
-                const icon = btn.querySelector('.cat-icon').outerHTML;
-                btn.innerHTML = `${icon}${poiLabels[type] || btn.dataset.label}`;
-            });
-            
-            // RTL support for Arabic
-            document.body.style.direction = currentLang === 'ar' ? 'rtl' : 'ltr';
+        // Ad Logic
+        function startAdTimer() {
+            if (isPro) return;
+            adTimer = setInterval(() => {
+                const now = Date.now();
+                if (now - lastAdTime >= 120000) { // 120 seconds
+                    showAd();
+                }
+            }, 10000);
         }
 
-        function renderLangList() {
-            langList.innerHTML = '';
-            languages.forEach(lang => {
-                const div = document.createElement('div');
-                div.className = `lang-item ${currentLang === lang.code ? 'active' : ''}`;
-                div.innerText = lang.name;
-                div.onclick = () => {
-                    setLanguage(lang.code);
-                    langOverlay.style.display = 'none';
-                };
-                langList.appendChild(div);
-            });
+        function showAd() {
+            if (isPro) return;
+            document.getElementById('ad-overlay').style.display = 'flex';
+            lastAdTime = Date.now();
+            console.log("Showing Interstitial Ad");
         }
 
-        openLangBtn.addEventListener('click', () => {
-            playClickSound();
-            langOverlay.style.display = 'flex';
-        });
-
-        closeLangBtn.addEventListener('click', () => {
-            playClickSound();
-            langOverlay.style.display = 'none';
-        });
-
-        // Initialize UI
-        updateUI();
-        renderLangList();
-
-        // Start background location tracking immediately
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(
-                (position) => {
-                    currentLat = position.coords.latitude;
-                    currentLon = position.coords.longitude;
-                    currentSpeed = position.coords.speed;
-                    console.log("Background location updated:", currentLat, currentLon);
-                },
-                (error) => console.warn("Background location error:", error),
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-        }
-
-        // PWA Install Prompt
-        let deferredPrompt;
-        
-        // Check if already installed
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-            installBtn.style.display = 'none';
-        }
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            // Only show if not already in standalone mode
-            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-                return;
-            }
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'block';
-        });
-
-        installBtn.addEventListener('click', async () => {
-            playClickSound();
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                installBtn.style.display = 'none';
-            }
-            deferredPrompt = null;
-        });
-
-        // Help Overlay Logic
-        openHelp.addEventListener('click', () => {
-            playClickSound();
-            helpOverlay.style.display = 'flex';
-        });
-
-        closeHelp.addEventListener('click', () => {
-            playClickSound();
-            helpOverlay.style.display = 'none';
-        });
-
-        helpOverlay.addEventListener('click', (e) => {
-            if (e.target === helpOverlay) {
-                helpOverlay.style.display = 'none';
-            }
-        });
-
-        // POI Logic
-        let currentCategory = 'playground';
-        
-        const poiQueries = {
-            playground: 'node["leisure"="playground"]',
-            cafe: 'node["amenity"="cafe"]',
-            snackbar: 'node["amenity"="fast_food"]',
-            toilet: 'node["amenity"="toilets"]',
-            water: 'node["amenity"="drinking_water"]',
-            shop: 'node["shop"="supermarket"]',
-            bench: 'node["amenity"="bench"]',
-            viewpoint: 'node["tourism"="viewpoint"]',
-            park: 'node["leisure"="park"]',
-            camp_site: 'node["tourism"="camp_site"]',
-            pharmacy: 'node["amenity"="pharmacy"]',
-            bus_stop: 'node["highway"="bus_stop"]'
+        document.getElementById('close-ad-btn').onclick = () => {
+            document.getElementById('ad-overlay').style.display = 'none';
         };
 
-        openPoiBtn.addEventListener('click', () => {
-            playClickSound();
-            poiOverlay.style.display = 'flex';
-            fetchPOIs();
-        });
+        // Pro Logic
+        function checkProFeature(e) {
+            if (!isPro) {
+                e.stopImmediatePropagation();
+                document.getElementById('pro-offer-overlay').style.display = 'flex';
+                return false;
+            }
+            return true;
+        }
 
-        mapPoiBtn.addEventListener('click', () => {
-            playClickSound();
-            poiOverlay.style.display = 'flex';
-            fetchPOIs();
-        });
+        document.getElementById('buy-pro-action').onclick = () => {
+            // Here you would normally link to Google Play Billing
+            alert("Redirecting to Secure Payment...");
+            isPro = true;
+            localStorage.setItem('isPro', 'true');
+            document.getElementById('pro-offer-overlay').style.display = 'none';
+            location.reload(); // Refresh to unlock everything
+        };
 
-        closePoiBtn.addEventListener('click', () => {
-            playClickSound();
-            poiOverlay.style.display = 'none';
-        });
+        document.getElementById('close-pro-offer').onclick = () => {
+            document.getElementById('pro-offer-overlay').style.display = 'none';
+        };
 
-        catBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                playClickSound();
-                catBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentCategory = btn.dataset.type;
-                poiTitle.innerText = `${translations[currentLang].findPlaces}: ${btn.dataset.label}`;
-                fetchPOIs();
+        // Navigation Actions
+        document.getElementById('set-home-btn').onclick = () => {
+            navigator.geolocation.getCurrentPosition(p => {
+                homeLat = p.coords.latitude;
+                homeLon = p.coords.longitude;
+                document.getElementById('set-home-btn').style.borderColor = 'var(--green)';
+                document.getElementById('set-home-btn').innerText = "Home Set!";
             });
-        });
+        };
 
-        async function fetchPOIs() {
-            const t = translations[currentLang];
+        document.getElementById('go-home-btn').onclick = () => {
+            if (!homeLat) return alert("Set Home first!");
+            showScreen('selection-screen');
+        };
+
+        document.getElementById('select-compass-btn').onclick = () => {
+            showScreen('compass-screen');
+            startTracking();
+        };
+
+        document.getElementById('select-map-btn').onclick = (e) => {
+            if (checkProFeature(e)) {
+                showScreen('map-screen');
+                startTracking();
+                initMap();
+            }
+        };
+
+        document.getElementById('cancel-selection-btn').onclick = () => showScreen('home-screen');
+
+        // GPS Tracking
+        function startTracking() {
+            watchId = navigator.geolocation.watchPosition(p => {
+                currentLat = p.coords.latitude;
+                currentLon = p.coords.longitude;
+                updateNav();
+            }, null, {enableHighAccuracy: true});
             
-            // Function to perform the Overpass query
-            const performPoiSearch = async (lat, lon) => {
-                poiList.innerHTML = `
-                    <div class="loading-poi">
-                        <div class="spinner"></div>
-                        ${t.searchingPoi}
-                    </div>`;
-                poiStatus.innerText = `Searching within 3km...`;
-                
-                const queryTag = poiQueries[currentCategory];
-                const query = `[out:json];${queryTag}(around:3000,${lat},${lon});out;`;
-                const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
-                
-                try {
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    
-                    if (data.elements && data.elements.length > 0) {
-                        poiList.innerHTML = '';
-                        poiStatus.innerText = `Found ${data.elements.length} locations`;
-                        
-                        const pois = data.elements.map(item => {
-                            const d = getDistance(lat, lon, item.lat, item.lon);
-                            return { ...item, distance: d };
-                        }).sort((a, b) => a.distance - b.distance);
+            window.addEventListener('deviceorientation', e => {
+                heading = e.webkitCompassHeading || (360 - e.alpha);
+                updateNav();
+            });
+        }
 
-                        pois.slice(0, 15).forEach(poi => {
-                            const div = document.createElement('div');
-                            div.className = 'poi-item';
-                            const name = poi.tags.name || `Unnamed ${currentCategory}`;
-                            div.innerHTML = `
-                                <h4>${name}</h4>
-                                <p>${Math.round(poi.distance)} meters away</p>
-                            `;
-                            div.onclick = () => {
-                                playClickSound();
-                                if (watchId !== null) {
-                                    // Already navigating - set as waypoint
-                                    waypointLat = poi.lat;
-                                    waypointLon = poi.lon;
-                                    poiOverlay.style.display = 'none';
-                                    customAlert(`${t.waypointSet} ${name}`);
-
-                                    if (navigationType === 'map' && map) {
-                                        updateMapMarkers();
-                                    }
-                                } else {
-                                    // Not navigating yet - set as home destination
-                                    homeLat = poi.lat;
-                                    homeLon = poi.lon;
-                                    setHomeBtn.classList.add('home-set');
-                                    openPoiBtn.classList.add('home-set');
-                                    setHomeBtn.innerText = `${t.homeSetPoi}: ${currentCategory.toUpperCase()}`;
-                                    poiOverlay.style.display = 'none';
-                                    customAlert(`${t.targetSet} ${name}`);
-                                }
-                            };
-                            poiList.appendChild(div);
-                        });
-                    } else {
-                        poiList.innerHTML = `<div class="loading-poi">${t.noPoiFound}</div>`;
-                        poiStatus.innerText = "Try another category";
-                    }
-                } catch (error) {
-                    poiList.innerHTML = `<div class="loading-poi">${t.connError}</div>`;
-                    poiStatus.innerText = "Connection error";
-                    console.error(error);
-                }
-            };
-
-            // If we already have a background location, use it immediately!
-            if (currentLat && currentLon) {
-                console.log("Using cached background location for POI");
-                await performPoiSearch(currentLat, currentLon);
-            } else {
-                // Fallback: get current position if background hasn't locked yet
-                poiList.innerHTML = `
-                    <div class="loading-poi">
-                        <div class="spinner"></div>
-                        ${t.locatingYou}
-                    </div>`;
-                poiStatus.innerText = "Accessing GPS...";
-                
-                navigator.geolocation.getCurrentPosition(async (position) => {
-                    currentLat = position.coords.latitude;
-                    currentLon = position.coords.longitude;
-                    await performPoiSearch(currentLat, currentLon);
-                }, (error) => {
-                    poiList.innerHTML = `<div class="loading-poi">${t.gpsError}</div>`;
-                    poiStatus.innerText = "GPS error";
-                }, { enableHighAccuracy: true });
+        function updateNav() {
+            if (!currentLat || !homeLat) return;
+            const dist = getDist(currentLat, currentLon, homeLat, homeLon);
+            document.getElementById('distance-val').innerText = Math.round(dist);
+            
+            const bearing = getBearing(currentLat, currentLon, homeLat, homeLon);
+            const dir = (bearing - heading + 360) % 360;
+            document.getElementById('arrow').style.transform = `rotate(${dir}deg)`;
+            
+            if (dist < 10) {
+                confetti();
+                stopNav();
             }
         }
 
-        // Custom Alert Logic
-        function customAlert(message) {
-            const t = translations[currentLang];
-            return new Promise((resolve) => {
-                confirmMsg.innerText = message;
-                confirmNoBtn.style.display = 'none';
-                confirmYesBtn.innerText = t.ok;
-                confirmOverlay.style.display = 'flex';
-
-                const onOk = () => {
-                    playClickSound();
-                    cleanup();
-                    resolve();
-                };
-
-                const cleanup = () => {
-                    confirmOverlay.style.display = 'none';
-                    confirmNoBtn.style.display = 'block';
-                    confirmYesBtn.innerText = t.yes;
-                    confirmYesBtn.removeEventListener('click', onOk);
-                };
-
-                confirmYesBtn.addEventListener('click', onOk, { once: true });
-            });
+        function getDist(lat1, lon1, lat2, lon2) {
+            const R = 6371e3;
+            const φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(Δφ/2)**2 + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
 
-        // Custom Confirm Logic
-        function customConfirm(message) {
-            const t = translations[currentLang];
-            return new Promise((resolve) => {
-                confirmMsg.innerText = message;
-                confirmNoBtn.style.display = 'block';
-                confirmNoBtn.innerText = t.no;
-                confirmYesBtn.innerText = t.yes;
-                confirmOverlay.style.display = 'flex';
-
-                const onYes = () => {
-                    playClickSound();
-                    cleanup();
-                    resolve(true);
-                };
-
-                const onNo = () => {
-                    playClickSound();
-                    cleanup();
-                    resolve(false);
-                };
-
-                const cleanup = () => {
-                    confirmOverlay.style.display = 'none';
-                    confirmYesBtn.removeEventListener('click', onYes);
-                    confirmNoBtn.removeEventListener('click', onNo);
-                };
-
-                confirmYesBtn.addEventListener('click', onYes, { once: true });
-                confirmNoBtn.addEventListener('click', onNo, { once: true });
-            });
-        }
-
-        // Utils: Haversine distance
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371000; // Radius of Earth in meters
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        // Utils: Bearing calculation
         function getBearing(lat1, lon1, lat2, lon2) {
-            const y = Math.sin((lon2 - lon1) * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180);
-            const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
-                      Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos((lon2 - lon1) * Math.PI / 180);
-            const bearing = Math.atan2(y, x) * 180 / Math.PI;
-            return (bearing + 360) % 360;
+            const y = Math.sin((lon2-lon1)*Math.PI/180) * Math.cos(lat2*Math.PI/180);
+            const x = Math.cos(lat1*Math.PI/180)*Math.sin(lat2*Math.PI/180) - Math.sin(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.cos((lon2-lon1)*Math.PI/180);
+            return (Math.atan2(y, x)*180/Math.PI + 360) % 360;
         }
 
-        // Set Home Functionality
-        setHomeBtn.addEventListener('click', () => {
-            playClickSound();
-            const t = translations[currentLang];
-            if (!navigator.geolocation) {
-                customAlert("Geolocation is not supported by your browser");
-                return;
-            }
-
-            setHomeBtn.innerText = t.locating;
-            
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    homeLat = position.coords.latitude;
-                    homeLon = position.coords.longitude;
-                    
-                    setHomeBtn.classList.add('home-set');
-                    openPoiBtn.classList.add('home-set');
-                    setHomeBtn.innerText = t.homeSet;
-                    console.log(`Home set at: ${homeLat}, ${homeLon}`);
-                },
-                (error) => {
-                    customAlert(`Error: ${error.message}`);
-                    setHomeBtn.innerText = t.setHome;
-                },
-                { enableHighAccuracy: true }
-            );
-        });
-
-        // Go Home Functionality
-        goHomeBtn.addEventListener('click', () => {
-            playClickSound();
-            const t = translations[currentLang];
-            if (homeLat === null || homeLon === null) {
-                customAlert(t.pressSetHome);
-                return;
-            }
-
-            showScreen(selectionScreen);
-        });
-
-        selectCompassBtn.addEventListener('click', () => {
-            playClickSound();
-            navigationType = 'compass';
-            showScreen(compassScreen);
-            startNavigation();
-        });
-
-        selectMapBtn.addEventListener('click', () => {
-            playClickSound();
-            navigationType = 'map';
-            showScreen(mapScreen);
-            startNavigation();
-            setTimeout(initMap, 100); // Small delay to ensure container is visible
-        });
-
-        cancelSelectionBtn.addEventListener('click', () => {
-            playClickSound();
-            showScreen(homeScreen);
-        });
-
-        function showScreen(screen) {
-            [homeScreen, selectionScreen, compassScreen, mapScreen, completeScreen].forEach(s => s.classList.remove('active'));
-            screen.classList.add('active');
+        function stopNav() {
+            navigator.geolocation.clearWatch(watchId);
+            showScreen('home-screen');
         }
 
-        function startNavigation() {
-            startTime = new Date();
-            arrivalTriggered = false;
-            
-            // Start GPS tracking
-            watchId = navigator.geolocation.watchPosition(
-                (position) => {
-                    currentLat = position.coords.latitude;
-                    currentLon = position.coords.longitude;
-                    currentSpeed = position.coords.speed; // m/s
-                    updateNavigation();
-                },
-                (error) => console.error(error),
-                { enableHighAccuracy: true }
-            );
+        document.getElementById('stop-btn').onclick = stopNav;
+        document.getElementById('map-stop-btn').onclick = stopNav;
 
-            // Start Device Orientation
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                // iOS 13+
-                DeviceOrientationEvent.requestPermission()
-                    .then(response => {
-                        if (response == 'granted') {
-                            window.addEventListener('deviceorientation', handleOrientation);
-                        }
-                    })
-                    .catch(console.error);
-            } else {
-                window.addEventListener('deviceorientation', handleOrientation);
-            }
-        }
-
-        function handleOrientation(event) {
-            // Update heading regardless of navigation type
-            // (needed for both compass arrow and map marker arrow)
-
-            // For Android (event.alpha)
-            if (event.webkitCompassHeading) {
-                heading = event.webkitCompassHeading; // iOS
-            } else if (event.alpha !== null) {
-                heading = 360 - event.alpha; // Android/Generic
-            }
-            updateNavigation();
-        }
-
-        function initMap() {
-            if (map) {
-                map.remove();
-            }
-            
-            map = L.map('map').setView([currentLat || 0, currentLon || 0], 15);
-            
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OSM'
-            }).addTo(map);
-
-            updateMapMarkers();
-        }
-
-        function updateMapMarkers() {
-            if (!map) return;
-
-            // Home Icon
-            const homeIcon = L.divIcon({
-                className: 'home-marker-marker',
-                html: `
-                    <div class="home-marker-container">
-                        <div class="home-marker-dot"></div>
-                    </div>
-                `,
-                iconSize: [60, 60],
-                iconAnchor: [30, 30]
-            });
-
-            // Waypoint Icon (Yellow)
-            const waypointIcon = L.divIcon({
-                className: 'waypoint-marker-marker',
-                html: `
-                    <div class="home-marker-container">
-                        <div class="home-marker-dot" style="background: #ffeb3b; box-shadow: 0 0 25px #ffeb3b, 0 0 50px rgba(255, 235, 59, 0.6); animation: pulse-yellow 1.5s infinite;"></div>
-                    </div>
-                `,
-                iconSize: [40, 40],
-                iconAnchor: [20, 20]
-            });
-
-            // User Icon
-            const userIcon = L.divIcon({
-                className: 'user-direction-marker',
-                html: `
-                    <div class="user-direction-container">
-                        <div id="map-direction-arrow" class="user-direction-arrow" style="transform: rotate(${heading}deg)"></div>
-                        <div class="user-dot"></div>
-                    </div>
-                `,
-                iconSize: [40, 40],
-                iconAnchor: [20, 20]
-            });
-
-            if (homeMarker) map.removeLayer(homeMarker);
-            if (waypointMarker) map.removeLayer(waypointMarker);
-            if (userMarker) map.removeLayer(userMarker);
-            if (polyline) map.removeLayer(polyline);
-
-            homeMarker = L.marker([homeLat, homeLon], {icon: homeIcon}).addTo(map);
-            
-            if (waypointLat && waypointLon) {
-                waypointMarker = L.marker([waypointLat, waypointLon], {icon: waypointIcon}).addTo(map);
-            } else {
-                waypointMarker = null;
-            }
-
-            userMarker = L.marker([currentLat || 0, currentLon || 0], {icon: userIcon}).addTo(map);
-            
-            polyline = L.polyline(userPath, {
-                color: 'var(--blue)',
-                weight: 5,
-                opacity: 0.6,
-                dashArray: '10, 10'
-            }).addTo(map);
-
-            const layers = [homeMarker, userMarker];
-            if (waypointMarker) layers.push(waypointMarker);
-            
-            const group = new L.featureGroup(layers);
-            map.fitBounds(group.getBounds().pad(0.2));
-        }
-
-        function updateNavigation() {
-            if (currentLat === null || homeLat === null) return;
-
-            const t = translations[currentLang];
-            
-            // Determine current target (waypoint or home)
-            const targetLat = waypointLat !== null ? waypointLat : homeLat;
-            const targetLon = waypointLon !== null ? waypointLon : homeLon;
-            
-            const distance = getDistance(currentLat, currentLon, targetLat, targetLon);
-            
-            // Add current location to breadcrumb trail
-            if (userPath.length === 0 || 
-                getDistance(currentLat, currentLon, userPath[userPath.length-1][0], userPath[userPath.length-1][1]) > 5) {
-                userPath.push([currentLat, currentLon]);
-            }
-
-            // Update labels
-            if (navigationType === 'compass') {
-                distanceVal.innerText = Math.round(distance);
-            } else if (navigationType === 'map') {
-                mapDistanceVal.innerText = Math.round(distance);
-                
-                if (map && userMarker && polyline) {
-                    userMarker.setLatLng([currentLat, currentLon]);
-                    polyline.setLatLngs(userPath);
-                    
-                    // Rotate the map marker arrow
-                    const mapArrow = document.getElementById('map-direction-arrow');
-                    if (mapArrow) {
-                        mapArrow.style.transform = `rotate(${heading}deg)`;
-                    }
-
-                    const layers = [homeMarker, userMarker, polyline];
-                    if (waypointMarker) layers.push(waypointMarker);
-                    const group = new L.featureGroup(layers);
-                    map.fitBounds(group.getBounds().pad(0.2));
-                }
-            }
-
-            // Update ETA based on current speed
-            let etaText = "";
-            const etaLabel = waypointLat !== null ? (translations[currentLang].distance || "Distance") : t.timeToHome;
-            
-            if (currentSpeed && currentSpeed > 0.2) {
-                const speedKmh = currentSpeed * 3.6;
-                const timeMinutes = Math.round((distance / currentSpeed) / 60);
-                etaText = `${etaLabel}: ${timeMinutes} min (${speedKmh.toFixed(1)} km/h)`;
-            } else {
-                etaText = `${etaLabel}: -- min (${t.standingStill})`;
-            }
-
-            if (navigationType === 'compass') {
-                etaDisplay.innerText = etaText;
-            } else {
-                mapEtaDisplay.innerText = etaText;
-            }
-
-            // Compass specific logic
-            if (navigationType === 'compass') {
-                const bearing = getBearing(currentLat, currentLon, targetLat, targetLon);
-                let direction = (bearing - heading + 360) % 360;
-                arrow.style.transform = `rotate(${direction}deg)`;
-
-                // Direction Feedback
-                const diff = Math.abs(direction > 180 ? direction - 360 : direction);
-                if (diff < 20) {
-                    arrow.classList.add('green');
-                } else {
-                    arrow.classList.remove('green');
-                }
-
-                // Near Destination
-                if (distance < 50) {
-                    arrow.classList.add('blink');
-                } else {
-                    arrow.classList.remove('blink');
-                }
-            }
-
-            // Arrival Detection: < 10m
-            if (distance < 10 && !arrivalTriggered) {
-                onArrival();
-            }
-        }
-
-        async function onArrival() {
-            const t = translations[currentLang];
-            
-            // Confetti
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-
-            // Vibration
-            if (navigator.vibrate) {
-                navigator.vibrate([200, 100, 200, 100, 200]);
-            }
-
-            // Sound
-            playArrivalSound();
-
-            if (waypointLat !== null) {
-                // Reached a waypoint
-                const stayAtWaypoint = await customConfirm(`${t.waypointReached} ${t.continueToHome}`);
-                if (stayAtWaypoint) {
-                    // Continue to Home
-                    waypointLat = null;
-                    waypointLon = null;
-                    if (navigationType === 'map' && map) {
-                        updateMapMarkers();
-                    }
-                } else {
-                    // Stop at waypoint
-                    stopNavigation();
-                    resetAppState();
-                    showScreen(homeScreen);
-                }
-                return;
-            }
-
-            arrivalTriggered = true;
-            
-            // Behavior depends on navigation mode
-            if (navigationType === 'map') {
-                // If on Map, stay on Map and let user decide when to stop
-                console.log("Arrived on Map mode - staying on map.");
-            } else {
-                // If on Compass, stop tracking and show completion screen after delay
-                stopNavigation();
-
-                // Calculate duration
-                const endTime = new Date();
-                const durationMinutes = Math.round((endTime - startTime) / 60000);
-                tripTimeDisplay.innerText = durationMinutes;
-
-                setTimeout(() => {
-                    if (navigationType === 'compass') {
-                        showScreen(completeScreen);
-                    }
-                }, 3000);
-            }
-        }
-
-        function playArrivalSound() {
-            const audio = new Audio('arrival.mp3');
-            audio.play().catch(err => console.error("Audio play failed:", err));
-        }
-
-        function playClickSound() {
-            const audio = new Audio('click.mp3');
-            audio.play().catch(err => console.error("Audio play failed:", err));
-        }
-
-        function stopNavigation() {
-            if (watchId !== null) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-            }
-            window.removeEventListener('deviceorientation', handleOrientation);
-            
-            if (map) {
-                map.remove();
-                map = null;
-            }
-        }
-
-        // Stop Button
-        stopBtn.addEventListener('click', async () => {
-            playClickSound();
-            const t = translations[currentLang];
-            const firstConfirm = await customConfirm(t.confirmStop1);
-            if (firstConfirm) {
-                const secondConfirm = await customConfirm(t.confirmStop2);
-                if (secondConfirm) {
-                    stopNavigation();
-                    resetAppState();
-                    showScreen(homeScreen);
-                }
-            }
-        });
-
-        mapStopBtn.addEventListener('click', async () => {
-            playClickSound();
-            const t = translations[currentLang];
-            const firstConfirm = await customConfirm(t.confirmStop1);
-            if (firstConfirm) {
-                const secondConfirm = await customConfirm(t.confirmStop2);
-                if (secondConfirm) {
-                    stopNavigation();
-                    resetAppState();
-                    showScreen(homeScreen);
-                }
-            }
-        });
-
-        // SOS Functionality
-        sosBtn.addEventListener('click', async () => {
-            playClickSound();
-            const t = translations[currentLang];
-            
-            if (!currentLat || !currentLon) {
-                customAlert(t.locating || "Locating...");
-                return;
-            }
-
-            const mapsUrl = `https://www.google.com/maps?q=${currentLat},${currentLon}`;
-            const shareText = `${t.sosMsg || "My current location: "}${mapsUrl}`;
-
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'SOS - Set Home Go Home',
-                        text: shareText,
-                        url: mapsUrl
-                    });
-                } catch (err) {
-                    console.log("Share failed:", err);
-                }
-            } else {
-                // Fallback: Copy to clipboard and alert
-                try {
-                    await navigator.clipboard.writeText(shareText);
-                    customAlert("Location copied to clipboard! You can now paste it into a message.");
-                } catch (err) {
-                    customAlert(`My location: ${currentLat}, ${currentLon}`);
-                }
-            }
-        });
-
-        // PowerSave Functionality
-        powerSaveBtn.addEventListener('click', () => {
-            playClickSound();
-            isPowerSave = !isPowerSave;
-            const mapEl = document.getElementById('map');
-            if (isPowerSave) {
-                mapEl.style.filter = 'invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)';
-                powerSaveBtn.style.background = 'var(--green)';
-                powerSaveBtn.style.color = 'black';
-            } else {
-                mapEl.style.filter = 'none';
-                powerSaveBtn.style.background = 'radial-gradient(circle at 30% 30%, #1a1a1a, #000)';
-                powerSaveBtn.style.color = 'white';
-            }
-        });
-
-        // Offline Map Functionality
-        offlineMapBtn.addEventListener('click', () => {
-            playClickSound();
-            downloadOverlay.style.display = 'flex';
-            const t = translations[currentLang];
-            document.getElementById('download-title').innerText = t.downloadTitle;
-            document.getElementById('download-desc').innerText = t.downloadDesc;
-            closeDownloadBtn.innerText = t.cancel;
-            downloadOptBtns.forEach(btn => {
-                btn.innerText = `${btn.dataset.radius} ${t.radius}`;
-            });
-        });
-
-        closeDownloadBtn.addEventListener('click', () => {
-            playClickSound();
-            downloadOverlay.style.display = 'none';
-            downloadProgressContainer.style.display = 'none';
-            downloadOptions.style.display = 'flex';
-            closeDownloadBtn.innerText = translations[currentLang].cancel;
-        });
-
-        downloadOptBtns.forEach(btn => {
-            btn.addEventListener('click', async () => {
-                playClickSound();
-                const radiusKm = parseInt(btn.dataset.radius);
-                if (!currentLat || !currentLon) {
-                    customAlert(translations[currentLang].locating);
-                    return;
-                }
-                startMapDownload(currentLat, currentLon, radiusKm);
-            });
-        });
-
-        async function startMapDownload(lat, lon, radiusKm) {
-            const t = translations[currentLang];
-            downloadOptions.style.display = 'none';
-            downloadProgressContainer.style.display = 'block';
-            closeDownloadBtn.disabled = true;
-            closeDownloadBtn.style.opacity = '0.5';
-
-            const zoomLevels = [13, 14, 15, 16];
-            let tileUrls = [];
-
-            zoomLevels.forEach(z => {
-                const latDegreeKm = 111;
-                const lonDegreeKm = 111 * Math.cos(lat * Math.PI / 180);
-                const latDiff = radiusKm / latDegreeKm;
-                const lonDiff = radiusKm / lonDegreeKm;
-
-                const x1 = lon2tile(lon - lonDiff, z);
-                const x2 = lon2tile(lon + lonDiff, z);
-                const y1 = lat2tile(lat + latDiff, z);
-                const y2 = lat2tile(lat - latDiff, z);
-
-                const xMin = Math.min(x1, x2);
-                const xMax = Math.max(x1, x2);
-                const yMin = Math.min(y1, y2);
-                const yMax = Math.max(y1, y2);
-
-                for (let x = xMin; x <= xMax; x++) {
-                    for (let y = yMin; y <= yMax; y++) {
-                        tileUrls.push(`https://tile.openstreetmap.org/${z}/${x}/${y}.png`);
-                    }
-                }
-            });
-
-            tileUrls = [...new Set(tileUrls)].slice(0, 500); // Safety limit
-            const totalTiles = tileUrls.length;
-            let downloaded = 0;
-            let failed = 0;
-
-            try {
-                const cache = await caches.open(CACHE_NAME);
-                for (const url of tileUrls) {
-                    try {
-                        const response = await fetch(url, { mode: 'cors' });
-                        if (response.ok) {
-                            await cache.put(url, response);
-                            downloaded++;
-                        } else {
-                            failed++;
-                        }
-                    } catch (e) {
-                        failed++;
-                        console.error("Tile fetch error:", e);
-                    }
-                    const progress = Math.round(((downloaded + failed) / totalTiles) * 100);
-                    downloadProgressFill.style.width = `${progress}%`;
-                    downloadStatus.innerText = `${t.downloading}${progress}% (${downloaded} ok)`;
-                }
-                
-                if (downloaded > 0) {
-                    downloadStatus.innerText = `${t.downloadDone} (${downloaded} tiles)`;
-                } else {
-                    downloadStatus.innerText = t.downloadError;
-                }
-            } catch (err) {
-                console.error("Download manager error:", err);
-                downloadStatus.innerText = t.downloadError;
-            }
-
-            closeDownloadBtn.disabled = false;
-            closeDownloadBtn.style.opacity = '1';
-            closeDownloadBtn.innerText = t.ok;
-        }
-
-        function lon2tile(lon, zoom) { return Math.floor((lon + 180) / 360 * Math.pow(2, zoom)); }
-        function lat2tile(lat, zoom) { return Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * Math.pow(2, zoom)); }
-
-        // Start New Trip
-        startNewBtn.addEventListener('click', () => {
-            playClickSound();
-            stopNavigation();
-            resetAppState();
-            showScreen(homeScreen);
-        });
-
-        function resetCompassUI() {
-            distanceVal.innerText = "0";
-            arrow.style.transform = "rotate(0deg)";
-            arrow.classList.remove('green', 'blink');
-        }
-
-        function resetAppState() {
-            const t = translations[currentLang];
-            homeLat = null;
-            homeLon = null;
-            waypointLat = null;
-            waypointLon = null;
-            arrivalTriggered = false;
-            userPath = []; // Clear breadcrumb trail
-            resetCompassUI();
-            
-            setHomeBtn.classList.remove('home-set');
-            openPoiBtn.classList.remove('home-set');
-            setHomeBtn.innerText = t.setHome;
-        }
-
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('SW registered'))
-                    .catch(err => console.error('SW registration failed', err));
-            });
-        }
+        // Init
+        startAdTimer();
     </script>
 </body>
 </html>
